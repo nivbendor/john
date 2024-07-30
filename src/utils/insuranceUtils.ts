@@ -221,7 +221,7 @@ export const Dental = (individualInfo: IndividualInfo, plan: Plan, personType: '
     return 0;
   }
   
-  const premium = DENTAL_PREMIUMS[region]?.[plan]?.[individualInfo[personType].eligibility] || 0;{}
+  const premium = DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo[personType].eligibility] || 0;
   return premium;
 };
 

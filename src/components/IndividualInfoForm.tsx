@@ -110,19 +110,6 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
     </Card>
   );
 };
-const getZipCodeRegion = (zipCode: string): number | null => {
-  if (!zipCode || typeof zipCode !== 'string') {
-    return null; // Return null for invalid input
-  }
-
-  const zipPrefix = zipCode.substring(0, 3);
-  for (const region in ZIP_CODE_REGIONS) {
-    if (ZIP_CODE_REGIONS[region].includes(zipPrefix)) {
-      return parseInt(region, 10);
-    }
-  }
-  return null;
-};
 
 const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   individualInfo,
@@ -149,6 +136,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               id="businessEmployees"
               name="businessEmployees"
               type="number"
+              min={0}
+              max={100}
               value={individualInfo.businessEmployees}
               onChange={(e) => handleIndividualInfoChange(e, 'business')}
             />
