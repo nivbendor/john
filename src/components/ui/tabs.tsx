@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface TabsProps {
+interface TabSelectorProps {
   activeTab: 'business' | 'owner' | 'employees';
   setActiveTab: (tab: 'business' | 'owner' | 'employees') => void;
 }
 
-const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
+const TabSelector: React.FC<TabSelectorProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="flex space-x-2 mb-4">
       <button
@@ -30,4 +30,4 @@ const Tabs: React.FC<TabsProps> = ({ activeTab, setActiveTab }) => {
   );
 };
 
-export default Tabs;
+export default TabSelector;

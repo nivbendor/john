@@ -177,6 +177,7 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan, 
 export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
   const person = individualInfo[personType];
   const { age, employeeCoverage, spouseCoverage, numberOfChildren, eligibility } = person;
+  const totalEmployees = individualInfo.businessEmployees;
 
   // Calculate individual premium
   const units_individual = Math.min(employeeCoverage / LIFE_ADD_CONFIG.units, LIFE_ADD_CONFIG.units_max_individual);
@@ -188,26 +189,32 @@ export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Pl
   // Calculate spouse premium for 'Individual + Spouse' and 'Family' eligibility
   if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
     const max_coverage_spouse = Math.min(
-      LIFE_ADD_CONFIG.max_coverage_amount_spouse,
-      employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional
+      employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
+      LIFE_ADD_CONFIG.max_coverage_amount_spouse
     );
-    const units_spouse = Math.min(spouseCoverage, max_coverage_spouse) / LIFE_ADD_CONFIG.units;
+    const units_spouse = Math.min(spouseCoverage / LIFE_ADD_CONFIG.units, max_coverage_spouse / LIFE_ADD_CONFIG.units);
     const units_max_spouse = Math.min(units_spouse, LIFE_ADD_CONFIG.units_max_spouse);
     monthly_premium_spouse = units_max_spouse * getAgeBandRate(age, LIFE_ADD_CONFIG.ageBandRates);
   }
 
   // Calculate children premium for 'Individual + Children' and 'Family' eligibility
   if (eligibility === 'Individual + Children' || eligibility === 'Family') {
-    monthly_premium_children = Math.min(numberOfChildren, LIFE_ADD_CONFIG.max_number_of_children) * LIFE_ADD_CONFIG.children_rate;
+    monthly_premium_children = LIFE_ADD_CONFIG.children_rate;
   }
 
   // Sum up all applicable premiums
   const total_premium = monthly_premium_individual + monthly_premium_spouse + monthly_premium_children;
 
-  console.log('Individual Premium:', monthly_premium_individual);
-  console.log('Spouse Premium:', monthly_premium_spouse);
-  console.log('Children Premium:', monthly_premium_children);
-  console.log('Total Premium:', total_premium);
+  // Calculate final premium based on personType
+  const final_premium = personType === 'employee' 
+    ? total_premium * totalEmployees 
+    : total_premium;
+
+  console.log('Life Individual Premium:', monthly_premium_individual.toFixed(2));
+  console.log('Life Spouse Premium:', monthly_premium_spouse.toFixed(2));
+  console.log('Life Children Premium:', monthly_premium_children.toFixed(2));
+  console.log('Life Total Premium:', total_premium.toFixed(2));
+  console.log('Life Final Premium:', final_premium.toFixed(2));
 
   return total_premium;
 }

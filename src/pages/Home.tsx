@@ -10,6 +10,7 @@ import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 
+
 type PremiumResult = Record<Product, number>;
 
 const initialIndividualInfo: IndividualInfo = {
