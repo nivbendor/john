@@ -43,3 +43,19 @@ export const US_STATES: USState[] = [
   'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ];
+
+export function calculatePremiumByCostView(premium: number, costView: CostView): number {
+  switch (costView) {
+    case 'Monthly':
+      return premium;
+    case 'Weekly':
+      return premium / 4;  // Approximately 52 weeks / 12 months
+    case 'Semi-Monthly':
+      return premium / 2;
+    case 'Annual':
+      return premium * 12;
+    default:
+      console.warn(`Unexpected cost view: ${costView}. Returning monthly premium.`);
+      return premium;
+  }
+}

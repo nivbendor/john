@@ -12,7 +12,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>( // 
     <div className="flex justify-center md:mb-1  md:mt-1"> {/* Center the select element within its container */}
       <select
         ref={ref}
-        className={`w-full max-w-md rounded-xl p-2 text-center text-lg font-medium ${className || ''}`} // Add rounded-xl, padding, text-center, text size, and font weight
+        className={`w-full border-solid	rounded-xl p-2 text-center text-base font-medium ${className || ''}`} // Add rounded-xl, padding, text-center, text size, and font weight
         onChange={(e) => onValueChange && onValueChange(e.target.value as unknown as T)}
         {...props}
       >

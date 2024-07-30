@@ -3,7 +3,7 @@ import './styles/global.css';
 import './styles/ProductTabs.css';
 import './styles/App.css';
 import { Product, IndividualInfo, Plan, USState, CostView } from './utils/insuranceTypes';
-import { calculatePremiums, PRODUCTS } from './utils/insuranceUtils';
+import { calculatePremiums, } from './utils/insuranceUtils';
 import CostEstimate from './components/CostEstimate';
 import ProductDetails from './components/ProductDetails';
 import IndividualInfoForm from './components/IndividualInfoForm';
@@ -13,6 +13,7 @@ import { CardContent, CardHeader, Card } from 'components/ui/card';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'components/ui/select';
 import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
+import { PRODUCTS } from './utils/insuranceConfig';
 
 type PremiumResult = Record<Product, number>;
 
@@ -67,27 +68,35 @@ function App() {
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     const value = 'target' in e ? e.target.value : e.value;
-  
+    
     setIndividualInfo((prev) => {
-      const updatedInfo = {
-        ...prev,
-        [personType]: {
-          ...prev[personType],
-          [name]: value,
-        }
-      };
-  
-      // If age is changed, ensure eligibility is set
-      if (name === 'age') {
-        updatedInfo[personType].eligibility = updatedInfo[personType].eligibility || 'Individual';
+      if (name === 'businessZipCode' || name === 'businessEmployees') {
+        console.log({ ...prev, [name]: value })
+        return { ...prev, [name]: parseInt(value as string, 10)};
+      } else {
+        console.log({
+          ...prev,
+          [personType]: {
+            ...prev[personType],
+            [name]: value,
+          }
+        })
+        return {
+          ...prev,
+          [personType]: {
+            ...prev[personType],
+            [name]: value,
+          }
+        };
       }
-  
-      return updatedInfo;
     });
   }, []);
 
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
-    PRODUCTS.reduce((acc, product) => ({ ...acc, [product]: 'Basic' }), {} as Record<Product, Plan>)
+    PRODUCTS.reduce((acc, product) => ({
+      ...acc,
+      [product]: product === 'STD' ? 'Basic' : 'Basic'
+    }), {} as Record<Product, Plan>)
   );
 
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
@@ -95,17 +104,22 @@ function App() {
   }, []);
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
+    // For LTD, only recalculate if annualSalary or plan changes
+  if (product === 'LTD') {
     const newPremium = calculatePremiums(individualInfo, plan, product, costView);
     setPremiums(prev => ({
       ...prev,
-      [product]: newPremium
+      [product]: newPremium 
     }));
-  }, [individualInfo, costView, calculatePremiums]);
-
-
-  const handleProductToggle = useCallback((product: Product) => {
-    setProducts(prev => ({ ...prev, [product]: !prev[product] }));
-  }, []);
+  } else {
+    // For other products, recalculate as before
+    const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+    setPremiums(prev => ({
+      ...prev,
+      [product]: newPremium 
+    }));
+  }
+}, [individualInfo, costView, calculatePremiums]);
 
   // const handleCalculate = () => {
   //   setIsExpanded(false);
@@ -162,7 +176,7 @@ function App() {
       <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
         <div className="main-container flex w-full md:gap-24">
           <div className="md:w-3/4 flex flex-col items-center">
-            <div className="w-full md:mb-4 md:mt-16">
+            <div className="w-full md:mb-2 p-1 md:mt-2">
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
                 <IndividualInfoForm
                   individualInfo={individualInfo}
@@ -196,6 +210,8 @@ function App() {
               errors={errors}
               costView={costView}
               recalculatePremium={recalculatePremium}  // Add this line
+              personType={activeTab === 'owner' ? 'owner' : 'employee'}
+
             />
               </div>
             </div>

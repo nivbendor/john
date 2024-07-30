@@ -3,6 +3,9 @@ import { IndividualInfo, EligibilityOption, ELIGIBILITY_OPTIONS } from '../utils
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Card } from './ui/card';
+
+import { ZIP_CODE_REGIONS} from '../utils/insuranceConfig';
 
 interface IndividualInfoFormProps {
   individualInfo: IndividualInfo;
@@ -30,7 +33,7 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
     const { name, value } = e.target;
     let parsedValue: string | number = value;
 
-    if (name === 'age' || name === 'numberOfChildren') {
+    if (name === 'age') {
       parsedValue = parseInt(value) || 0;
     } else if (name === 'annualSalary' || name === 'employeeCoverage' || name === 'spouseCoverage') {
       parsedValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
@@ -40,9 +43,9 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
   };
 
   return (
-    <div className="space-y-4">
+    <Card className="mb-4">
       <h3 className="text-lg font-semibold capitalize">{personType} Information</h3>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-2">
         <div>
           <Label htmlFor={`${personType}-age`}>Age</Label>
           <Input
@@ -103,20 +106,22 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
           />
           {errors[`${personType}SpouseCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${personType}SpouseCoverage`]}</p>}
         </div>
-        <div>
-          <Label htmlFor={`${personType}-numberOfChildren`}>Number of Children</Label>
-          <Input
-            id={`${personType}-numberOfChildren`}
-            name="numberOfChildren"
-            value={personInfo.numberOfChildren}
-            onChange={handleInputChange}
-            className={errors[`${personType}NumberOfChildren`] ? 'border-red-500' : ''}
-          />
-          {errors[`${personType}NumberOfChildren`] && <p className="text-red-500 text-sm mt-1">{errors[`${personType}NumberOfChildren`]}</p>}
         </div>
-      </div>
-    </div>
+    </Card>
   );
+};
+const getZipCodeRegion = (zipCode: string): number | null => {
+  if (!zipCode || typeof zipCode !== 'string') {
+    return null; // Return null for invalid input
+  }
+
+  const zipPrefix = zipCode.substring(0, 3);
+  for (const region in ZIP_CODE_REGIONS) {
+    if (ZIP_CODE_REGIONS[region].includes(zipPrefix)) {
+      return parseInt(region, 10);
+    }
+  }
+  return null;
 };
 
 const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
@@ -124,17 +129,17 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   handleIndividualInfoChange,
   errors,
   activeTab,
-}) => {
+}) => { 
   return (
-    <div className="space-y-8">
+    <Card className="mb-4">
       {activeTab === 'business' && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2">
           <div>
             <Label htmlFor="businessZipCode">Business Zip Code</Label>
             <Input
               id="businessZipCode"
               name="businessZipCode"
-              value={individualInfo.businessZipCode}
+              value={individualInfo.businessZipCode || ''} // Use empty string if businessZipCode is falsy
               onChange={(e) => handleIndividualInfoChange(e, 'business')}
             />
           </div>
@@ -164,9 +169,11 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
           personInfo={individualInfo.employee}
           handleChange={handleIndividualInfoChange}
           errors={errors}
+          
         />
+        
       )}
-    </div>
+    </Card>
   );
 };
 

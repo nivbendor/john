@@ -158,12 +158,7 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
       "Benefit maximum of $1,200 per week",
       "Guaranteed Issue"
     ],
-    'Premium': [
-      "Income protection",
-      "Covers pregnancy",
-      "Benefit maximum of $1,200 per week",
-      "Guaranteed Issue"
-    ]
+    'Premium': []
   },
   'Life / AD&D': {
     'Basic': [
@@ -228,7 +223,6 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
     ]
   }
 };
-// productConfig.ts
 
 export const STD_CONFIG = {
   benefitAmountKey: 0.6,
@@ -246,7 +240,8 @@ export const STD_CONFIG = {
     { minAge: 55, maxAge: 59, rate: 0.46 },
     { minAge: 60, maxAge: 64, rate: 0.55 },
     { minAge: 65, maxAge: Infinity, rate: 0.66 }
-  ]
+  ],
+  plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
 };
 
 export const LTD_CONFIG = {
