@@ -1,11 +1,9 @@
 import React from 'react';
-import { IndividualInfo, EligibilityOption, ELIGIBILITY_OPTIONS } from '../utils/insuranceTypes';
+import { IndividualInfo, EligibilityOption } from '../utils/insuranceTypes';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card } from './ui/card';
-
-import { ZIP_CODE_REGIONS} from '../utils/insuranceConfig';
 
 interface IndividualInfoFormProps {
   individualInfo: IndividualInfo;
@@ -35,7 +33,7 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
 
     if (name === 'age') {
       parsedValue = parseInt(value) || 0;
-    } else if (name === 'annualSalary' || name === 'employeeCoverage' || name === 'spouseCoverage') {
+    } else if (name === 'annualSalary') {
       parsedValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
     }
 
@@ -43,9 +41,9 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
   };
 
   return (
-    <Card className="mb-4">
-      <h3 className="text-lg font-semibold capitalize">{personType} Information</h3>
-      <div className="grid grid-cols-3 gap-2">
+    <Card className="mb-4 p-4">
+      <h3 className="text-lg font-semibold capitalize mb-4">{personType} Information</h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label htmlFor={`${personType}-age`}>Age</Label>
           <Input
@@ -84,29 +82,7 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personType, personInfo,
             </SelectContent>
           </Select>
         </div>
-        <div>
-          <Label htmlFor={`${personType}-employeeCoverage`}>Employee Coverage</Label>
-          <Input
-            id={`${personType}-employeeCoverage`}
-            name="employeeCoverage"
-            value={formatCurrency(personInfo.employeeCoverage)}
-            onChange={handleInputChange}
-            className={errors[`${personType}EmployeeCoverage`] ? 'border-red-500' : ''}
-          />
-          {errors[`${personType}EmployeeCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${personType}EmployeeCoverage`]}</p>}
-        </div>
-        <div>
-          <Label htmlFor={`${personType}-spouseCoverage`}>Spouse Coverage</Label>
-          <Input
-            id={`${personType}-spouseCoverage`}
-            name="spouseCoverage"
-            value={formatCurrency(personInfo.spouseCoverage)}
-            onChange={handleInputChange}
-            className={errors[`${personType}SpouseCoverage`] ? 'border-red-500' : ''}
-          />
-          {errors[`${personType}SpouseCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${personType}SpouseCoverage`]}</p>}
-        </div>
-        </div>
+      </div>
     </Card>
   );
 };
@@ -118,31 +94,34 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   activeTab,
 }) => { 
   return (
-    <Card className="mb-4">
+    <div>
       {activeTab === 'business' && (
-        <div className="grid grid-cols-2 gap-2">
-          <div>
-            <Label htmlFor="businessZipCode">Business Zip Code</Label>
-            <Input
-              id="businessZipCode"
-              name="businessZipCode"
-              value={individualInfo.businessZipCode || ''} // Use empty string if businessZipCode is falsy
-              onChange={(e) => handleIndividualInfoChange(e, 'business')}
-            />
+        <Card className="mb-4 p-4">
+          <h3 className="text-lg font-semibold mb-4">Business Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="businessZipCode">Business Zip Code</Label>
+              <Input
+                id="businessZipCode"
+                name="businessZipCode"
+                value={individualInfo.businessZipCode || ''}
+                onChange={(e) => handleIndividualInfoChange(e, 'business')}
+              />
+            </div>
+            <div>
+              <Label htmlFor="businessEmployees">Number of Employees</Label>
+              <Input
+                id="businessEmployees"
+                name="businessEmployees"
+                type="number"
+                min={0}
+                max={10}
+                value={individualInfo.businessEmployees}
+                onChange={(e) => handleIndividualInfoChange(e, 'business')}
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="businessEmployees">Number of Employees</Label>
-            <Input
-              id="businessEmployees"
-              name="businessEmployees"
-              type="number"
-              min={0}
-              max={10}
-              value={individualInfo.businessEmployees}
-              onChange={(e) => handleIndividualInfoChange(e, 'business')}
-            />
-          </div>
-        </div>
+        </Card>
       )}
       {activeTab === 'owner' && (
         <PersonInfoForm
@@ -158,11 +137,9 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
           personInfo={individualInfo.employee}
           handleChange={handleIndividualInfoChange}
           errors={errors}
-          
         />
-        
       )}
-    </Card>
+    </div>
   );
 };
 
