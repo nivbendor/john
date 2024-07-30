@@ -17,7 +17,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
             className={`flex flex-col items-center justify-center p-2 rounded-md transition-colors duration-150 ease-in-out
               ${selectedProduct === product
                 ? 'bg-blue-500 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'text-gray-700 hover:bg-gray-200'
               }`}
             onClick={() => setSelectedProduct(product)}
           >
