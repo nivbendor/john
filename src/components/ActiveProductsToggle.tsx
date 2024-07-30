@@ -52,29 +52,27 @@ const ActiveProductsList: React.FC<ActiveProductsListProps> = ({
             .map(([product]) => (
               <div key={product} className="flex items-center">
                 <span className="font-mediu min-w-24">{product}</span>
-                <div className="flex items-center space-x-2 min-w-48">
-                  <span className="text-sm min-w-28">
-                    ${getAdjustedPremium(product as Product, premiums[product as Product])?.toFixed(2) || '0.00'} / {costView.toLowerCase()}
-                  </span>
-                  <div className="wrapper">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="50"
-                      value={toggleStates[product as Product] === 'Owner' ? 0 : toggleStates[product as Product] === 'All' ? 50 : 100}
-                      onChange={(e) => handleToggleChange(product as Product, parseInt(e.target.value))}
-                      className={`custom-toggle ${
-                        toggleStates[product as Product] === 'Owner'
-                          ? 'tgl-def'
-                          : toggleStates[product as Product] === 'All'
-                          ? 'tgl-on'
-                          : 'tgl-off'
-                      }`}
-                    />
-                  </div>
+                <div className="wrapper">
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="50"
+                    value={toggleStates[product as Product] === 'Owner' ? 0 : toggleStates[product as Product] === 'All' ? 50 : 100}
+                    onChange={(e) => handleToggleChange(product as Product, parseInt(e.target.value))}
+                    className={`custom-toggle ${
+                      toggleStates[product as Product] === 'Owner'
+                        ? 'tgl-def'
+                        : toggleStates[product as Product] === 'All'
+                        ? 'tgl-on'
+                        : 'tgl-off'
+                    }`}
+                  />
                   <span className="text-xs">{toggleStates[product as Product]}</span>
                 </div>
+                <span className="text-sm min-w-28">
+                  ${getAdjustedPremium(product as Product, premiums[product as Product])?.toFixed(2) || '0.00'} / {costView.toLowerCase()}
+                </span>
               </div>
             ))}
         </div>

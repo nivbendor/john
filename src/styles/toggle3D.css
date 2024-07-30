@@ -1,7 +1,9 @@
 /* Toggle3D.css */
 .wrapper {
+    width: 100px;
     height: 50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     padding: 20px 0;
   }
