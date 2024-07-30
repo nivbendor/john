@@ -137,7 +137,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               name="businessEmployees"
               type="number"
               min={0}
-              max={100}
+              max={10}
               value={individualInfo.businessEmployees}
               onChange={(e) => handleIndividualInfoChange(e, 'business')}
             />
