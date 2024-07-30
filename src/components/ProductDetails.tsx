@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, ReactNode } from 'react';
 import { Product, Plan, IndividualInfo, EligibilityOption, CostView } from '../utils/insuranceTypes';
 import { PRODUCT_BULLET_POINTS } from '../utils/insuranceConfig';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
-import Button from './ui/button'; 
+// import Button from './ui/button';
 import { Card } from './ui/card';
 import { hasMultiplePlans } from '../utils/insuranceUtils';
 
@@ -69,22 +69,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   return (
+    <Card className="mb-4 p-4">
+
     <div className="product-details">
       <h2 className="text-2xl font-bold mb-4">{selectedProduct}</h2>
       {hasMultiplePlans(selectedProduct) && (
         <div className="mb-4">
           <Label>Plan</Label>
           <RadioGroup value={currentPlan} onValueChange={handlePlanChange}>
-            <div className="flex space-x-2">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Basic" id="basic" />
-                <Label htmlFor="basic">Basic</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="Premium" id="premium" />
-                <Label htmlFor="premium">Premium</Label>
-              </div>
-            </div>
+              <RadioGroupItem value="Basic">Basic</RadioGroupItem>
+              <RadioGroupItem value="Premium">Premium</RadioGroupItem>
           </RadioGroup>
         </div>
       )}
@@ -102,14 +96,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
       {selectedProduct === 'Life / AD&D' && (
         <>
-          <Button
+          <button
             onClick={() => setIsMoreDetailsOpen(!isMoreDetailsOpen)}
             className="mb-2"
           >
             {isMoreDetailsOpen ? 'Less Details' : 'More Details'}
-          </Button>
+          </button>
           {isMoreDetailsOpen && (
-            <Card className="p-4">
               <div className="space-y-4">
                 <div>
                   <Label htmlFor={`${personType}-employeeCoverage`}>Individual Coverage</Label>
@@ -136,14 +129,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <p className="text-sm text-gray-500 mt-1">The amount of life insurance coverage for the spouse, if applicable.</p>
                 </div>
               </div>
-              <p className="text-sm text-gray-500 mt-4">
-                Tip: A common rule of thumb is to have life insurance coverage equal to 10-15 times your annual salary.
-              </p>
-            </Card>
           )}
         </>
       )}
     </div>
+    </Card>
   );
 };
 
