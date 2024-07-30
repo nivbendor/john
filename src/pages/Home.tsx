@@ -9,6 +9,7 @@ import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'c
 import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
+import ActiveProductsToggle from '../components/ActiveProductsToggle';
 
 
 type PremiumResult = Record<Product, number>;
@@ -171,7 +172,7 @@ function Home() {
       <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
         <div className="main-container flex w-full md:gap-24">
           <div className="md:w-3/4 flex flex-col items-center">
-            <div className="product-tabs-container">
+            <div className="w-full md:mb-2 p-1 md:mt-2">
               
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <IndividualInfoForm
@@ -182,7 +183,7 @@ function Home() {
               />
             </div>
             
-            <div className="product-tabs-container">
+            <div className="product-tabs-container w-full ">
               <ProductSelector
                 selectedProduct={selectedProduct}
                 setSelectedProduct={setSelectedProduct}
@@ -204,7 +205,7 @@ function Home() {
               </div>
             </div>
           </div>
-          <div className="rightrail w-1/4 space-y-4 overflow-y-auto">
+          <div className="rightrail w-1/3 space-y-4 overflow-y-auto">
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold">Cost View</span>
               <Select
@@ -227,12 +228,13 @@ function Home() {
               costView={costView}
               businessEmployees={individualInfo.businessEmployees}
             />
-            <ActiveProductsList
-              products={products}
-              premiums={premiums}
-              costView={costView}
-            />
-          </div>
+            <ActiveProductsToggle
+          products={products}
+          premiums={premiums}
+          costView={costView}
+          individualInfo={individualInfo}
+        />
+      </div>
         </div>
       </div>
     </div>
