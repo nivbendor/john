@@ -50,10 +50,10 @@ const ActiveProductsList: React.FC<ActiveProductsListProps> = ({
           {Object.entries(products)
             .filter(([_, isActive]) => isActive)
             .map(([product]) => (
-              <div key={product} className="flex items-center justify-between">
-                <span className="font-medium">{product}</span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm">
+              <div key={product} className="flex items-center">
+                <span className="font-mediu min-w-24">{product}</span>
+                <div className="flex items-center space-x-2 min-w-48">
+                  <span className="text-sm min-w-28">
                     ${getAdjustedPremium(product as Product, premiums[product as Product])?.toFixed(2) || '0.00'} / {costView.toLowerCase()}
                   </span>
                   <div className="wrapper">
