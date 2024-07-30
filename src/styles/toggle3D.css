@@ -1,0 +1,48 @@
+/* Toggle3D.css */
+.wrapper {
+    width: 200px;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  
+  .custom-toggle {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 20px;
+    width: 40px;
+    background-color: #333;
+    border-radius: 25px;
+    padding: 0 2px;
+    margin: 0;
+    cursor: pointer;
+  }
+  
+  .custom-toggle::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 25px;
+  }
+  
+  .custom-toggle:focus {
+    outline: none;
+  }
+  
+  .custom-toggle.tgl-def::-webkit-slider-thumb {
+    background-color: orange;
+  }
+  
+  .custom-toggle.tgl-on::-webkit-slider-thumb {
+    background-color: green;
+  }
+  
+  .custom-toggle.tgl-off::-webkit-slider-thumb {
+    background-color: red;
+  }
+  
+  .rangeActive {
+    background-color: green;
+  }
