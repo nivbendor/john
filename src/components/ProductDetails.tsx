@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Product, Plan, IndividualInfo, CostView } from '../utils/insuranceTypes';
 import { PRODUCT_BULLET_POINTS } from '../utils/insuranceConfig';
-import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import { Card } from './ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { hasMultiplePlans } from '../utils/insuranceUtils';
-
 
 interface ProductDetailsProps {
   selectedProduct: Product;
@@ -101,16 +100,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   return (
     <Card className="mb-4 p-4">
       <div className="product-details">
-        <h2 className="text-2xl font-bold mb-4">{selectedProduct}</h2>
-        {hasMultiplePlans(selectedProduct) && (
-          <div className="mb-4">
-            <Label>Plan</Label>
-            <RadioGroup value={currentPlan} onValueChange={handlePlanChange}>
-              <RadioGroupItem value="Basic">Basic</RadioGroupItem>
-              <RadioGroupItem value="Premium">Premium</RadioGroupItem>
-            </RadioGroup>
-          </div>
-        )}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">{selectedProduct}</h2>
+          {hasMultiplePlans(selectedProduct) && (
+            <Select value={currentPlan} onValueChange={handlePlanChange}>
+              <SelectTrigger className="dp-30 w-32">
+                <SelectValue placeholder="Select plan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Basic">Basic</SelectItem>
+                <SelectItem value="Premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Features:</h3>
           <ul className="list-disc pl-5">

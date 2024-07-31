@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Product, CostView, IndividualInfo, Plan } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView } from '../utils/insuranceTypes';
 import { CardTitle, Card, CardContent, CardHeader } from './ui/card';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from './ui/select';
 import { calculatePremiums, PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
@@ -51,9 +51,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
 
     switch (toggleStates[product]) {
       case 'Owner':
-        return ownerPremium; // Owner's share
+        return calculatePremiumByCostView(ownerPremium, costView); // Owner's share
       case 'Employees':
-        return employeePremium; // Employees' share
+        return calculatePremiumByCostView(employeePremium, costView); // Employees' share
       case 'All':
       default:
         return baseAmount; // Full premium
