@@ -98,7 +98,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       {activeTab === 'business' && (
         <Card className="mb-4 p-4">
           <h3 className="text-lg font-semibold mb-4">Business Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
             <div>
               <Label htmlFor="businessZipCode">Business Zip Code</Label>
               <Input

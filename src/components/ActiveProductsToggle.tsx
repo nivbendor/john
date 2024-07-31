@@ -45,20 +45,27 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
 
   const getAdjustedPremium = (product: Product, baseAmount: number): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
-
+  
     const ownerPremium = calculatePremium(individualInfo, plan, 'owner');
     const employeePremium = calculatePremium(individualInfo, plan, 'employee');
-
+    const totalEmployees = individualInfo.businessEmployees;
+  
+    let totalCost = 0;
+  
     switch (toggleStates[product]) {
       case 'Owner':
-        return calculatePremiumByCostView(ownerPremium, costView); // Owner's share
+        totalCost = ownerPremium;
+        break;
       case 'Employees':
-        return calculatePremiumByCostView(employeePremium, costView); // Employees' share
+        totalCost = employeePremium * totalEmployees;
+        break;
       case 'All':
-      default:
-        return baseAmount; // Full premium
+        totalCost = ownerPremium + (employeePremium * totalEmployees);
+        break;
     }
-  };
+  
+    return calculatePremiumByCostView(totalCost, costView);
+  }
 
   return (
     <Card>
@@ -91,7 +98,6 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
                   <span className="text-sm">
                     ${getAdjustedPremium(product as Product, premiums[product as Product]).toFixed(2)}
                   </span>
-                  
                 </div>
               </div>
             ))}

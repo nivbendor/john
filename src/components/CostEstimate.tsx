@@ -1,8 +1,6 @@
 import React from 'react';
-import { CostView, getCostViewDisplayText } from '../utils/insuranceTypes';
+import { CostView } from '../utils/insuranceTypes';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Switch } from './ui/switch';
-
 
 interface CostEstimateProps {
   totalPremium: number;
@@ -59,6 +57,5 @@ const CostEstimate: React.FC<CostEstimateProps> = ({
     </Card>
   );
 };
-// {getCostViewDisplayText(costView)}
 
 export default CostEstimate;
