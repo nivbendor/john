@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Product, Plan, IndividualInfo, CostView } from '../utils/insuranceTypes';
+import { Product, Plan, IndividualInfo, CostView, getCostViewDisplayText } from '../utils/insuranceTypes';
 import { PRODUCT_BULLET_POINTS } from '../utils/insuranceConfig';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
@@ -122,15 +122,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             ))}
           </ul>
         </div>
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold">Cost:</h3>
-          <p className="text-xl font-semibold">${premium.toFixed(2)} / {costView.toLowerCase()}</p>
+        <div className="mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-semibold">Avg. Cost Per Individual:</h3>
+          <p className="text-xl font-semibold">
+            ${premium.toFixed(2)}
+            <span className="text-sm ml-1">/ {getCostViewDisplayText(costView)}</span>
+          </p>
         </div>
         {selectedProduct === 'Life / AD&D' && (
           <>
             <button
               onClick={() => setIsMoreDetailsOpen(!isMoreDetailsOpen)}
-              className="mb-2"
+              className="mb-2 flex"
             >
               {isMoreDetailsOpen ? 'Less Details' : 'More Details'}
             </button>

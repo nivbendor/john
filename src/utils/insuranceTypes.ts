@@ -59,3 +59,18 @@ export function calculatePremiumByCostView(premium: number, costView: CostView):
       return premium;
   }
 }
+
+export function getCostViewDisplayText(view: CostView): string {
+  switch (view) {
+    case 'Monthly':
+      return 'month';
+    case 'Weekly':
+      return 'week';
+    case 'Annual':
+      return 'year';
+    case 'Semi-Monthly':
+      return '2 weeks';
+    default:
+      return view;
+  }
+}
