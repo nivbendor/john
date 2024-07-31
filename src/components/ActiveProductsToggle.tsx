@@ -88,7 +88,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
                     <SelectContent>
                       <SelectItem value="Owner">Owner</SelectItem>
                       <SelectItem value="All">All</SelectItem>
-                      <SelectItem value="Employees">Employees</SelectItem>
+                      {individualInfo.businessEmployees && <SelectItem value="Employees">Employees</SelectItem>}
                     </SelectContent>
                   </Select>
                   <span className="text-sm">
