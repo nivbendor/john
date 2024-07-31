@@ -1,18 +1,21 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Product, IndividualInfo, Plan, USState, CostView } from '../utils/insuranceTypes';
-import { calculatePremiums, } from '../utils/insuranceUtils';
+import { calculatePremiums } from '../utils/insuranceUtils';
 import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
 import IndividualInfoForm from '../components/IndividualInfoForm';
-import ActiveProductsList from '../components/ActiveProductsToggle';
+import ActiveProductsToggle from '../components/ActiveProductsToggle';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'components/ui/select';
 import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
-import ActiveProductsToggle from '../components/ActiveProductsToggle';
 
 
 type PremiumResult = Record<Product, number>;
+type ToggleState = 'Owner' | 'All' | 'Employees';
+
+
+
 
 const initialIndividualInfo: IndividualInfo = {
   businessZipCode: '07030',
@@ -50,14 +53,35 @@ const initialPremiums: PremiumResult = {
   'Critical Illness/Cancer': 0
 };
 
+
 function Home() {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(initialIndividualInfo);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
-  const [plan, setPlan] = useState<Plan>('Basic');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<'business' | 'owner' | 'employees'>('business');
+  const [totalEmployees, setTotalEmployees] = useState(1);
+  const [forceUpdate, setForceUpdate] = useState(0);
+  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
+    PRODUCTS.reduce((acc, product) => ({
+      ...acc,
+      [product]: product === 'STD' ? 'Basic' : 'Basic'
+    }), {} as Record<Product, Plan>)
+  ); 
+
+  const [toggleStates, setToggleStates] = useState<Record<Product, ToggleState>>(() => {
+    const initialStates: Record<Product, ToggleState> = {} as Record<Product, ToggleState>;
+    Object.keys(initialProducts).forEach((product) => {
+      initialStates[product as Product] = 'All';
+    });
+    return initialStates;
+  });
+
+  const setProductPlan = useCallback((product: Product, plan: Plan) => {
+    setProductPlans(prev => ({ ...prev, [product]: plan }));
+  }, []);
 
   const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
@@ -88,17 +112,6 @@ function Home() {
     });
   }, []);
 
-  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
-    PRODUCTS.reduce((acc, product) => ({
-      ...acc,
-      [product]: product === 'STD' ? 'Basic' : 'Basic'
-    }), {} as Record<Product, Plan>)
-  );
-
-  const setProductPlan = useCallback((product: Product, plan: Plan) => {
-    setProductPlans(prev => ({ ...prev, [product]: plan }));
-  }, []);
-
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     // For LTD, only recalculate if annualSalary or plan changes
   if (product === 'LTD') {
@@ -117,52 +130,45 @@ function Home() {
   }
 }, [individualInfo, costView, calculatePremiums]);
 
-  // const handleCalculate = () => {
-  //   setIsExpanded(false);
-  //   setPremiums(calculateAllPremiums());
-  // };
+const handleToggleChange = (product: Product, newState: ToggleState) => {
+  setToggleStates((prevStates) => ({
+    ...prevStates,
+    [product]: newState,
+  }));
+    setForceUpdate(prev => prev + 1);
+};
 
   const calculateAllPremiums = useCallback(() => {
     const allPremiums: PremiumResult = { ...initialPremiums };
     PRODUCTS.forEach(product => {
-      allPremiums[product] = calculatePremiums(individualInfo, plan, product, costView);
+      allPremiums[product] = calculatePremiums(individualInfo, productPlans[product], product, costView);
     });
-
     return allPremiums;
-  }, [individualInfo, costView]);
+  }, [individualInfo, productPlans, costView]);
 
   useEffect(() => {
-    setPremiums(calculateAllPremiums());
-  }, [calculateAllPremiums]);
+    if (individualInfo.businessEmployees === 0) {
+      setToggleStates((prevStates) => {
+        const newStates = { ...prevStates };
+        Object.keys(newStates).forEach((product) => {
+          newStates[product as Product] = 'Owner';
+        });
+        return newStates;
+      });
+    }
 
-  const calculateTotalPremium = useCallback(() => {
-    return Object.entries(products)
-      .filter(([_, isActive]) => isActive)
-      .reduce((total, [product]) => total + (premiums[product] || 0), 0);
-  }, [products, premiums]);
 
-  const validateInputs = useCallback(() => {
-    const newErrors: Record<string, string> = {};
-    ['owner', 'employee'].forEach((personType) => {
-      const person = individualInfo[personType as 'owner' | 'employee'];
-      if (person.employeeCoverage < 5000 || person.employeeCoverage > 150000) {
-        newErrors[`${personType}EmployeeCoverage`] = 'Employee coverage must be between $5,000 and $150,000';
-      }
-      if (person.spouseCoverage > Math.min(person.employeeCoverage * 0.5, 20000)) {
-        newErrors[`${personType}SpouseCoverage`] = 'Spouse coverage cannot exceed 50% of employee coverage or $20,000, whichever is less';
-      }
-    });
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  }, [individualInfo]);
-
-  useEffect(() => {
-    validateInputs();
-  }, [validateInputs]);
-
-  const [activeTab, setActiveTab] = useState<'business' | 'owner' | 'employees'>('business');
-  // const [isExpanded, setIsExpanded] = useState(true);
+  const newPremiums = { ...initialPremiums };
+  Object.keys(productPlans).forEach((product) => {
+    newPremiums[product as Product] = calculatePremiums(
+      individualInfo,
+      productPlans[product as Product],
+      product as Product,
+      costView
+    );
+  });
+  setPremiums(calculateAllPremiums);
+}, [individualInfo.businessEmployees, productPlans, costView, calculatePremiums]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -191,16 +197,16 @@ function Home() {
               />
               <div className="w-full">
                 <ProductDetails
-                  selectedProduct={selectedProduct}
-                  plans={productPlans}
-                  setProductPlan={setProductPlan}
-                  premium={premiums[selectedProduct]}
-                  individualInfo={individualInfo}
-                  handleIndividualInfoChange={handleInputChange}
-                  errors={errors}
-                  costView={costView}
-                  recalculatePremium={recalculatePremium}
-                  personType={activeTab === 'owner' ? 'owner' : 'employee'}
+                   plans={productPlans}
+                   selectedProduct={selectedProduct}
+                   premium={premiums[selectedProduct]}
+                   costView={costView}
+                   individualInfo={individualInfo}
+                   setProductPlan={setProductPlan}
+                   handleIndividualInfoChange={handleInputChange}
+                   errors={errors}
+                   recalculatePremium={recalculatePremium}
+                   personType={activeTab === 'owner' ? 'owner' : 'employee'}
                 />
               </div>
             </div>
@@ -224,22 +230,25 @@ function Home() {
               </Select>
             </div>
             <CostEstimate
-              totalPremium={calculateTotalPremium()}
-              costView={costView}
-              businessEmployees={individualInfo.businessEmployees}
+                premiums={premiums}
+                costView={costView}
+                businessEmployees={individualInfo.businessEmployees}
+                toggleStates={toggleStates}
             />
             <ActiveProductsToggle
-              plan={plan}
+              plan={productPlans}
               products={products}
               premiums={premiums}
               costView={costView}
               individualInfo={individualInfo}
+              toggleStates={toggleStates}
+              handleToggleChange={handleToggleChange}
             />
-      </div>
+         </div>
         </div>
       </div>
     </div>
   );
-}
 
+}
 export default Home;
