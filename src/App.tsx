@@ -4,7 +4,7 @@ import './styles/global.css';
 import './styles/ProductTabs.css';
 import './styles/App.css';
 import Home from './pages/Home';
-import About from './pages/Business';
+import Business from './pages/Business';
 
 const App = () => {
   return (
@@ -22,7 +22,7 @@ const App = () => {
         </nav> */}
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/john" element={<About />} />
+          <Route path="/john" element={<Business />} />
         </Routes>
       </div>
     </Router>

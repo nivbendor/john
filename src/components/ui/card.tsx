@@ -20,7 +20,7 @@ export const CardHeader: React.FC<CardProps> = ({ children, className = '', ...p
 );
 
 export const CardContent: React.FC<CardProps> = ({ children, className = '', ...props }) => (
-  <div className={`rounded-xl px-4 py-5 ${className}`} {...props}>
+  <div className={`rounded-xl px-4 py-5 sm:p-6 ${className}`} {...props}>
     {children}
   </div>
 );

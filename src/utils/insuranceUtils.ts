@@ -233,7 +233,7 @@ export const Dental = (individualInfo: IndividualInfo, plan: Plan, personType: '
 };
 
 
-const PREMIUM_CALCULATIONS: PremiumCalculation = {
+export const PREMIUM_CALCULATIONS: PremiumCalculation = {
   STD: calculateSTDPremium,
   LTD: calculateLTDPremium,
   'Life / AD&D': calculateLifeADDPremium,
@@ -253,9 +253,6 @@ const PREMIUM_CALCULATIONS: PremiumCalculation = {
   }
   
 };
-console.log("DENTALLLLLLLLL", Dental)
-
-
 
 export const calculatePremiums = (
   individualInfo: IndividualInfo,

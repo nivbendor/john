@@ -229,11 +229,12 @@ function Home() {
               businessEmployees={individualInfo.businessEmployees}
             />
             <ActiveProductsToggle
-          products={products}
-          premiums={premiums}
-          costView={costView}
-          individualInfo={individualInfo}
-        />
+              plan={plan}
+              products={products}
+              premiums={premiums}
+              costView={costView}
+              individualInfo={individualInfo}
+            />
       </div>
         </div>
       </div>

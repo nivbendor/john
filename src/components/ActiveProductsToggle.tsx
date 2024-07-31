@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Product, CostView, IndividualInfo } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan } from '../utils/insuranceTypes';
 import { CardTitle, Card, CardContent, CardHeader } from './ui/card';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from './ui/select';
+import { calculatePremiums, PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 
 
 interface ActiveProductsToggleProps {
+  plan: Plan,
   products: Record<Product, boolean>;
   premiums: Record<Product, number>;
   costView: CostView;
@@ -14,6 +16,7 @@ interface ActiveProductsToggleProps {
 type ToggleState = 'Owner' | 'All' | 'Employees';
 
 const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
+  plan,
   products,
   premiums,
   costView,
@@ -41,11 +44,16 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   };
 
   const getAdjustedPremium = (product: Product, baseAmount: number): number => {
+    const calculatePremium = PREMIUM_CALCULATIONS[product];
+
+    const ownerPremium = calculatePremium(individualInfo, plan, 'owner');
+    const employeePremium = calculatePremium(individualInfo, plan, 'employee');
+
     switch (toggleStates[product]) {
       case 'Owner':
-        return baseAmount / totalEmployees; // Owner's share
+        return ownerPremium; // Owner's share
       case 'Employees':
-        return (baseAmount * (totalEmployees - 1)) / totalEmployees; // Employees' share
+        return employeePremium; // Employees' share
       case 'All':
       default:
         return baseAmount; // Full premium
@@ -84,7 +92,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
                     </SelectContent>
                   </Select>
                   <span className="text-sm">
-                    ${getAdjustedPremium(product as Product, premiums[product as Product]).toFixed(2)} / {costView.toLowerCase()}
+                    ${getAdjustedPremium(product as Product, premiums[product as Product]).toFixed(2)}
                   </span>
                   
                 </div>
