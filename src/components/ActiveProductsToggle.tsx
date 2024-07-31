@@ -30,13 +30,6 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     return initialStates;
   });
 
-  useEffect(() => {
-    if (individualInfo.businessEmployees > 0) { return; }
-    Object.keys(products).forEach((product) => {
-      toggleStates[product as Product] = 'Owner';
-    });
-  }, [individualInfo.businessEmployees]);
-
   const [totalEmployees, setTotalEmployees] = useState(1);
 
   useEffect(() => {
@@ -92,7 +85,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
                     <SelectContent>
                       <SelectItem key={1} value="Owner">Owner</SelectItem>
                       {individualInfo.businessEmployees && <SelectItem value="Employees" key={2}>Employees</SelectItem>}
-                      <SelectItem key={3} value="All">All</SelectItem>
+                      {individualInfo.businessEmployees && <SelectItem key={3} value="All">All</SelectItem>}
                     </SelectContent>
                   </Select>
                   <span className="text-sm">
