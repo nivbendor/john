@@ -10,6 +10,8 @@ import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 import { Button } from '../components/ui/button';
+import { parseUrlParams } from '../utils/parseUrlParams';
+
 
 type PremiumResult = Record<Product, number>;
 
@@ -54,7 +56,10 @@ const initialPremiums: PremiumResult = {
 
 
 function Home() {
-  const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(initialIndividualInfo);
+  const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
+    const urlParams = parseUrlParams();
+    return { ...initialIndividualInfo, ...urlParams };
+  });
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);
@@ -69,6 +74,11 @@ function Home() {
       [product]: product === 'STD' ? 'Basic' : 'Basic'
     }), {} as Record<Product, Plan>)
   ); 
+  useEffect(() => {
+    // Trigger recalculations based on the initial state
+    const newPremiums = calculateAllPremiums();
+    setPremiums(newPremiums);
+  }, []);
 
   const [toggleStates, setToggleStates] = useState<Record<Product, ToggleState>>(() => {
     const initialStates: Record<Product, ToggleState> = {} as Record<Product, ToggleState>;
