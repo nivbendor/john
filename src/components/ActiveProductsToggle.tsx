@@ -4,7 +4,7 @@ import { CardTitle, Card, CardContent, CardHeader } from './ui/card';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from './ui/select';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 
-type ToggleState = 'Owner' | 'All' | 'Employees';
+type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';
 
 interface ActiveProductsToggleProps {
   plan: Record<Product, Plan>,
@@ -81,6 +81,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
                       <SelectItem value="Owner">Owner</SelectItem>
                       {individualInfo.businessEmployees > 0 && <SelectItem value="Employees">Employees</SelectItem>}
                       {individualInfo.businessEmployees > 0 && <SelectItem value="All">All</SelectItem>}
+                      <SelectItem value="None">None</SelectItem>
                     </SelectContent>
                   </Select>
                   <span className="text-sm">

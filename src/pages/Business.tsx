@@ -12,7 +12,7 @@ import { PRODUCTS } from '../utils/insuranceConfig';
 import { Button } from '../components/ui/button';
 
 type PremiumResult = Record<Product, number>;
-type ToggleState = 'Owner' | 'All' | 'Employees';
+type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';
 
 // ToggleState
 
