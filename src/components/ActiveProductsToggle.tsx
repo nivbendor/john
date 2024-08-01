@@ -26,7 +26,6 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
 }) => {
   const getAdjustedPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
-    console.log("Plan:", plan[product])
     const ownerPremium = calculatePremium(individualInfo, plan[product], 'owner'); 
     const employeePremium = calculatePremium(individualInfo, plan[product], 'employee');
     const employeesCount = individualInfo.businessEmployees;

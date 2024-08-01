@@ -234,9 +234,10 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
             <CostEstimate
                 premiums={premiums}
                 costView={costView}
-                businessEmployees={individualInfo.businessEmployees}
                 toggleStates={toggleStates}
                 activeProducts={products}
+                plan={productPlans}
+                individualInfo={individualInfo}
             />
             <ActiveProductsToggle
               plan={productPlans}
