@@ -9,9 +9,6 @@ import { hasMultiplePlans } from '../utils/insuranceUtils';
 import CustomBadge from './ui/CustomBadge';
 import { cn } from '../utils/insuranceUtils';
 
-
-
-
 interface ProductDetailsProps {
   selectedProduct: Product;
   plans: Record<Product, Plan>;
@@ -106,47 +103,49 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   return (
     <Card className="mb-4 p-4">
-      <div className="product-details">
-        <div className="flex justify-between items-center mb-4">
-          <div><h2 className="text-2xl font-bold">{selectedProduct}</h2></div>
-          <div className="flex items-center space-x-2">
-            <div className="flex flex-col items-end space-y-1 mr-2">
-              <CustomBadge className={cn(
-                activeProducts[selectedProduct] 
-                  ? "bg-blue-100 text-blue-800" 
-                  : "bg-gray-100 text-gray-800"
-              )}>
-                Owner: {individualInfo.owner.eligibility}
-              </CustomBadge>
-              <CustomBadge className={cn(
-                activeProducts[selectedProduct] && individualInfo.businessEmployees > 0
-                  ? "bg-blue-100 text-blue-800" 
-                  : "bg-gray-100 text-gray-800"
-              )}>
-                Employee: {individualInfo.employee.eligibility}
-              </CustomBadge>
-            </div>
-            {hasMultiplePlans(selectedProduct) && (
-              <Select value={currentPlan} onValueChange={handlePlanChange}>
-                <SelectTrigger className="dp-30 w-32">
-                  <SelectValue placeholder="Select plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Basic">Basic</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </div>
+      <div className="product-details text-center">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold">Features:</h3>
-          <ul className="list-disc pl-5">
-            {bulletPoints.map((point, index) => (
-              <li key={index}>{point}</li>
-            ))}
-          </ul>
+          <h2 className="text-2xl font-bold">{selectedProduct}</h2>
         </div>
+        <div className="flex justify-center items-center mb-4">
+        <div className="flex items-center space-x-2 mr-2">
+
+            <CustomBadge className={cn(
+              activeProducts[selectedProduct] 
+                ? "bg-blue-100 text-blue-800" 
+                : "bg-gray-100 text-gray-800"
+            )}>
+              Owner: {individualInfo.owner.eligibility}
+            </CustomBadge>
+            <CustomBadge className={cn(
+              activeProducts[selectedProduct] && individualInfo.businessEmployees > 0
+                ? "bg-blue-100 text-blue-800" 
+                : "bg-gray-100 text-gray-800"
+            )}>
+              Employee: {individualInfo.employee.eligibility}
+            </CustomBadge>
+          </div>
+          {hasMultiplePlans(selectedProduct) && (
+            <Select value={currentPlan} onValueChange={handlePlanChange}>
+              <SelectTrigger className="dp-30 w-32">
+                <SelectValue placeholder="Select plan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Basic">Basic</SelectItem>
+                <SelectItem value="Premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        <div className="mb-4 text-left">
+  <h3 className="text-lg font-semibold">Features:</h3>
+  <ul className="list-disc pl-5">
+    {bulletPoints.map((point, index) => (
+      <li key={index}>{point}</li>
+    ))}
+  </ul>
+</div>
+
         <div className="mb-4 flex items-center gap-2">
           <h3 className="text-lg font-semibold">Avg. Cost Per Individual:</h3>
           <p className="text-xl font-semibold">
@@ -158,13 +157,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <>
             <button
               onClick={() => setIsMoreDetailsOpen(!isMoreDetailsOpen)}
-              className="mb-2 flex"
+              className="mb-2 flex justify-center"
             >
               {isMoreDetailsOpen ? 'Less Details' : 'More Details'}
             </button>
             {isMoreDetailsOpen && (
               <div className="product-tabs product-selector">
-                <ul className="product-tabs-list">
+                <ul className="product-tabs-list flex justify-center">
                   <li 
                     className={`product-tab-item ${selectedPersona === 'owner' ? 'active' : ''}`}
                     onClick={() => setSelectedPersona('owner')}

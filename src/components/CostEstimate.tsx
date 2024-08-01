@@ -74,10 +74,10 @@ const CostEstimate: React.FC<CostEstimateProps> = ({
         <CardTitle>Cost Estimate</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
+        <div className="space-y-2 text-center">
           <p>
             <span className="font-semibold">Total {costView} Cost: </span>
-            {formatCurrency(getCostViewAmount(totalMonthlyCost))}
+            <span>{formatCurrency(getCostViewAmount(totalMonthlyCost))}</span>
           </p>
           <p>
             <span className="font-semibold">Total Annual Cost: </span>
@@ -85,7 +85,7 @@ const CostEstimate: React.FC<CostEstimateProps> = ({
           </p>
           <p>
             <span className="font-semibold">Avg Monthly Cost per Individual: </span>
-            {formatCurrency(avgMonthlyPerIndividual)}
+            <span>{formatCurrency(avgMonthlyPerIndividual)}</span>
           </p>
         </div>
       </CardContent>
