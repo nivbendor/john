@@ -150,6 +150,7 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
       setToggleStates((prevStates) => {
         const newStates = { ...prevStates };
         Object.keys(newStates).forEach((product) => {
+          if (newStates[product as Product] === 'None') { return; }
           newStates[product as Product] = 'Owner';
         });
         return newStates;
