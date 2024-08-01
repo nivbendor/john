@@ -1,41 +1,56 @@
-import styled from 'styled-components';
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import { cva, type VariantProps } from "class-variance-authority"
 
-const Button = styled.button`
-  transition: opacity 300ms cubic-bezier(0.694, 0, 0.335, 1), background-color 100ms cubic-bezier(0.694, 0, 0.335, 1), color 100ms cubic-bezier(0.694, 0, 0.335, 1);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: baseline;
-  white-space: nowrap;
+import { cn } from "../../utils/insuranceUtils"
 
-  &:before {
-    animation: opacityFallbackOut 0.5s step-end forwards;
-    backface-visibility: hidden;
-    background-color: #EBEBEB;
-    clip-path: polygon(-1% 0, 0 0, -25% 100%, -1% 100%);
-    content: "";
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    transform: translateZ(0);
-    transition: clip-path 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), -webkit-clip-path 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-    width: 100%;
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default: "h-10 px-4 py-2",
+        sm: "h-9 rounded-md px-3",
+        lg: "h-11 rounded-md px-8",
+        icon: "h-10 w-10",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
   }
+)
 
-  &:hover:before {
-    animation: opacityFallbackIn 0s step-start forwards;
-    clip-path: polygon(0 0, 101% 0, 101% 101%, 0 101%);
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+}
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
   }
+)
+Button.displayName = "Button"
 
-  &:after {
-    background-color: #FFFFFF;
-  }
-
-  span {
-    z-index: 1;
-    position: relative;
-  }
-`;
-
-export default Button;
+export { Button, buttonVariants }

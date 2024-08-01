@@ -9,6 +9,7 @@ interface CostEstimateProps {
   costView: CostView;
   businessEmployees: number;
   toggleStates: Record<Product, ToggleState>;
+  activeProducts: Record<Product, boolean>;
 }
 
 const CostEstimate: React.FC<CostEstimateProps> = ({
@@ -16,45 +17,56 @@ const CostEstimate: React.FC<CostEstimateProps> = ({
   costView,
   businessEmployees,
   toggleStates,
+  activeProducts,
 }) => {
-  const getTotalCost = () => {
-    let totalCost = 0;
+  const calculateCosts = () => {
+    let ownerPremium = 0;
+    let employeePremium = 0;
+
     Object.entries(premiums).forEach(([product, premium]) => {
-      switch (toggleStates[product as Product]) {
-        case 'Owner':
-          totalCost += premium;
-          break;
-        case 'Employees':
-          totalCost += premium * businessEmployees;
-          break;
-        case 'All':
-          totalCost += premium * (businessEmployees + 1);
-          break;
+      if (activeProducts[product as Product]) {
+        switch (toggleStates[product as Product]) {
+          case 'Owner':
+            ownerPremium += premium;
+            break;
+          case 'Employees':
+            employeePremium += premium * businessEmployees;
+            break;
+          case 'All':
+            ownerPremium += premium;
+            employeePremium += premium * businessEmployees;
+            break;
+        }
       }
     });
 
+    const totalMonthlyCost = ownerPremium + employeePremium;
+    const totalAnnualCost = totalMonthlyCost * 12;
+    const avgMonthlyPerIndividual = totalMonthlyCost / (businessEmployees + 1);
+
+    return { totalMonthlyCost, totalAnnualCost, avgMonthlyPerIndividual };
+  };
+
+  const { totalMonthlyCost, totalAnnualCost, avgMonthlyPerIndividual } = calculateCosts();
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(amount);
+  };
+
+  const getCostViewAmount = (monthlyCost: number) => {
     switch (costView) {
       case 'Weekly':
-        return totalCost * 52;
+        return monthlyCost / 4;
       case 'Semi-Monthly':
-        return totalCost * 24;
+        return monthlyCost / 2;
       case 'Monthly':
-        return totalCost * 12;
+        return monthlyCost;
       case 'Annual':
-        return totalCost;
+        return monthlyCost * 12;
       default:
-        return totalCost * 12;
+        return monthlyCost;
     }
   };
-
-  const getPerEmployeeCost = () => {
-    const totalCost = getTotalCost();
-    const totalEmployees = businessEmployees + 1; // +1 for the owner
-    return totalEmployees > 0 ? totalCost / totalEmployees : 0;
-  };
-
-  const totalCost = getTotalCost();
-  const perEmployeeCost = getPerEmployeeCost();
 
   return (
     <Card>
@@ -65,15 +77,15 @@ const CostEstimate: React.FC<CostEstimateProps> = ({
         <div className="space-y-2">
           <p>
             <span className="font-semibold">Total {costView} Cost: </span>
-            ${(totalCost / (costView === 'Annual' ? 1 : 12)).toFixed(2)}
+            {formatCurrency(getCostViewAmount(totalMonthlyCost))}
           </p>
           <p>
             <span className="font-semibold">Total Annual Cost: </span>
-            ${totalCost.toFixed(2)}
+            {formatCurrency(totalAnnualCost)}
           </p>
           <p>
-            <span className="font-semibold">Annual Cost per Individual: </span>
-            ${perEmployeeCost.toFixed(2)}
+            <span className="font-semibold">Avg Monthly Cost per Individual: </span>
+            {formatCurrency(avgMonthlyPerIndividual)}
           </p>
         </div>
       </CardContent>

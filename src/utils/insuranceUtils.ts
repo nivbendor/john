@@ -34,6 +34,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+
+
 export function hasMultiplePlans(product: Product): boolean {
   return !['STD', 'Life / AD&D', 'Critical Illness/Cancer'].includes(product);
 }

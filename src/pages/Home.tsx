@@ -207,6 +207,8 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                    errors={errors}
                    recalculatePremium={recalculatePremium}
                    personType={activeTab === 'owner' ? 'owner' : 'employee'}
+                   activeProducts={products}
+
                 />
               </div>
             </div>
@@ -234,6 +236,8 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                 costView={costView}
                 businessEmployees={individualInfo.businessEmployees}
                 toggleStates={toggleStates}
+                activeProducts={products}
+
             />
             <ActiveProductsToggle
               plan={productPlans}

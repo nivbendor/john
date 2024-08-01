@@ -6,6 +6,11 @@ import { Input } from './ui/input';
 import { Card } from './ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { hasMultiplePlans } from '../utils/insuranceUtils';
+import CustomBadge from './ui/CustomBadge';
+import { cn } from '../utils/insuranceUtils';
+
+
+
 
 interface ProductDetailsProps {
   selectedProduct: Product;
@@ -18,6 +23,7 @@ interface ProductDetailsProps {
   costView: CostView;
   recalculatePremium: (product: Product, plan: Plan) => void;
   personType: 'owner' | 'employee';
+  activeProducts: Record<Product, boolean>;
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
@@ -31,6 +37,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   errors,
   costView,
   personType,
+  activeProducts,
 }) => {
   const [isMoreDetailsOpen, setIsMoreDetailsOpen] = useState(false);
   const [selectedPersona, setSelectedPersona] = useState<'owner' | 'employee'>(personType);
@@ -101,18 +108,36 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     <Card className="mb-4 p-4">
       <div className="product-details">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">{selectedProduct}</h2>
-          {hasMultiplePlans(selectedProduct) && (
-            <Select value={currentPlan} onValueChange={handlePlanChange}>
-              <SelectTrigger className="dp-30 w-32">
-                <SelectValue placeholder="Select plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Basic">Basic</SelectItem>
-                <SelectItem value="Premium">Premium</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
+          <div><h2 className="text-2xl font-bold">{selectedProduct}</h2></div>
+          <div className="flex items-center space-x-2">
+            <div className="flex flex-col items-end space-y-1 mr-2">
+              <CustomBadge className={cn(
+                activeProducts[selectedProduct] 
+                  ? "bg-blue-100 text-blue-800" 
+                  : "bg-gray-100 text-gray-800"
+              )}>
+                Owner: {individualInfo.owner.eligibility}
+              </CustomBadge>
+              <CustomBadge className={cn(
+                activeProducts[selectedProduct] && individualInfo.businessEmployees > 0
+                  ? "bg-blue-100 text-blue-800" 
+                  : "bg-gray-100 text-gray-800"
+              )}>
+                Employee: {individualInfo.employee.eligibility}
+              </CustomBadge>
+            </div>
+            {hasMultiplePlans(selectedProduct) && (
+              <Select value={currentPlan} onValueChange={handlePlanChange}>
+                <SelectTrigger className="dp-30 w-32">
+                  <SelectValue placeholder="Select plan" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Basic">Basic</SelectItem>
+                  <SelectItem value="Premium">Premium</SelectItem>
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         </div>
         <div className="mb-4">
           <h3 className="text-lg font-semibold">Features:</h3>

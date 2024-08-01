@@ -9,12 +9,12 @@ import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'c
 import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
-
+import { Button } from '../components/ui/button';
 
 type PremiumResult = Record<Product, number>;
 type ToggleState = 'Owner' | 'All' | 'Employees';
 
-
+// ToggleState
 
 
 const initialIndividualInfo: IndividualInfo = {
@@ -207,6 +207,8 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                    errors={errors}
                    recalculatePremium={recalculatePremium}
                    personType={activeTab === 'owner' ? 'owner' : 'employee'}
+                   activeProducts={products}
+
                 />
               </div>
             </div>
@@ -234,6 +236,7 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                 costView={costView}
                 businessEmployees={individualInfo.businessEmployees}
                 toggleStates={toggleStates}
+                activeProducts={products}
             />
             <ActiveProductsToggle
               plan={productPlans}
