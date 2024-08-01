@@ -74,3 +74,5 @@ export function getCostViewDisplayText(view: CostView): string {
       return view;
   }
 }
+
+export type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';

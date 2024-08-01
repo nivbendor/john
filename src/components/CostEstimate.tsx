@@ -1,8 +1,6 @@
 import React from 'react';
-import { CostView, Product } from '../utils/insuranceTypes';
+import { CostView, Product, ToggleState } from '../utils/insuranceTypes';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-
-type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';
 
 interface CostEstimateProps {
   premiums: Record<Product, number>;

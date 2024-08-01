@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Product, IndividualInfo, Plan, USState, CostView } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, USState, CostView, ToggleState } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
 import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
@@ -12,7 +12,6 @@ import { PRODUCTS } from '../utils/insuranceConfig';
 
 
 type PremiumResult = Record<Product, number>;
-type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';
 
 
 

@@ -1,10 +1,8 @@
 import React, { useCallback } from 'react';
-import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, getCostViewDisplayText } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, getCostViewDisplayText, ToggleState } from '../utils/insuranceTypes';
 import { CardTitle, Card, CardContent, CardHeader } from './ui/card';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from './ui/select';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
-
-type ToggleState = 'Owner' | 'All' | 'Employees' | 'None';
 
 interface ActiveProductsToggleProps {
   plan: Record<Product, Plan>,
