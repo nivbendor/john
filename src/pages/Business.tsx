@@ -180,51 +180,51 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
   setPremiums(calculateAllPremiums);
 }, [individualInfo.businessEmployees, productPlans, costView, calculatePremiums]);
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <div className="top-0 left-0 p-4">
-        <h1 className="text-center text-2xl font-bold">John</h1>
-      </div>
-      <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
-        <div className="main-container flex w-full md:gap-24">
-          <div className="md:w-3/4 flex flex-col items-center">
-            <div className="w-full md:mb-2 p-1 md:mt-2">
-              
-              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-              <IndividualInfoForm
-                individualInfo={individualInfo}
-                handleIndividualInfoChange={handleInputChange}
-                errors={errors}
-                activeTab={activeTab}
-              />
-            </div>
-            
-            <div className="product-tabs-container w-full ">
-              <ProductSelector
-                selectedProduct={selectedProduct}
-                setSelectedProduct={setSelectedProduct}
-                products={PRODUCTS}
-              />
-              <div className="w-full">
-                <ProductDetails
-                   plans={productPlans}
-                   selectedProduct={selectedProduct}
-                   premium={premiums[selectedProduct]}
-                   costView={costView}
-                   individualInfo={individualInfo}
-                   setProductPlan={setProductPlan}
-                   handleIndividualInfoChange={handleInputChange}
-                   errors={errors}
-                   recalculatePremium={recalculatePremium}
-                   personType={activeTab === 'owner' ? 'owner' : 'employee'}
-                   activeProducts={products}
-
-                />
-              </div>
-            </div>
+return (
+  <div className="min-h-screen bg-gray-100">
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold text-center mb-8">John</h1>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            <IndividualInfoForm
+              individualInfo={individualInfo}
+              handleIndividualInfoChange={handleInputChange}
+              errors={errors}
+              activeTab={activeTab}
+            />
           </div>
-          <div className="rightrail w-1/3 space-y-4 overflow-y-auto">
-            <div className="flex justify-between items-center">
+          
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <ProductSelector
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+              products={PRODUCTS}
+            />
+          </div>
+          
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <ProductDetails
+              plans={productPlans}
+              selectedProduct={selectedProduct}
+              premium={premiums[selectedProduct]}
+              costView={costView}
+              individualInfo={individualInfo}
+              setProductPlan={setProductPlan}
+              handleIndividualInfoChange={handleInputChange}
+              errors={errors}
+              recalculatePremium={recalculatePremium}
+              personType={activeTab === 'owner' ? 'owner' : 'employee'}
+              activeProducts={products}
+            />
+          </div>
+        </div>
+        
+        <div className="space-y-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex justify-between items-center mb-4">
               <span className="text-lg font-semibold">Cost View</span>
               <Select
                 value={costView}
@@ -242,12 +242,15 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
               </Select>
             </div>
             <CostEstimate
-                premiums={premiums}
-                costView={costView}
-                businessEmployees={individualInfo.businessEmployees}
-                toggleStates={toggleStates}
-                activeProducts={products}
+              premiums={premiums}
+              costView={costView}
+              businessEmployees={individualInfo.businessEmployees}
+              toggleStates={toggleStates}
+              activeProducts={products}
             />
+          </div>
+          
+          <div className="bg-white rounded-lg shadow-md p-6">
             <ActiveProductsToggle
               plan={productPlans}
               products={products}
@@ -257,11 +260,12 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
               toggleStates={toggleStates}
               handleToggleChange={handleToggleChange}
             />
-         </div>
+          </div>
         </div>
       </div>
     </div>
-  );
-
+  </div>
+);
 }
+
 export default Home;

@@ -40,54 +40,62 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       case 'All':
         totalCost = ownerPremium + (employeePremium * employeesCount);
         break;
+      case 'None':
+        totalCost = 0;
+        break;
     }
 
     return calculatePremiumByCostView(totalCost, costView);
   }, [individualInfo, plan, costView, toggleStates]);
 
-  return (
-    <div className="bg-white shadow-lg rounded-lg p-6 font-sans">
-      <h2 className="text-2xl font-bold text-gray-900 dark mb-6">Active Products</h2>
-      
-      <div className="mb-8 bg-primary-50 dark:bg-primary-900 p-4 rounded-md">
-        <p className="text-sm text-primary-200 dark:text-primary-300">Total Cost Per</p>
-        <p className="text-3xl font-bold text-primary-700 dark:text-primary-200">{getCostViewDisplayText(costView)}</p>
-      </div>
+  const totalPremium = Object.entries(products)
+    .filter(([_, isActive]) => isActive)
+    .reduce((total, [product]) => total + getAdjustedPremium(product as Product), 0);
 
-      <div className="space-y-6">
-        {Object.entries(products)
-          .filter(([_, isActive]) => isActive)
-          .map(([product]) => (
-            <div key={product} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <span className="text-lg font-medium text-gray-900 dark:text-white mb-2 sm:mb-0">{product}</span>
-              <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-                <Select
-                  value={toggleStates[product as Product]}
-                  onValueChange={(value: ToggleState) => handleToggleChange(product as Product, value)}
-                >
-                  <SelectTrigger className="w-full sm:w-[180px] bg-white dark:bg-gray-600">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Owner">Owner</SelectItem>
-                    {individualInfo.businessEmployees > 0 && <SelectItem value="Employees">Employees</SelectItem>}
-                    {individualInfo.businessEmployees > 0 && <SelectItem value="All">All</SelectItem>}
-                    <SelectItem value="None">None</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-xl font-bold text-primary-600 dark:text-primary-300">
-                  ${getAdjustedPremium(product as Product).toFixed(2)}
-                </span>
+    return (
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">Active Products</h2>
+          <div className="text-right">
+            <p className="text-4xl font-bold text-gray-800">${totalPremium.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Total {getCostViewDisplayText(costView)} Cost</p>
+          </div>
+        </div>
+  
+        <div className="space-y-4">
+          {Object.entries(products)
+            .filter(([_, isActive]) => isActive)
+            .map(([product]) => (
+              <div key={product} className="flex items-center justify-between py-2 border-b border-gray-200">
+                <span className="text-sm font-medium text-gray-800 w-1/4">{product}</span>
+                <div className="flex items-center space-x-4 w-3/4 justify-end">
+                  <Select
+                    value={toggleStates[product as Product]}
+                    onValueChange={(value: ToggleState) => handleToggleChange(product as Product, value)}
+                  >
+                    <SelectTrigger className="w-24">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Owner">Owner</SelectItem>
+                      {individualInfo.businessEmployees > 0 && <SelectItem value="Employees">Employees</SelectItem>}
+                      {individualInfo.businessEmployees > 0 && <SelectItem value="All">All</SelectItem>}
+                      <SelectItem value="None">None</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm font-bold text-gray-800 w-20 text-right">
+                    ${getAdjustedPremium(product as Product).toFixed(2)}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+        </div>
+        
+        <p className="mt-6 text-sm text-gray-600">
+          Total Employees (including owner): {individualInfo.businessEmployees + 1}
+        </p>
       </div>
-      
-      <p className="mt-6 text-sm text-gray-600 dark:text-gray-300">
-        Total Employees (including owner): {individualInfo.businessEmployees + 1}
-      </p>
-    </div>
-  );
-};
-
-export default ActiveProductsToggle;
+    );
+  };
+  
+  export default ActiveProductsToggle;
