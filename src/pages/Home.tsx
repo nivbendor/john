@@ -232,12 +232,11 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
               </Select>
             </div>
             <CostEstimate
-                premiums={premiums}
-                costView={costView}
-                businessEmployees={individualInfo.businessEmployees}
-                toggleStates={toggleStates}
-                activeProducts={products}
-
+                 premiums={premiums}
+                 costView={costView}
+                 businessEmployees={individualInfo.businessEmployees}
+                 toggleStates={toggleStates}
+                 activeProducts={products}
             />
             <ActiveProductsToggle
               plan={productPlans}
