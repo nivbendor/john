@@ -19,7 +19,7 @@ type PremiumResult = Record<Product, number>;
 
 
 const initialIndividualInfo: IndividualInfo = {
-  businessZipCode: '07030',
+  businessZipCode: '37707',
   businessEmployees: 3,
   state: 'NJ' as USState,
   owner: {

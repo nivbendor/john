@@ -27,7 +27,6 @@ import {
   ACCIDENT_PREMIUMS,
   CRITICAL_ILLNESS_RATES,
   PRODUCT_ELIGIBILITY_OPTIONS,
-  AGE_BANDED_RATES_LIFE
 } from './insuranceConfig';
 
 export function cn(...inputs: ClassValue[]) {
@@ -46,29 +45,54 @@ const getAgeBandRate = (age: number, ageBandRates: typeof AGE_BANDED_RATES): num
 };
 
 const getZipCodeRegion = (zipCode: string | number | null | undefined): number | null => {
+  console.log(`--- Debug: getZipCodeRegion ---`);
+  console.log(`Input ZIP code: ${zipCode}`);
+
   // Convert to string and trim
   const zipString = String(zipCode || '').trim();
-  console.log(`Getting region for zip code: ${zipCode}`);
-
 
   // Check if the resulting string is empty or not a valid zip code format
   if (!zipString || !/^\d{5}$/.test(zipString)) {
-    console.log(`Processed zip code: ${zipString}`);
-
+    console.log(`Invalid zip code: ${zipString}`);
     return null;
   }
 
   const zipPrefix = zipString.substring(0, 3);
-  console.log(`Zip prefix: ${zipPrefix}`);
-  for (const region in ZIP_CODE_REGIONS) {
-    if (ZIP_CODE_REGIONS[region].includes(zipPrefix)) {
-      console.log(`Found region: ${region}`);
+  console.log(`ZIP prefix: ${zipPrefix}`);
 
+  for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
+    console.log(`Checking region ${region}`);
+    console.log(`Prefixes: ${prefixes.join(', ')}`);
+    if (prefixes.includes(zipPrefix)) {
+      console.log(`Found matching region: ${region}`);
       return parseInt(region, 10);
     }
   }
-  console.warn(`No region found for zip prefix: ${zipPrefix}`);
 
+  console.log(`No exact match found. Searching for closest region.`);
+
+  // If no exact match found, try to find the closest region
+  const numericPrefix = parseInt(zipPrefix, 10);
+  let closestRegion: number | null = null;
+  let smallestDifference = Infinity;
+
+  for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
+    for (const prefix of prefixes) {
+      const difference = Math.abs(parseInt(prefix, 10) - numericPrefix);
+      if (difference < smallestDifference) {
+        smallestDifference = difference;
+        closestRegion = parseInt(region, 10);
+      }
+    }
+  }
+
+  if (closestRegion !== null) {
+    console.log(`Closest region found: ${closestRegion}`);
+    return closestRegion;
+  }
+
+  console.warn(`No region found for zip prefix: ${zipPrefix}`);
+  console.log(`--- End Debug: getZipCodeRegion ---`);
   return null;
 };
 
@@ -110,7 +134,6 @@ type PremiumCalculation = {
 
 export function calculateSTDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
   // Always use 'Basic' plan for STD
-  const  stdPlan: Plan = 'Basic';
     
   const person = individualInfo[personType];
   const { annualSalary, age } = person;
@@ -178,7 +201,7 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan, 
 
 export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
   const person = individualInfo[personType];
-  const { age, employeeCoverage, spouseCoverage, numberOfChildren, eligibility } = person;
+  const { age, employeeCoverage, spouseCoverage, eligibility } = person;
   const totalEmployees = individualInfo.businessEmployees;
 
   // Calculate individual premium
@@ -223,14 +246,18 @@ export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Pl
 
 export const Dental = (individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number => {
   const { businessZipCode } = individualInfo;
+  const eligibility = individualInfo[personType].eligibility;
   
   const region = getZipCodeRegion(businessZipCode);
   if (region === null) {
-    console.warn(`No region found for businessZipCode: ${businessZipCode}`);
-    return 0;
+    console.warn(`No region found for businessZipCode: ${businessZipCode}. Using default region.`);
+    return DENTAL_PREMIUMS[plan]?.['1']?.[eligibility] || 0;
   }
   
-  const premium = DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo[personType].eligibility] || 0;
+  const premium = DENTAL_PREMIUMS[plan]?.[region]?.[eligibility] || 0;
+  if (premium === 0) {
+    console.warn(`No premium found for plan: ${plan}, region: ${region}, eligibility: ${eligibility}`);
+  }
   return premium;
 };
 
