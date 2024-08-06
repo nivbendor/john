@@ -22,7 +22,7 @@ const initialIndividualInfo: IndividualInfo = {
   businessZipCode: '37707',
   businessEmployees: 3,
   state: 'NJ' as USState,
-  owner: {
+  Individual: {
     age: 45,
     annualSalary: 200000,
     eligibility: 'Individual',
@@ -30,14 +30,6 @@ const initialIndividualInfo: IndividualInfo = {
     spouseCoverage: 20000,
     numberOfChildren: 2,
   },
-  employee: {
-    age: 35,
-    annualSalary: 30000,
-    eligibility: 'Individual',
-    employeeCoverage: 150000,
-    spouseCoverage: 20000,
-    numberOfChildren: 2,
-  }
 };
 
 const initialProducts: Record<Product, boolean> = {

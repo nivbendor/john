@@ -11,22 +11,6 @@ export function parseUrlParams(): Partial<IndividualInfo> {
   const businessEmployees = params.get('businessEmployees');
   if (businessEmployees) result.businessEmployees = parseInt(businessEmployees, 10);
 
-  // Owner Information
-  const ownerAge = params.get('ownerAge');
-  const ownerAnnualSalary = params.get('ownerAnnualSalary');
-  const ownerEligibility = params.get('ownerEligibility');
-  if (ownerAge || ownerAnnualSalary || ownerEligibility) {
-    const ownerInfo: Partial<PersonInfo> = {
-      age: ownerAge ? parseInt(ownerAge, 10) : undefined,
-      annualSalary: ownerAnnualSalary ? parseInt(ownerAnnualSalary, 10) : undefined,
-      eligibility: isValidEligibility(ownerEligibility) ? ownerEligibility : undefined,
-      employeeCoverage: 0,
-      spouseCoverage: 0,
-      numberOfChildren: 0
-    };
-    result.owner = ownerInfo as PersonInfo;
-  }
-
   // Employee Information
   const employeeAge = params.get('employeeAge');
   const employeeAnnualSalary = params.get('employeeAnnualSalary');
@@ -40,7 +24,7 @@ export function parseUrlParams(): Partial<IndividualInfo> {
       spouseCoverage: 0,
       numberOfChildren: 0
     };
-    result.employee = employeeInfo as PersonInfo;
+    result.Individual = employeeInfo as PersonInfo;
   }
 
   return result;

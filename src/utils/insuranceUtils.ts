@@ -132,10 +132,10 @@ type PremiumCalculation = {
   ) => number;
 };
 
-export function calculateSTDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
+export function calculateSTDPremium(individualInfo: IndividualInfo, plan: Plan): number {
   // Always use 'Basic' plan for STD
     
-  const person = individualInfo[personType];
+  const person = individualInfo.Individual;
   const { annualSalary, age } = person;
 
   const grossWeeklyIncome = annualSalary / STD_CONFIG.weeks;
@@ -166,11 +166,11 @@ export function calculateSTDPremium(individualInfo: IndividualInfo, plan: Plan, 
 return monthlyPremiums
 }
 
-export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
-  const person = individualInfo[personType];
+export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan): number {
+  const person = individualInfo.Individual
   const { annualSalary } = person;
 
-  console.log('LTD Calculation Input:', { annualSalary, plan, personType });
+  console.log('LTD Calculation Input:', { annualSalary, plan });
 
   const maxUnits = LTD_CONFIG.maxUnits[plan];
   const costPerHundred = LTD_CONFIG.costPerHundred[plan];
@@ -199,8 +199,8 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan, 
   return monthlyPremium;
 }
 
-export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number {
-  const person = individualInfo[personType];
+export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Plan): number {
+  const person = individualInfo.Individual;
   const { age, employeeCoverage, spouseCoverage, eligibility } = person;
   const totalEmployees = individualInfo.businessEmployees;
 
@@ -231,9 +231,7 @@ export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Pl
   const total_premium = monthly_premium_individual + monthly_premium_spouse + monthly_premium_children;
 
   // Calculate final premium based on personType
-  const final_premium = personType === 'employee' 
-    ? total_premium * totalEmployees 
-    : total_premium;
+  const final_premium = total_premium;
 
   console.log('Life Individual Premium:', monthly_premium_individual.toFixed(2));
   console.log('Life Spouse Premium:', monthly_premium_spouse.toFixed(2));
@@ -244,9 +242,9 @@ export function calculateLifeADDPremium(individualInfo: IndividualInfo, plan: Pl
   return total_premium;
 }
 
-export const Dental = (individualInfo: IndividualInfo, plan: Plan, personType: 'owner' | 'employee'): number => {
+export const Dental = (individualInfo: IndividualInfo, plan: Plan): number => {
   const { businessZipCode } = individualInfo;
-  const eligibility = individualInfo[personType].eligibility;
+  const eligibility = individualInfo.Individual.eligibility;
   
   const region = getZipCodeRegion(businessZipCode);
   if (region === null) {
@@ -267,16 +265,16 @@ export const PREMIUM_CALCULATIONS: PremiumCalculation = {
   LTD: calculateLTDPremium,
   'Life / AD&D': calculateLifeADDPremium,
   Accident: (individualInfo, plan, personType) =>
-    ACCIDENT_PREMIUMS[plan][individualInfo[personType].eligibility],
+    ACCIDENT_PREMIUMS[plan][individualInfo.Individual.eligibility],
   Dental: Dental,
   
   Vision: (individualInfo, plan, personType) => {
     const { state } = individualInfo;
     const stateCategory = getStateCategory(state);
-    return VISION_PREMIUMS[stateCategory][plan][individualInfo[personType].eligibility];
+    return VISION_PREMIUMS[stateCategory][plan][individualInfo.Individual.eligibility];
   },
-  'Critical Illness/Cancer': (individualInfo, plan, personType) => {
-    const person = individualInfo[personType];
+  'Critical Illness/Cancer': (individualInfo, plan) => {
+    const person = individualInfo.Individual;
     const { age, eligibility } = person;
     return getCriticalIllnessRate(age, eligibility);
   }
@@ -297,8 +295,7 @@ export const calculatePremiums = (
   const employeePremium = calculatePremium(individualInfo, plan, 'employee');
 
   // Ensure both owner and employee have a valid eligibility
-  if (!individualInfo.owner.eligibility) individualInfo.owner.eligibility = 'Individual';
-  if (!individualInfo.employee.eligibility) individualInfo.employee.eligibility = 'Individual';
+  if (!individualInfo.Individual.eligibility) individualInfo.Individual.eligibility = 'Individual';
 
   const totalEmployees = individualInfo.businessEmployees;
   const weightedPremium = ((ownerPremium * 1) + (employeePremium * totalEmployees)) / (totalEmployees + 1);

@@ -38,14 +38,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const [selectedPersona, setSelectedPersona] = useState("Individual");
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
-  const previousAnnualSalary = useRef(individualInfo["Individual"].annualSalary);
+  const previousAnnualSalary = useRef(individualInfo.Individual.annualSalary);
   const previousPlan = useRef(currentPlan);
 
   useEffect(() => {
     if (selectedProduct === 'LTD') {
-      if (previousAnnualSalary.current !== individualInfo["Individual"].annualSalary || previousPlan.current !== currentPlan) {
+      if (previousAnnualSalary.current !== individualInfo.Individual.annualSalary || previousPlan.current !== currentPlan) {
         recalculatePremium(selectedProduct, currentPlan);
-        previousAnnualSalary.current = individualInfo["Individual"].annualSalary;
+        previousAnnualSalary.current = individualInfo.Individual.annualSalary;
         previousPlan.current = currentPlan;
       }
     } else {
@@ -113,14 +113,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 ? "bg-blue-100 text-blue-800" 
                 : "bg-gray-100 text-gray-800"
             )}>
-              Owner: {individualInfo.owner.eligibility}
+              Owner: {individualInfo.Individual.eligibility}
             </CustomBadge>
             <CustomBadge className={cn(
               activeProducts[selectedProduct] && individualInfo.businessEmployees > 0
                 ? "bg-blue-100 text-blue-800" 
                 : "bg-gray-100 text-gray-800"
             )}>
-              Employee: {individualInfo.employee.eligibility}
+              Employee: {individualInfo.Individual.eligibility}
             </CustomBadge>
           </div>
           {/* <div>

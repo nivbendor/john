@@ -10,17 +10,13 @@ import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 
-
 type PremiumResult = Record<Product, number>;
-
-
-
 
 const initialIndividualInfo: IndividualInfo = {
   businessZipCode: '07030',
   businessEmployees: 3,
   state: 'NJ' as USState,
-  owner: {
+  Individual: {
     age: 45,
     annualSalary: 200000,
     eligibility: 'Individual',
@@ -28,14 +24,6 @@ const initialIndividualInfo: IndividualInfo = {
     spouseCoverage: 20000,
     numberOfChildren: 2,
   },
-  employee: {
-    age: 35,
-    annualSalary: 30000,
-    eligibility: 'Individual',
-    employeeCoverage: 150000,
-    spouseCoverage: 20000,
-    numberOfChildren: 2,
-  }
 };
 
 const initialProducts: Record<Product, boolean> = {
@@ -177,7 +165,7 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
       <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
         <div className="main-container flex w-full md:gap-24">
           <div className="md:w-3/4 flex flex-col items-center">
-            <div className="w-full md:mb-2 p-1 md:mt-2">
+            <div className="w-full md:mb-2 p-1 md:mt-2">ч
               
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <IndividualInfoForm

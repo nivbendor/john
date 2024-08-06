@@ -2,7 +2,6 @@ import React from 'react';
 import { IndividualInfo } from '../utils/insuranceTypes';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Card } from './ui/card';
 
 interface IndividualInfoFormProps {
@@ -15,7 +14,7 @@ interface IndividualInfoFormProps {
 }
 
 interface PersonInfoFormProps {
-  personInfo: IndividualInfo['owner'] | IndividualInfo['employee'];
+  personInfo: IndividualInfo;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number }) => void;
   errors: Record<string, string>;
 }
@@ -47,24 +46,32 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personInfo, handleChang
           <Input
             id="age"
             name="age"
-            value={personInfo.age}
+            value={personInfo.Individual.age}
             onChange={handleInputChange}
             className={errors["Age"] ? 'border-red-500' : ''}
           />
           {errors["Age"] && <p className="text-red-500 text-sm mt-1">{errors["Age"]}</p>}
         </div>
         <div>
-          <Label htmlFor= "Annual Salary">Annual Salary</Label>
+          <Label htmlFor="businessZipCode"> Zip Code</Label>
+          <Input
+            id="businessZipCode"
+            name="businessZipCode"
+            value={personInfo.businessZipCode || ''}
+            onChange={(e) => handleChange(e)}
+          />
+        </div>
+        <div>
+          <Label htmlFor= "annualSalary">Annual Salary</Label>
           <Input
             id="annualSalary"
             name="annualSalary"
-            value={formatCurrency(personInfo.annualSalary)}
+            value={formatCurrency(personInfo.Individual.annualSalary)}
             onChange={handleInputChange}
             className={errors["AnnualSalary"] ? 'border-red-500' : ''}
           />
           {errors["AnnualSalary"] && <p className="text-red-500 text-sm mt-1">{errors["AnnualSalary"]}</p>}
         </div>
-
       </div>
     </Card>
   );
@@ -77,30 +84,11 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   activeTab,
 }) => { 
   return (
-    <div>
-        <Card className="mb-4 p-4">
-          <h3 className="text-lg font-semibold mb-4">Individual Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-            <div>
-              <Label htmlFor="businessZipCode"> Zip Code</Label>
-              <Input
-                id="businessZipCode"
-                name="businessZipCode"
-                value={individualInfo.businessZipCode || ''}
-                onChange={(e) => handleIndividualInfoChange(e)}
-              />
-            </div>
-           </div>
-        </Card>
-      
-      
-        <PersonInfoForm
-          personInfo={individualInfo.owner}
-          handleChange={handleIndividualInfoChange}
-          errors={errors}
-        />
-      
-    </div>
+    <PersonInfoForm
+      personInfo={individualInfo}
+      handleChange={handleIndividualInfoChange}
+      errors={errors}
+    />
   );
 };
 

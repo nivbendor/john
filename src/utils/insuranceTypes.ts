@@ -30,8 +30,7 @@ export interface IndividualInfo {
   businessZipCode: string;
   businessEmployees: number;
   state: USState;
-  owner: PersonInfo;
-  employee: PersonInfo;
+  Individual: PersonInfo;
 }
 
 export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
