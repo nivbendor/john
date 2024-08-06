@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Product, Plan, IndividualInfo, CostView, getCostViewDisplayText } from '../utils/insuranceTypes';
+import { Product, Plan, IndividualInfo, CostView, getCostViewDisplayText, EligibilityOption } from '../utils/insuranceTypes';
 import { PRODUCT_BULLET_POINTS } from '../utils/insuranceConfig';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
@@ -15,11 +15,10 @@ interface ProductDetailsProps {
   setProductPlan: (product: Product, plan: Plan) => void;
   premium: number;
   individualInfo: IndividualInfo;
-  handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: string | number }, personType: 'owner' | 'employee' | 'business') => void;
+  handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: string | number }) => void;
   errors: Record<string, string>;
   costView: CostView;
   recalculatePremium: (product: Product, plan: Plan) => void;
-  personType: 'owner' | 'employee';
   activeProducts: Record<Product, boolean>;
 }
 
@@ -33,27 +32,26 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   handleIndividualInfoChange,
   errors,
   costView,
-  personType,
   activeProducts,
 }) => {
   const [isMoreDetailsOpen, setIsMoreDetailsOpen] = useState(false);
-  const [selectedPersona, setSelectedPersona] = useState<'owner' | 'employee'>(personType);
+  const [selectedPersona, setSelectedPersona] = useState("Individual");
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
-  const previousAnnualSalary = useRef(individualInfo[personType].annualSalary);
+  const previousAnnualSalary = useRef(individualInfo["Individual"].annualSalary);
   const previousPlan = useRef(currentPlan);
 
   useEffect(() => {
     if (selectedProduct === 'LTD') {
-      if (previousAnnualSalary.current !== individualInfo[personType].annualSalary || previousPlan.current !== currentPlan) {
+      if (previousAnnualSalary.current !== individualInfo["Individual"].annualSalary || previousPlan.current !== currentPlan) {
         recalculatePremium(selectedProduct, currentPlan);
-        previousAnnualSalary.current = individualInfo[personType].annualSalary;
+        previousAnnualSalary.current = individualInfo["Individual"].annualSalary;
         previousPlan.current = currentPlan;
       }
     } else {
       recalculatePremium(selectedProduct, currentPlan);
     }
-  }, [individualInfo, selectedProduct, currentPlan, recalculatePremium, personType]);
+  }, [individualInfo, selectedProduct, currentPlan, recalculatePremium]);
 
   const handlePlanChange = (value: string) => {
     if (value === 'Basic' || value === 'Premium') {
@@ -69,37 +67,37 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, persona: 'owner' | 'employee') => {
     const { name, value } = e.target;
     const parsedValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
-    handleIndividualInfoChange({ name, value: parsedValue }, persona);
+    handleIndividualInfoChange({ name, value: parsedValue });
   };
 
-  const renderCoverageFields = (persona: 'owner' | 'employee') => (
-    <div className="space-y-4">
-      <div>
-        <Label htmlFor={`${persona}-employeeCoverage`}>Individual Coverage</Label>
-        <Input
-          id={`${persona}-employeeCoverage`}
-          name="employeeCoverage"
-          value={formatCurrency(individualInfo[persona].employeeCoverage)}
-          onChange={(e) => handleInputChange(e, persona)}
-          className={errors[`${persona}EmployeeCoverage`] ? 'border-red-500' : ''}
-        />
-        {errors[`${persona}EmployeeCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${persona}EmployeeCoverage`]}</p>}
-        <p className="text-sm text-gray-500 mt-1">The amount of life insurance coverage for the individual.</p>
-      </div>
-      <div>
-        <Label htmlFor={`${persona}-spouseCoverage`}>Spouse Coverage</Label>
-        <Input
-          id={`${persona}-spouseCoverage`}
-          name="spouseCoverage"
-          value={formatCurrency(individualInfo[persona].spouseCoverage)}
-          onChange={(e) => handleInputChange(e, persona)}
-          className={errors[`${persona}SpouseCoverage`] ? 'border-red-500' : ''}
-        />
-        {errors[`${persona}SpouseCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${persona}SpouseCoverage`]}</p>}
-        <p className="text-sm text-gray-500 mt-1">The amount of life insurance coverage for the spouse, if applicable.</p>
-      </div>
-    </div>
-  );
+  // const renderCoverageFields = (persona: 'owner' | 'employee') => (
+  //   <div className="space-y-4">
+  //     <div>
+  //       <Label htmlFor={`${persona}-employeeCoverage`}>Individual Coverage</Label>
+  //       <Input
+  //         id={`${persona}-employeeCoverage`}
+  //         name="employeeCoverage"
+  //         value={formatCurrency(individualInfo[persona].employeeCoverage)}
+  //         onChange={(e) => handleInputChange(e, persona)}
+  //         className={errors[`${persona}EmployeeCoverage`] ? 'border-red-500' : ''}
+  //       />
+  //       {errors[`${persona}EmployeeCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${persona}EmployeeCoverage`]}</p>}
+  //       <p className="text-sm text-gray-500 mt-1">The amount of life insurance coverage for the individual.</p>
+  //     </div>
+  //     <div>
+  //       <Label htmlFor={`${persona}-spouseCoverage`}>Spouse Coverage</Label>
+  //       <Input
+  //         id={`${persona}-spouseCoverage`}
+  //         name="spouseCoverage"
+  //         value={formatCurrency(individualInfo[persona].spouseCoverage)}
+  //         onChange={(e) => handleInputChange(e, persona)}
+  //         className={errors[`${persona}SpouseCoverage`] ? 'border-red-500' : ''}
+  //       />
+  //       {errors[`${persona}SpouseCoverage`] && <p className="text-red-500 text-sm mt-1">{errors[`${persona}SpouseCoverage`]}</p>}
+  //       <p className="text-sm text-gray-500 mt-1">The amount of life insurance coverage for the spouse, if applicable.</p>
+  //     </div>
+  //   </div>
+  // );
 
   return (
     <Card className="mb-4 p-4">
@@ -125,6 +123,23 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               Employee: {individualInfo.employee.eligibility}
             </CustomBadge>
           </div>
+          {/* <div>
+          <Label htmlFor={`${personType}-eligibility`}>Eligibility</Label>
+          <Select
+            value={personInfo.eligibility}
+            onValueChange={(value: EligibilityOption) => handleChange({ name: 'eligibility', value }, personType)}
+          >
+            <SelectTrigger id={`${personType}-eligibility`}>
+              <SelectValue>{personInfo.eligibility}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'].map((option) => (
+                <SelectItem key={option} value={option}>{option}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div> */}
+        
           {hasMultiplePlans(selectedProduct) && (
             <Select value={currentPlan} onValueChange={handlePlanChange}>
               <SelectTrigger className="dp-30 w-32">
@@ -177,9 +192,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     <a href="#" className="product-tab-link">Employee</a>
                   </li>
                 </ul>
-                <div className="product-details">
+                {/* <div className="product-details">
                   {renderCoverageFields(selectedPersona)}
-                </div>
+                </div> */}
               </div>
             )}
           </>

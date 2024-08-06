@@ -94,8 +94,7 @@ function Home() {
 
   const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
-    personType: 'owner' | 'employee' | 'business'
-  ) => {
+      ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
     
@@ -104,7 +103,7 @@ function Home() {
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);
       }
-
+const personType="Individual"
       return {
         ...prev,
         ...(personType && {
@@ -188,7 +187,7 @@ return (
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div className="bg-white rounded-lg shadow-md p-6">
-            <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
+            {/* <Tabs activeTab={activeTab} setActiveTab={setActiveTab} /> */}
             <IndividualInfoForm
               individualInfo={individualInfo}
               handleIndividualInfoChange={handleInputChange}
@@ -216,7 +215,6 @@ return (
               handleIndividualInfoChange={handleInputChange}
               errors={errors}
               recalculatePremium={recalculatePremium}
-              personType={activeTab === 'owner' ? 'owner' : 'employee'}
               activeProducts={products}
             />
           </div>
@@ -241,13 +239,13 @@ return (
                 </SelectContent>
               </Select>
             </div>
-            <CostEstimate
+            {/* <CostEstimate
                 premiums={premiums}
                 costView={costView}
                 businessEmployees={individualInfo.businessEmployees}
                 toggleStates={toggleStates}
                 activeProducts={products}
-            />
+            /> */}
           </div>
           
           <div className="bg-white rounded-lg shadow-md p-6">

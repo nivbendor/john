@@ -84,7 +84,6 @@ function Home() {
 
   const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
-    personType: 'owner' | 'employee' | 'business'
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
@@ -94,7 +93,7 @@ function Home() {
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);
       }
-
+const personType = "Individual"
       return {
         ...prev,
         ...(personType && {
@@ -206,7 +205,6 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                    handleIndividualInfoChange={handleInputChange}
                    errors={errors}
                    recalculatePremium={recalculatePremium}
-                   personType={activeTab === 'owner' ? 'owner' : 'employee'}
                    activeProducts={products}
 
                 />
