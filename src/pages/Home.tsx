@@ -13,17 +13,15 @@ import { PRODUCTS } from '../utils/insuranceConfig';
 type PremiumResult = Record<Product, number>;
 
 const initialIndividualInfo: IndividualInfo = {
-  businessZipCode: '07030',
+  zipCode: '37707',
   businessEmployees: 3,
   state: 'NJ' as USState,
-  Individual: {
-    age: 45,
-    annualSalary: 200000,
-    eligibility: 'Individual',
-    employeeCoverage: 150000,
-    spouseCoverage: 20000,
-    numberOfChildren: 2,
-  },
+  age: 45,
+  annualSalary: 200000,
+  eligibility: 'Individual',
+  employeeCoverage: 150000,
+  spouseCoverage: 20000,
+  numberOfChildren: 2,
 };
 
 const initialProducts: Record<Product, boolean> = {
@@ -90,7 +88,7 @@ const personType = "Individual"
             [name]: value,
           }
         }),
-        ...((name === 'businessZipCode' || name === 'businessEmployees') && {
+        ...((name === 'zipCode' || name === 'businessEmployees') && {
           [name]: value,
         }),
       };
@@ -116,12 +114,12 @@ const personType = "Individual"
   }
 }, [individualInfo, costView, calculatePremiums]);
 
-const handleToggleChange = (product: Product, newState: ToggleState) => {
-  setToggleStates((prevStates) => ({
-    ...prevStates,
-    [product]: newState,
+const handleToggleChange = (product: Product, isActive: boolean) => {
+  setProducts((prevProducts) => ({
+    ...prevProducts,
+    [product]: isActive,
   }));
-    setForceUpdate(prev => prev + 1);
+  setForceUpdate(prev => prev + 1);
 };
 
   const calculateAllPremiums = useCallback(() => {
@@ -172,7 +170,6 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                 individualInfo={individualInfo}
                 handleIndividualInfoChange={handleInputChange}
                 errors={errors}
-                activeTab={activeTab}
               />
             </div>
             
@@ -213,14 +210,14 @@ const handleToggleChange = (product: Product, newState: ToggleState) => {
                   <SelectItem value="Monthly">Monthly</SelectItem>
                   <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
                   <SelectItem value="Weekly">Weekly</SelectItem>
-                  <SelectItem value="Annual">Annual</SelectItem>
+                  <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <CostEstimate
                  premiums={premiums}
                  costView={costView}
-                 businessEmployees={individualInfo.businessEmployees}
+                //  businessEmployees={individualInfo.businessEmployees}
                  toggleStates={toggleStates}
                  activeProducts={products}
             />

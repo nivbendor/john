@@ -5,6 +5,11 @@ import './styles/ProductTabs.css';
 import './styles/App.css';
 import Home from './pages/Home';
 import Business from './pages/Business';
+import StickyProductCostSummary from './components/StickyProductCostSummary';
+import totalPremium from './components/ActiveProductsToggle';
+import products from './components/ActiveProductsToggle';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const App = () => {
   return (
@@ -24,6 +29,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/john" element={<Business />} />
         </Routes>
+                <StickyProductCostSummary products={products} totalCost={totalPremium} />
+
       </div>
     </Router>
   );

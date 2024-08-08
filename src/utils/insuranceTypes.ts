@@ -4,7 +4,7 @@ export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'V
 
 export type EligibilityOption = 'Individual' | 'Individual + Spouse' | 'Individual + Children' | 'Family';
 
-export type CostView = 'Monthly' | 'Semi-Monthly' | 'Weekly' | 'Annual';
+export type CostView = 'Monthly' | 'Semi-Monthly' | 'Weekly' | 'Bi-Weekly';
 
 export type PremiumResult = Record<Product, number>;
 
@@ -17,20 +17,18 @@ export type USState =
   | 'NM' | 'NY' | 'NC' | 'ND' | 'OH' | 'OK' | 'OR' | 'PA' | 'RI' | 'SC'
   | 'SD' | 'TN' | 'TX' | 'UT' | 'VT' | 'VA' | 'WA' | 'WV' | 'WI' | 'WY';
 
-export interface PersonInfo {
+
+
+export interface IndividualInfo {
+  zipCode: string;
+  businessEmployees: number;
+  state: USState;
   age: number;
   annualSalary: number;
   eligibility: EligibilityOption;
   employeeCoverage: number;
   spouseCoverage: number;
   numberOfChildren: number;
-}
-
-export interface IndividualInfo {
-  businessZipCode: string;
-  businessEmployees: number;
-  state: USState;
-  Individual: PersonInfo;
 }
 
 export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
@@ -51,7 +49,7 @@ export function calculatePremiumByCostView(premium: number, costView: CostView):
       return premium / 4;  // Approximately 52 weeks / 12 months
     case 'Semi-Monthly':
       return premium / 2;
-    case 'Annual':
+    case 'Bi-Weekly':
       return premium * 12;
     default:
       console.warn(`Unexpected cost view: ${costView}. Returning monthly premium.`);
@@ -65,8 +63,8 @@ export function getCostViewDisplayText(view: CostView): string {
       return 'month';
     case 'Weekly':
       return 'week';
-    case 'Annual':
-      return 'year';
+    case 'Bi-Weekly':
+      return '26 weeks';
     case 'Semi-Monthly':
       return '2 weeks';
     default:

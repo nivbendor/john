@@ -10,31 +10,34 @@ interface IndividualInfoFormProps {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
   ) => void;
   errors: Record<string, string>;
-  activeTab: 'business' | 'owner' | 'employees';
 }
 
-interface PersonInfoFormProps {
-  personInfo: IndividualInfo;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number }) => void;
-  errors: Record<string, string>;
-}
-
-const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personInfo, handleChange, errors }) => {
+const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
+  individualInfo,
+  handleIndividualInfoChange,
+  errors,
+}) => {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+    const limitedValue = Math.min(value, 999999);
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(limitedValue);
+  };
+  const parseCurrency = (value: string) => {
+    const numericValue = value.replace(/[^0-9.-]+/g, "");
+    return parseFloat(numericValue);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    let parsedValue: string | number = value;
-
-    if (name === 'age') {
-      parsedValue = parseInt(value) || 0;
-    } else if (name === 'annualSalary') {
-      parsedValue = parseFloat(value.replace(/[^0-9.]/g, '')) || 0;
+  const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value;
+    const numericValue = parseCurrency(rawValue);
+    if (!isNaN(numericValue)) {
+      const limitedValue = Math.min(numericValue, 999999);
+      handleIndividualInfoChange({ name: 'annualSalary', value: limitedValue });
     }
-
-    handleChange({ name, value: parsedValue });
   };
 
   return (
@@ -46,49 +49,34 @@ const PersonInfoForm: React.FC<PersonInfoFormProps> = ({ personInfo, handleChang
           <Input
             id="age"
             name="age"
-            value={personInfo.Individual.age}
-            onChange={handleInputChange}
+            value={individualInfo.age}
+            onChange={handleIndividualInfoChange}
             className={errors["Age"] ? 'border-red-500' : ''}
           />
           {errors["Age"] && <p className="text-red-500 text-sm mt-1">{errors["Age"]}</p>}
         </div>
         <div>
-          <Label htmlFor="businessZipCode"> Zip Code</Label>
+          <Label htmlFor="zipCode">Zip Code</Label>
           <Input
-            id="businessZipCode"
-            name="businessZipCode"
-            value={personInfo.businessZipCode || ''}
-            onChange={(e) => handleChange(e)}
+            id="zipCode"
+            name="zipCode"
+            value={individualInfo.zipCode || ''}
+            onChange={handleIndividualInfoChange}
           />
         </div>
         <div>
-          <Label htmlFor= "annualSalary">Annual Salary</Label>
+          <Label htmlFor="annualSalary">Annual Salary</Label>
           <Input
             id="annualSalary"
             name="annualSalary"
-            value={formatCurrency(personInfo.Individual.annualSalary)}
-            onChange={handleInputChange}
+            value={formatCurrency(individualInfo.annualSalary)}
+            onChange={handleSalaryChange}
             className={errors["AnnualSalary"] ? 'border-red-500' : ''}
           />
           {errors["AnnualSalary"] && <p className="text-red-500 text-sm mt-1">{errors["AnnualSalary"]}</p>}
         </div>
       </div>
     </Card>
-  );
-};
-
-const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
-  individualInfo,
-  handleIndividualInfoChange,
-  errors,
-  activeTab,
-}) => { 
-  return (
-    <PersonInfoForm
-      personInfo={individualInfo}
-      handleChange={handleIndividualInfoChange}
-      errors={errors}
-    />
   );
 };
 

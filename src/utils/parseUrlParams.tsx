@@ -1,30 +1,23 @@
-import { IndividualInfo, EligibilityOption, PersonInfo } from '../utils/insuranceTypes';
+import { IndividualInfo, EligibilityOption } from '../utils/insuranceTypes';
+
+
 
 export function parseUrlParams(): Partial<IndividualInfo> {
   const params = new URLSearchParams(window.location.search);
   const result: Partial<IndividualInfo> = {};
 
   // Business Information
-  const businessZipCode = params.get('businessZipCode');
-  if (businessZipCode) result.businessZipCode = businessZipCode;
+  const zipCode = params.get('zipCode');
+  if (params.get('age')) {
+    result.age = parseInt(params.get('age')!, 10);
+  }
 
-  const businessEmployees = params.get('businessEmployees');
-  if (businessEmployees) result.businessEmployees = parseInt(businessEmployees, 10);
+  if (params.get('annualSalary')) {
+    result.annualSalary = parseInt(params.get('annualSalary')!, 10);
+  }
 
-  // Employee Information
-  const employeeAge = params.get('employeeAge');
-  const employeeAnnualSalary = params.get('employeeAnnualSalary');
-  const employeeEligibility = params.get('employeeEligibility');
-  if (employeeAge || employeeAnnualSalary || employeeEligibility) {
-    const employeeInfo: Partial<PersonInfo> = {
-      age: employeeAge ? parseInt(employeeAge, 10) : undefined,
-      annualSalary: employeeAnnualSalary ? parseInt(employeeAnnualSalary, 10) : undefined,
-      eligibility: isValidEligibility(employeeEligibility) ? employeeEligibility : undefined,
-      employeeCoverage: 0,
-      spouseCoverage: 0,
-      numberOfChildren: 0
-    };
-    result.Individual = employeeInfo as PersonInfo;
+  if (params.get('eligibility')) {
+    result.eligibility = params.get('eligibility') as IndividualInfo['eligibility'];
   }
 
   return result;
