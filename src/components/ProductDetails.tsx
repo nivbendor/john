@@ -3,7 +3,7 @@ import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostView
 import { PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
-import { SplitButton, Dropdown } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 
 interface ProductDetailsProps {
   selectedProduct: Product;
@@ -74,49 +74,43 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
   };
 
+  const costPerHour = premium / 40;
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-      <div className='text-center'>{hasMultiplePlans(selectedProduct) && (
-          <Select value={currentPlan} onValueChange={handlePlanChange}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Select plan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Basic">Basic</SelectItem>
-              <SelectItem value="Premium">Premium</SelectItem>
-            </SelectContent>
-          </Select>
-        )}
+        <h2 className="text-2xl font-bold">{selectedProduct}</h2>
+        <div className="flex items-center space-x-4">
+          {hasMultiplePlans(selectedProduct) && (
+            <Select value={currentPlan} onValueChange={handlePlanChange}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="Select plan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Basic">Basic</SelectItem>
+                <SelectItem value="Premium">Premium</SelectItem>
+              </SelectContent>
+            </Select>
+          )}
+          {eligibilityOptions.length > 1 && (
+            <Dropdown onSelect={handleEligibilityChange}>
+              <Dropdown.Toggle variant="primary" id="dropdown-eligibility">
+                {individualInfo.eligibility}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {eligibilityOptions.map((option) => (
+                  <Dropdown.Item key={option} eventKey={option} active={option === individualInfo.eligibility}>
+                    <div className="flex justify-between items-center w-full">
+                      <span>{option}</span>
+                      <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
-        
-        <h2 className="text-2xl font-bold text-xl">{selectedProduct}</h2>
-        
-        {eligibilityOptions.length > 1 && (
-  <SplitButton
-    id={`dropdown-split-variants-eligibility`}
-    variant="primary"
-    title={individualInfo.eligibility}
-    onSelect={handleEligibilityChange}
-    drop="start" // This makes the dropdown open to the left
-  >
-    {eligibilityOptions.map((option) => (
-      <Dropdown.Item 
-        key={option} 
-        eventKey={option} 
-        active={option === individualInfo.eligibility}
-      >
-        <div className="flex justify-between items-center w-full">
-          <span>{option}</span>
-          <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>
-        </div>
-      </Dropdown.Item>
-    ))}
-  </SplitButton>
-        )}
       </div>
-
-        
       
       <div>
         <h3 className="text-lg font-semibold mb-2">Plan Details:</h3>
@@ -126,11 +120,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           ))} 
         </ul>
       </div>
-      <div className="flex items-baseline space-x-1">
-        <p className="text-lg font-semibold">Cost:</p>
-        <p className="text-lg font-bold">{formatCurrency(premium)}</p>
-        <span className="text-xs">/ {getCostViewDisplayText(costView)}</span>
-        
+      <div className="bg-gray-100 p-4 rounded-md shadow-md">
+        <div className="flex items-baseline space-x-2">
+          <p className="text-lg font-semibold text-gray-700">Cost:</p>
+          <p className="text-lg font-bold text-green-600">{formatCurrency(premium)}</p>
+          <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
+        </div>
+        <div className="flex items-baseline space-x-1 mt-2">
+          <span className="font-bold">{formatCurrency(costPerHour)}</span>
+          <span className="text-sm text-gray-500">/hour</span>
+        </div>
       </div>
     </div>
   );
