@@ -10,6 +10,7 @@ import Tabs from 'components/ui/tabs';
 import ProductSelector from 'components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 
+
 type PremiumResult = Record<Product, number>;
 
 const initialIndividualInfo: IndividualInfo = {
@@ -114,6 +115,15 @@ const personType = "Individual"
   }
 }, [individualInfo, costView, calculatePremiums]);
 
+const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
+  const initialState = PRODUCTS.reduce((acc, product) => ({
+    ...acc,
+    [product]: product !== 'Vision' && product !== 'Critical Illness/Cancer'
+  }), {} as Record<Product, boolean>);
+  return initialState;
+});
+
+
 const handleToggleChange = (product: Product, isActive: boolean) => {
   setProducts((prevProducts) => ({
     ...prevProducts,
@@ -214,24 +224,17 @@ const handleToggleChange = (product: Product, isActive: boolean) => {
                 </SelectContent>
               </Select>
             </div>
-            <CostEstimate
-                 premiums={premiums}
-                 costView={costView}
-                //  businessEmployees={individualInfo.businessEmployees}
-                 toggleStates={toggleStates}
-                 activeProducts={products}
-            />
+            
             <ActiveProductsToggle
-              plan={productPlans}
-              products={products}
-              premiums={premiums}
-              costView={costView}
-              individualInfo={individualInfo}
-              toggleStates={toggleStates}
-              handleToggleChange={handleToggleChange}
-            />
-         </div>
-        </div>
+          plan={productPlans}
+          products={activeProducts}
+          premiums={premiums}
+          costView={costView}
+          individualInfo={individualInfo}
+          handleToggleChange={handleToggleChange}
+        />
+      </div>
+    </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Product, IndividualInfo, Plan, USState, CostView, ToggleState } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
-import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import ActiveProductsToggle from '../components/ActiveProductsToggle';
@@ -109,9 +108,18 @@ function Business() {
     });
   }, [productPlans.LTD, recalculatePremium]);
 
+  const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
+    const initialState = PRODUCTS.reduce((acc, product) => ({
+      ...acc,
+      [product]: product !== 'Vision' && product !== 'Critical Illness/Cancer'
+    }), {} as Record<Product, boolean>);
+    return initialState;
+  });
+
+
   const handleToggleChange = useCallback((product: Product, isActive: boolean) => {
-    setProducts((prevProducts) => ({
-      ...prevProducts,
+    setActiveProducts(prev => ({
+      ...prev,
       [product]: isActive,
     }));
   }, []);
@@ -140,8 +148,8 @@ function Business() {
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8 w-full lg:w-1/2 mx-auto">
+          <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
             <div className="flex items-center space-x-4">
               <Avatar>
                 <AvatarImage src="https://github.com/shadcn.png" />
@@ -149,7 +157,7 @@ function Business() {
               </Avatar>
               <h1 className="text-3xl font-bold">Howdy</h1>
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex-grow">
               <IndividualInfoForm
                 individualInfo={individualInfo}
                 handleIndividualInfoChange={handleInputChange}
@@ -177,14 +185,14 @@ function Business() {
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-xl shadow-md p-6">
               <ProductSelector
                 selectedProduct={selectedProduct}
                 setSelectedProduct={setSelectedProduct}
                 products={PRODUCTS}
               />
             </div>
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-xl shadow-md p-6">
               <ProductDetails
                 plans={productPlans}
                 selectedProduct={selectedProduct}
@@ -200,18 +208,17 @@ function Business() {
             </div>
           </div>
           <div className="space-y-8">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <ActiveProductsToggle
-                plan={productPlans}
-                products={products}
-                premiums={premiums}
-                costView={costView}
-                individualInfo={individualInfo}
-                handleToggleChange={handleToggleChange}
-                toggleStates={toggleStates}
-              />
-            </div>
-          </div>
+            <div className="bg-white rounded-xl shadow-md p-6">
+            <ActiveProductsToggle
+          plan={productPlans}
+          products={activeProducts}
+          premiums={premiums}
+          costView={costView}
+          individualInfo={individualInfo}
+          handleToggleChange={handleToggleChange}
+        />
+      </div>
+    </div>
         </div>
       </div>
     </div>

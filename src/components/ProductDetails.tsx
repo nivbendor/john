@@ -77,7 +77,21 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">{selectedProduct}</h2>
+      <div className='text-center'>{hasMultiplePlans(selectedProduct) && (
+          <Select value={currentPlan} onValueChange={handlePlanChange}>
+            <SelectTrigger className="w-[120px]">
+              <SelectValue placeholder="Select plan" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Basic">Basic</SelectItem>
+              <SelectItem value="Premium">Premium</SelectItem>
+            </SelectContent>
+          </Select>
+        )}
+        </div>
+        
+        <h2 className="text-2xl font-bold text-xl">{selectedProduct}</h2>
+        
         {eligibilityOptions.length > 1 && (
   <SplitButton
     id={`dropdown-split-variants-eligibility`}
@@ -101,20 +115,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   </SplitButton>
         )}
       </div>
-      <div className="flex justify-between items-center">
 
-        {hasMultiplePlans(selectedProduct) && (
-          <Select value={currentPlan} onValueChange={handlePlanChange}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="Select plan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Basic">Basic</SelectItem>
-              <SelectItem value="Premium">Premium</SelectItem>
-            </SelectContent>
-          </Select>
-        )}
-      </div>
+        
+      
       <div>
         <h3 className="text-lg font-semibold mb-2">Plan Details:</h3>
         <ul className="list-disc pl-5">
@@ -127,6 +130,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         <p className="text-lg font-semibold">Cost:</p>
         <p className="text-lg font-bold">{formatCurrency(premium)}</p>
         <span className="text-xs">/ {getCostViewDisplayText(costView)}</span>
+        
       </div>
     </div>
   );
