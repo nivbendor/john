@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText } from '../utils/insuranceTypes';
 import { PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 
@@ -41,23 +40,33 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>(initialEligibilityPremiums);
+  const [planPremiums, setPlanPremiums] = useState<Record<Plan, number>>({ Basic: 0, Premium: 0 });
 
   useEffect(() => {
     const options = PRODUCT_ELIGIBILITY_OPTIONS[selectedProduct] || ['Individual'];
     setEligibilityOptions(options);
 
-    const premiums = { ...initialEligibilityPremiums };
+    const eligibilityPremiums = { ...initialEligibilityPremiums };
     options.forEach(option => {
       const tempInfo = { ...individualInfo, eligibility: option };
       const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, currentPlan);
-      premiums[option] = calculatePremiumByCostView(calculatedPremium, costView);
+      eligibilityPremiums[option] = calculatePremiumByCostView(calculatedPremium, costView);
     });
-    setEligibilityPremiums(premiums);
+    setEligibilityPremiums(eligibilityPremiums);
+
+    if (hasMultiplePlans(selectedProduct)) {
+      const planPremiums: Record<Plan, number> = { Basic: 0, Premium: 0 };
+      (['Basic', 'Premium'] as Plan[]).forEach(plan => {
+        const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](individualInfo, plan);
+        planPremiums[plan] = calculatePremiumByCostView(calculatedPremium, costView);
+      });
+      setPlanPremiums(planPremiums);
+    }
 
     recalculatePremium(selectedProduct, currentPlan);
   }, [individualInfo, currentPlan, selectedProduct, recalculatePremium, costView]);
 
-  const handlePlanChange = (value: string) => {
+  const handlePlanChange = (value: string | null) => {
     if (value === 'Basic' || value === 'Premium') {
       setProductPlan(selectedProduct, value as Plan);
       recalculatePremium(selectedProduct, value as Plan);
@@ -82,15 +91,21 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         <h2 className="text-2xl font-bold">{selectedProduct}</h2>
         <div className="flex items-center space-x-4">
           {hasMultiplePlans(selectedProduct) && (
-            <Select value={currentPlan} onValueChange={handlePlanChange}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue placeholder="Select plan" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Basic">Basic</SelectItem>
-                <SelectItem value="Premium">Premium</SelectItem>
-              </SelectContent>
-            </Select>
+            <Dropdown onSelect={handlePlanChange}>
+              <Dropdown.Toggle variant="primary" id="dropdown-plan">
+                {currentPlan}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {['Basic', 'Premium'].map((plan) => (
+                  <Dropdown.Item key={plan} eventKey={plan} active={currentPlan === plan}>
+                    <div className="flex justify-between items-center w-full">
+                      <span>{plan}</span>
+                      <span className="ml-4">{formatCurrency(planPremiums[plan as Plan])} / {costView.toLowerCase()}</span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           )}
           {eligibilityOptions.length > 1 && (
             <Dropdown onSelect={handleEligibilityChange}>
@@ -111,13 +126,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           )}
         </div>
       </div>
-      
+
       <div>
         <h3 className="text-lg font-semibold mb-2">Plan Details:</h3>
         <ul className="list-disc pl-5">
           {bulletPoints.map((point, index) => (
             <li key={index}>{point}</li>
-          ))} 
+          ))}
         </ul>
       </div>
       <div className="bg-gray-100 p-4 rounded-md shadow-md">
