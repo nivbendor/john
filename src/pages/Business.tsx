@@ -81,7 +81,7 @@ function Business() {
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    
+    console.log("ALEX!!!!!", name,value)
     setIndividualInfo((prev) => {
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);

@@ -1,0 +1,40 @@
+import React, { CSSProperties } from 'react';
+import { Input } from './input';
+
+const styles: { Stepper: CSSProperties } = {
+  Stepper: {
+    width: '100%',
+    padding: '0px 8px',
+    border: '1px solid #ccc',
+    boxSizing: 'border-box',
+    borderRadius: '4px',
+    backgroundColor: '#ffffff',
+    color: '#333',
+    fontSize: '14px',
+    fontFamily: 'Source Sans Pro',
+    lineHeight: '44px',
+    textAlign: 'center',
+    outline: 'none',
+  },
+};
+
+const defaultProps = {
+  value: 43,
+};
+
+const InputStepper = ({ value = defaultProps.value, onChange, errors }) => {
+  return (
+    <Input
+      id="age"
+      name="age"
+      value={value}
+      onChange={onChange}
+      className={errors["Age"] ? 'border-red-500' : ''}
+      type="number"
+      style={styles.Stepper}
+      placeholder={value.toString()}
+    />
+  );
+};
+
+export default InputStepper;

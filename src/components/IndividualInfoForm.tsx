@@ -3,6 +3,7 @@ import { IndividualInfo } from '../utils/insuranceTypes';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
+import InputStepper from './ui/ageinput';
 
 interface IndividualInfoFormProps {
   individualInfo: IndividualInfo;
@@ -46,12 +47,10 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <Label htmlFor="age">Age</Label>
-          <Input
-            id="age"
-            name="age"
+          <InputStepper
             value={individualInfo.age}
             onChange={handleIndividualInfoChange}
-            className={errors["Age"] ? 'border-red-500' : ''}
+            errors={errors}
           />
           {errors["Age"] && <p className="text-red-500 text-sm mt-1">{errors["Age"]}</p>}
         </div>
