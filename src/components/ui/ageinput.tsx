@@ -3,16 +3,16 @@ import { Input } from './input';
 
 const styles: { Stepper: CSSProperties } = {
   Stepper: {
-    width: '100%',
+    width: '80%',
     padding: '0px 8px',
     border: '1px solid #ccc',
     boxSizing: 'border-box',
-    borderRadius: '4px',
+    borderRadius: '8px',
     backgroundColor: '#ffffff',
     color: '#333',
-    fontSize: '14px',
+    fontSize: '16px',
     fontFamily: 'Source Sans Pro',
-    lineHeight: '44px',
+    lineHeight: '25x',
     textAlign: 'center',
     outline: 'none',
   },
@@ -33,6 +33,7 @@ const InputStepper = ({ value = defaultProps.value, onChange, errors = {} }) => 
       type="number"
       style={styles.Stepper}
       placeholder={value.toString()}
+      
     />
   );
 };

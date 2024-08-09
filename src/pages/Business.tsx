@@ -1,14 +1,24 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Product, IndividualInfo, Plan, USState, CostView, ToggleState } from '../utils/insuranceTypes';
+import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import { Product, IndividualInfo, Plan, USState, ToggleState, CostView } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import ActiveProductsToggle from '../components/ActiveProductsToggle';
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'components/ui/select';
-import ProductSelector from 'components/ProductSelector';
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
+import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/Avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/Avatar';
 import { parseUrlParams } from '../utils/parseUrlParams';
+import { useCostView } from '../components/CostViewContext';
+import InputStepper from '../components/ui/ageinput';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Button } from '../components/ui/button'; // Make sure to import the Button component
+import '../styles/iconSettings.css'; // Import the CSS file
+// import {settingsIcon} from './components/ui/settings.png'; // Adjust the path as needed
+
+
+
 
 type PremiumResult = Record<Product, number>;
 
@@ -32,18 +42,24 @@ const initialPremiums: PremiumResult = {
   LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 'Critical Illness/Cancer': 0
 };
 
-function Business() {
+interface BusinessProps {
+  setProducts: React.Dispatch<React.SetStateAction<Record<Product, boolean>>>;
+  setTotalCost: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const Business: React.FC<BusinessProps> = ({ setProducts: setGlobalProducts, setTotalCost }) => {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
     const urlParams = parseUrlParams();
     return { ...initialIndividualInfo, ...urlParams };
   });
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
-  const [costView, setCostView] = useState<CostView>('Monthly');
+  const { costView, setCostView } = useCostView(); // Use the costView and setCostView from context
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
+  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
     PRODUCTS.reduce((acc, product) => ({
       ...acc,
       [product]: 'Basic'
@@ -56,7 +72,6 @@ function Business() {
     });
     return initialStates;
   });
-
   const calculateAllPremiums = useCallback(() => {
     const allPremiums: PremiumResult = { ...initialPremiums };
     PRODUCTS.forEach(product => {
@@ -69,7 +84,7 @@ function Business() {
     const newPremium = calculatePremiums(individualInfo, plan, product, costView);
     setPremiums(prev => ({
       ...prev,
-      [product]: newPremium 
+      [product]: newPremium
     }));
   }, [individualInfo, costView]);
 
@@ -82,7 +97,7 @@ function Business() {
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    
+
     setIndividualInfo((prev) => {
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);
@@ -126,61 +141,75 @@ function Business() {
   }, []);
 
   useEffect(() => {
+    setGlobalProducts(activeProducts);
+  }, [activeProducts, setGlobalProducts]);
+
+  useEffect(() => {
+    const newTotalCost = Object.values(premiums).reduce((sum, premium) => sum + premium, 0);
+    setTotalCost(newTotalCost);
+  }, [premiums, setTotalCost]);
+
+  useEffect(() => {
     const newPremiums = calculateAllPremiums();
     setPremiums(newPremiums);
   }, [calculateAllPremiums]);
 
-  useEffect(() => {
-    if (individualInfo.businessEmployees === 0) {
-      setToggleStates((prevStates) => {
-        const newStates = { ...prevStates };
-        Object.keys(newStates).forEach((product) => {
-          if (newStates[product as Product] === 'None') { return; }
-          newStates[product as Product] = 'Owner';
-        });
-        return newStates;
-      });
-    }
+  const handleIndividualInfoChange = useCallback((
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
+  ) => {
+    const name = 'target' in e ? e.target.name : e.name;
+    let value = 'target' in e ? e.target.value : e.value;
 
-    const newPremiums = calculateAllPremiums();
-    setPremiums(newPremiums);
-  }, [individualInfo.businessEmployees, calculateAllPremiums]);
+    setIndividualInfo((prev) => {
+      if (name === 'businessEmployees' || name === 'age') {
+        value = parseInt(value as string, 10);
+      }
+
+      const newInfo = {
+        ...prev,
+        [name]: value,
+      };
+
+      // Recalculate LTD plan if annual salary changes
+      if (name === 'annualSalary') {
+        const newLTDPlan = newInfo.annualSalary >= 100000 ? 'Premium' : 'Basic';
+        if (newLTDPlan !== productPlans.LTD) {
+          setProductPlans(prevPlans => ({
+            ...prevPlans,
+            LTD: newLTDPlan,
+          }));
+          recalculatePremium('LTD', newLTDPlan);
+        }
+      }
+
+      return newInfo;
+    });
+  }, [productPlans.LTD, recalculatePremium]);
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+  const formatCurrency = (value: number): string => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const rawValue = e.target.value;
+    const numericValue = parseFloat(rawValue.replace(/[^0-9.-]+/g, ""));
+    if (!isNaN(numericValue)) {
+      handleIndividualInfoChange({ name: 'annualSalary', value: numericValue });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8">
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8 w-full lg:w-1/2 mx-auto">
-          <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
-            <div className="flex items-center space-x-4">
-              <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
-              <h1 className="text-3xl font-bold">Howdy</h1>
-              <IndividualInfoForm individualInfo={individualInfo} handleIndividualInfoChange={handleInputChange} errors={errors} />
-            </div>
-            
-            <div className="text-right">
-              <h2 className="text-xl font-semibold mb-2">Cost View</h2>
-              <Select
-                value={costView}
-                onValueChange={(value: CostView) => setCostView(value)}
-              >
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue>{costView}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Monthly">Monthly</SelectItem>
-                  <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
-                  <SelectItem value="Weekly">Weekly</SelectItem>
-                  <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-8">
+      <div className="container mx-auto px-4 py-8 w-full">        
+        <div className="flex flex-col lg:flex-row gap-8">
+          <div className="w-full lg:w-2/3 space-y-8">
             <div className="bg-white rounded-xl shadow-md p-6">
               <ProductSelector
                 selectedProduct={selectedProduct}
@@ -203,8 +232,96 @@ function Business() {
               />
             </div>
           </div>
-          <div className="space-y-8">
-            <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="w-full lg:w-3/4">
+          <div className="w-full ">
+
+          <div className="rounded-xl shadow-md p-6 mb-8 w-full "> {/* Individual box */}
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
+            <div className="w-full lg:w-4/4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold capitalize">Individual Information</h3>
+                <button className="setting-btn" onClick={toggleExpand}>
+                  <div className="bar bar1"></div>
+                  <div className="bar bar2"></div>
+                  <div className="bar"></div>
+                </button>
+              </div>
+              {isExpanded ? (
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+      <Label htmlFor="age" className="block text-center mb-1">Age</Label>
+      <InputStepper
+        value={individualInfo.age}
+        onChange={handleIndividualInfoChange}
+        errors={errors}
+      />
+      {errors["Age"] && <p className="text-red-500 text-sm mt-1">{errors["Age"]}</p>}
+    </div>
+    <div className="md:col-span-2 grid grid-cols-2 gap-4">
+      <div>
+        <Label htmlFor="zipCode" className="block text-center mb-1">Zip Code</Label>
+        <Input
+          id="zipCode"
+          name="zipCode"
+          value={individualInfo.zipCode || ''}
+          onChange={handleIndividualInfoChange}
+          className="w-full"
+        />
+      </div>
+      <div>
+        <Label htmlFor="annualSalary" className="block text-center mb-1">Annual Salary</Label>
+        <Input
+          id="annualSalary"
+          name="annualSalary"
+          value={formatCurrency(individualInfo.annualSalary)}
+          onChange={handleSalaryChange}
+          className={`w-full ${errors["AnnualSalary"] ? 'border-red-500' : ''}`}
+        />
+        {errors["AnnualSalary"] && <p className="text-red-500 text-sm mt-1">{errors["AnnualSalary"]}</p>}
+      </div>
+    </div>
+  </div>
+) : (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <div>
+      <div className="text-sm text-gray-500 text-center">Age</div>
+      <div className="font-medium text-center">{individualInfo.age}</div>
+    </div>
+    <div className="md:col-span-2 grid grid-cols-2 gap-4">
+      <div>
+        <div className="text-sm text-gray-500 text-center">Zip Code</div>
+        <div className="font-medium text-center">{individualInfo.zipCode}</div>
+      </div>
+      <div>
+        <div className="text-sm text-gray-500 text-center">Annual Salary</div>
+        <div className="font-medium text-center">{formatCurrency(individualInfo.annualSalary)}</div>
+      </div>
+    </div>
+  </div>
+)}
+            </div>
+          </div>
+        </div>
+  <div className="flex items-center justify-between">
+    <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
+    <Select
+      value={costView}
+      onValueChange={(value: CostView) => setCostView(value)}
+    >
+      <SelectTrigger className="w-full lg:w-[120px]">
+        <SelectValue>{costView}</SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Monthly">Monthly</SelectItem>
+        <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
+        <SelectItem value="Weekly">Weekly</SelectItem>
+        <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</div>
+
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
               <ActiveProductsToggle
                 plan={productPlans}
                 products={activeProducts}

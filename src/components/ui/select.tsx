@@ -9,7 +9,7 @@ interface SelectProps<T> extends React.SelectHTMLAttributes<HTMLSelectElement> {
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>( // Use generics instead of "any"
   <T,>({ children, onValueChange, className, ...props }: SelectProps<T>, ref: React.Ref<HTMLSelectElement>) => (
-    <div className="flex justify-center md:mb-1  md:mt-1"> {/* Center the select element within its container */}
+    <div className="flex justify-center md:mb-2  md:mt-2"> {/* Center the select element within its container */}
       <select
         ref={ref}
         className={`w-full border-solid	rounded-xl p-2 text-center text-base font-medium ${className || ''}`} // Add rounded-xl, padding, text-center, text size, and font weight

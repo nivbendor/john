@@ -5,9 +5,9 @@ import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import ActiveProductsToggle from '../components/ActiveProductsToggle';
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from 'components/ui/select';
-import Tabs from 'components/ui/tabs';
-import ProductSelector from 'components/ProductSelector';
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
+import Tabs from '../components/ui/tabs';
+import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 
 

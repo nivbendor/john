@@ -18,8 +18,20 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]},
+      "@/*": ["./src/*"],
+      "components/*": ["src/components/*"]},
   },
   "include": ["src/**/*"],
   "exclude": ["**/node_modules", "**/.*/"]
 }
+
+// {
+//   "compilerOptions": {
+//     // ... other options
+//     "baseUrl": ".",
+//     "paths": {
+//       "components/*": ["src/components/*"]
+//     }
+//   },
+//   "include": ["src/**/*"]
+// }
