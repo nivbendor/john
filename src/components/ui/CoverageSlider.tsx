@@ -23,22 +23,41 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
   );
 
   const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
-    if (!Array.isArray(newValue)) {
-      return;
-    }
-  
-    let newEmployeeCoverage = newValue[0];
-    let newSpouseCoverage = newValue[1];
-  
-    if (activeThumb === 0) {
-      newEmployeeCoverage = Math.min(newValue[0], maxEmployeeCoverage);
+  if (!Array.isArray(newValue)) {
+    return;
+  }
+
+  let newEmployeeCoverage = newValue[1];
+  let newSpouseCoverage = newValue[0];
+
+  console.log('Slider Moved:', { newEmployeeCoverage, newSpouseCoverage, activeThumb });
+
+  // Calculate the maximum spouse coverage based on employee coverage
+  const maxSpouseCoverage = eligibility === 'Individual + Spouse' || eligibility === 'Family'
+    ? Math.min(newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional, LIFE_ADD_CONFIG.max_coverage_amount_spouse)
+    : 0;
+
+  if (activeThumb === 1) {
+    // Adjusting employee coverage
+    newEmployeeCoverage = Math.min(newEmployeeCoverage, LIFE_ADD_CONFIG.max_coverage_amount_individual);
+    
+    if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
+      // Constrain spouse coverage
       newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
     } else {
-      newSpouseCoverage = Math.min(newValue[1], maxSpouseCoverage);
+      newSpouseCoverage = 0;
     }
+  } else if (activeThumb === 1 && (eligibility === 'Individual + Spouse' || eligibility === 'Family')) {
+    // Constrain spouse coverage when adjusting spouse slider
+    newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
+    // Ensure employee coverage is sufficient to support the spouse coverage
+    newEmployeeCoverage = Math.max(newEmployeeCoverage, newSpouseCoverage / LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
+  }
+
+  console.log('Updated Coverage Values:', { newEmployeeCoverage, newSpouseCoverage });
+  onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
+};
   
-    onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
-  };
   
 
   const formatCurrency = (value: number) => {

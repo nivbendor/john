@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText } from '../utils/insuranceTypes';
-import { PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
+import { LIFE_ADD_CONFIG, PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
@@ -81,8 +81,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   const handleCoverageChange = (employee: number, spouse: number) => {
+    // Calculate the maximum allowed spouse coverage based on the employee coverage
+    const maxSpouseCoverage = Math.min(
+      employee * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
+      LIFE_ADD_CONFIG.max_coverage_amount_spouse
+    );
+  
+    // Constrain the spouse coverage to ensure it doesn't exceed the maximum allowed value
+    const constrainedSpouseCoverage = Math.min(spouse, maxSpouseCoverage);
+  
+    console.log('Coverage Change Triggered:', { employee, constrainedSpouseCoverage });
+  
+    // Update the state with constrained values
     handleIndividualInfoChange({ name: 'employeeCoverage', value: employee });
-    handleIndividualInfoChange({ name: 'spouseCoverage', value: spouse });
+    handleIndividualInfoChange({ name: 'spouseCoverage', value: constrainedSpouseCoverage });
   };
 
   const formatCurrency = (value: number) => {
