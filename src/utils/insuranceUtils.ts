@@ -34,7 +34,57 @@ import {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+const getZipCodeRegion = (zipCode: string | number | null | undefined): number | null => {
+  console.log(`--- Debug: getZipCodeRegion ---`);
+  console.log(`Input ZIP code: ${zipCode}`);
 
+  // Convert to string and trim
+  const zipString = String(zipCode || '').trim();
+
+  // Check if the resulting string is empty or not a valid zip code format
+  if (!zipString || !/^\d{5}$/.test(zipString)) {
+    console.log(`Invalid zip code: ${zipString}`);
+    return null;
+  }
+
+  const zipPrefix = zipString.substring(0, 3);
+  console.log(`ZIP prefix: ${zipPrefix}`);
+
+  for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
+    console.log(`Checking region ${region}`);
+    console.log(`Prefixes: ${prefixes.join(', ')}`);
+    if (prefixes.includes(zipPrefix)) {
+      console.log(`Found matching region: ${region}`);
+      return parseInt(region, 10);
+    }
+  }
+
+  console.log(`No exact match found. Searching for closest region.`);
+
+  // If no exact match found, try to find the closest region
+  const numericPrefix = parseInt(zipPrefix, 10);
+  let closestRegion: number | null = null;
+  let smallestDifference = Infinity;
+
+  for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
+    for (const prefix of prefixes) {
+      const difference = Math.abs(parseInt(prefix, 10) - numericPrefix);
+      if (difference < smallestDifference) {
+        smallestDifference = difference;
+        closestRegion = parseInt(region, 10);
+      }
+    }
+  }
+
+  if (closestRegion !== null) {
+    console.log(`Closest region found: ${closestRegion}`);
+    return closestRegion;
+  }
+
+  console.warn(`No region found for zip prefix: ${zipPrefix}`);
+  console.log(`--- End Debug: getZipCodeRegion ---`);
+  return null;
+};
 const getSTDRate = (age: number): number => {
   const ageGroup = STD_CONFIG.ageBandRates.find(band => age >= band.minAge && age <= band.maxAge);
   return ageGroup ? ageGroup.rate : STD_CONFIG.ageBandRates[STD_CONFIG.ageBandRates.length - 1].rate;
@@ -134,9 +184,10 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   },
   Accident: (individualInfo, plan) => ACCIDENT_PREMIUMS[plan][individualInfo.eligibility],
   Dental: (individualInfo, plan) => {
-    const region = ZIP_CODE_REGIONS[individualInfo.zipCode];
-    return region !== undefined ? DENTAL_PREMIUMS[plan][region][individualInfo.eligibility] : 0;
+    const region = getZipCodeRegion(individualInfo.zipCode);
+    return region !== null ? (DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo.eligibility] || 0) : 0;
   },
+  
   Vision: (individualInfo, plan) => {
     const stateCategory = getStateCategory(individualInfo.state);
     return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
