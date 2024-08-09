@@ -50,7 +50,7 @@ export function calculatePremiumByCostView(premium: number, costView: CostView):
     case 'Semi-Monthly':
       return premium / 2;
     case 'Bi-Weekly':
-      return premium * 12;
+      return premium / 12;
     default:
       console.warn(`Unexpected cost view: ${costView}. Returning monthly premium.`);
       return premium;

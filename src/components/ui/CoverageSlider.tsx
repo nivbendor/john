@@ -47,7 +47,7 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
     } else {
       newSpouseCoverage = 0;
     }
-  } else if (activeThumb === 1 && (eligibility === 'Individual + Spouse' || eligibility === 'Family')) {
+  } else if (activeThumb === 0 && (eligibility === 'Individual + Spouse' || eligibility === 'Family')) {
     // Constrain spouse coverage when adjusting spouse slider
     newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
     // Ensure employee coverage is sufficient to support the spouse coverage
