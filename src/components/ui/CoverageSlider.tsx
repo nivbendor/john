@@ -26,19 +26,20 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
     if (!Array.isArray(newValue)) {
       return;
     }
-
+  
     let newEmployeeCoverage = newValue[0];
     let newSpouseCoverage = newValue[1];
-
+  
     if (activeThumb === 0) {
       newEmployeeCoverage = Math.min(newValue[0], maxEmployeeCoverage);
-      newSpouseCoverage = Math.min(newSpouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
+      newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
     } else {
       newSpouseCoverage = Math.min(newValue[1], maxSpouseCoverage);
     }
-
+  
     onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
   };
+  
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {

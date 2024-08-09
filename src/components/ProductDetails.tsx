@@ -4,7 +4,7 @@ import { PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/ins
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
-import {CoverageSlider }from './ui/CoverageSlider';
+import CoverageSlider from './ui/CoverageSlider';
 
 
 interface ProductDetailsProps {
