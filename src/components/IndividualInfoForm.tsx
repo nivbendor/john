@@ -14,7 +14,7 @@ interface IndividualInfoFormProps {
 }
 
 const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
-  individualInfo,
+  individualInfo = { age: 0, zipCode: '', annualSalary: 0 }, // Provide default values
   handleIndividualInfoChange,
   errors,
 }) => {
@@ -27,6 +27,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       maximumFractionDigits: 0
     }).format(limitedValue);
   };
+
   const parseCurrency = (value: string) => {
     const numericValue = value.replace(/[^0-9.-]+/g, "");
     return parseFloat(numericValue);

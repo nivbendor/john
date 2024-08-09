@@ -3,27 +3,22 @@ import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostView
 import { PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
-// import {listitem , } from './ui/listitem';
+import { Alert, AlertDescription } from './ui/alert';
+import {CoverageSlider }from './ui/CoverageSlider';
+
 
 interface ProductDetailsProps {
-  selectedProduct: Product;
   plans: Record<Product, Plan>;
-  setProductPlan: (product: Product, plan: Plan) => void;
+  selectedProduct: Product;
   premium: number;
+  costView: CostView;
   individualInfo: IndividualInfo;
+  setProductPlan: (product: Product, plan: Plan) => void;
   handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: string | number }) => void;
   errors: Record<string, string>;
-  costView: CostView;
   recalculatePremium: (product: Product, plan: Plan) => void;
   activeProducts: Record<Product, boolean>;
 }
-
-const initialEligibilityPremiums: Record<EligibilityOption, number> = {
-  'Individual': 0,
-  'Individual + Spouse': 0,
-  'Individual + Children': 0,
-  'Family': 0
-};
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
   plans,
@@ -40,14 +35,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
-  const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>(initialEligibilityPremiums);
+  const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
+    Individual: 0,
+    'Individual + Spouse': 0,
+    'Individual + Children': 0,
+    Family: 0,
+  });
   const [planPremiums, setPlanPremiums] = useState<Record<Plan, number>>({ Basic: 0, Premium: 0 });
 
   useEffect(() => {
     const options = PRODUCT_ELIGIBILITY_OPTIONS[selectedProduct] || ['Individual'];
     setEligibilityOptions(options);
 
-    const eligibilityPremiums = { ...initialEligibilityPremiums };
+    const eligibilityPremiums = { Individual: 0, 'Individual + Spouse': 0, 'Individual + Children': 0, Family: 0 };
     options.forEach(option => {
       const tempInfo = { ...individualInfo, eligibility: option };
       const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, currentPlan);
@@ -80,8 +80,18 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   };
 
+  const handleCoverageChange = (employee: number, spouse: number) => {
+    handleIndividualInfoChange({ name: 'employeeCoverage', value: employee });
+    handleIndividualInfoChange({ name: 'spouseCoverage', value: spouse });
+  };
+
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value);
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
   };
 
   const costPerHour = premium / 40;
@@ -91,6 +101,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">{selectedProduct}</h2>
         <div className="flex items-center space-x-4">
+          {selectedProduct === 'Life / AD&D' && (
+            <CoverageSlider
+              individualInfo={individualInfo}
+              onCoverageChange={handleCoverageChange}
+            />
+          )}
           {hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">
@@ -136,6 +152,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           ))}
         </ul>
       </div>
+
+      {selectedProduct === 'Life / AD&D' && (errors.employeeCoverage || errors.spouseCoverage) && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            {errors.employeeCoverage && <div>{errors.employeeCoverage}</div>}
+            {errors.spouseCoverage && <div>{errors.spouseCoverage}</div>}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <div className="bg-gray-100 p-4 rounded-md shadow-md">
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>

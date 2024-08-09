@@ -22,7 +22,7 @@ const defaultProps = {
   value: 43,
 };
 
-const InputStepper = ({ value = defaultProps.value, onChange, errors }) => {
+const InputStepper = ({ value = defaultProps.value, onChange, errors = {} }) => {
   return (
     <Input
       id="age"

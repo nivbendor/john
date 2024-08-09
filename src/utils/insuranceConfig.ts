@@ -1,6 +1,10 @@
 // utils/insuranceConfig.ts
 
+import { useState } from 'react';
 import { Product, EligibilityOption, USState, Plan } from './insuranceTypes';
+import { getDefaultIndividualData } from './insuranceUtils';
+
+// const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
 export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
 
@@ -13,6 +17,15 @@ export const US_STATES: USState[] = [
   'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
   'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
 ];
+export const insuranceConfig = {
+  Individual: {
+    // Define properties and default values
+    name: '',
+    age: 0,
+    // Add other necessary properties
+  },
+  // Add other configurations as needed
+};
 
 export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> = {
   LTD: ['Individual'],
@@ -96,24 +109,20 @@ export const DENTAL_PREMIUMS: Record<Plan, Record<number, Record<EligibilityOpti
   }
 };
 
-export const CRITICAL_ILLNESS_RATES: {
-  [K in '<24' | '25-29' | '30-34' | '35-39' | '40-44' | '45-49' | '50-54' | '55-59' | '60-64' | '65-69' | '70-74' | '75+']: {
-    [E in EligibilityOption]: number
-  }
-} = {
-  '<24': { Individual: 5.55, 'Individual + Spouse': 9.15, 'Individual + Children': 8.10, Family: 11.70 },
-  '25-29': { Individual: 6.45, 'Individual + Spouse': 10.35, 'Individual + Children': 8.85, Family: 12.90 },
-  '30-34': { Individual: 7.65, 'Individual + Spouse': 12.30, 'Individual + Children': 10.20, Family: 14.85 },
-  '35-39': { Individual: 10.05, 'Individual + Spouse': 15.75, 'Individual + Children': 12.45, Family: 18.30 },
-  '40-44': { Individual: 13.50, 'Individual + Spouse': 21.00, 'Individual + Children': 16.05, Family: 23.25 },
-  '45-49': { Individual: 18.45, 'Individual + Spouse': 28.35, 'Individual + Children': 21.00, Family: 30.90 },
-  '50-54': { Individual: 24.30, 'Individual + Spouse': 37.20, 'Individual + Children': 26.85, Family: 39.60 },
-  '55-59': { Individual: 33.60, 'Individual + Spouse': 51.15, 'Individual + Children': 36.15, Family: 53.70 },
-  '60-64': { Individual: 44.55, 'Individual + Spouse': 67.50, 'Individual + Children': 47.10, Family: 70.05 },
-  '65-69': { Individual: 58.95, 'Individual + Spouse': 89.25, 'Individual + Children': 61.50, Family: 91.80 },
-  '70-74': { Individual: 77.85, 'Individual + Spouse': 117.60, 'Individual + Children': 80.40, Family: 120.15 },
-  '75+': { Individual: 109.05, 'Individual + Spouse': 164.25, 'Individual + Children': 111.60, Family: 166.80 }
-};
+export const CRITICAL_ILLNESS_RATES: { minAge: number; maxAge: number; rate: number }[] = [
+  { minAge: 0, maxAge: 24, rate: 5.55 },
+  { minAge: 25, maxAge: 29, rate: 6.45 },
+  { minAge: 30, maxAge: 34, rate: 7.65 },
+  { minAge: 35, maxAge: 39, rate: 10.05 },
+  { minAge: 40, maxAge: 44, rate: 13.50 },
+  { minAge: 45, maxAge: 49, rate: 18.45 },
+  { minAge: 50, maxAge: 54, rate: 24.30 },
+  { minAge: 55, maxAge: 59, rate: 33.60 },
+  { minAge: 60, maxAge: 64, rate: 44.55 },
+  { minAge: 65, maxAge: 69, rate: 58.95 },
+  { minAge: 70, maxAge: 74, rate: 77.85 },
+  { minAge: 75, maxAge: 120, rate: 109.05 }
+];
 
 type ZIPCodeRegions = {
   [key: number]: string[];

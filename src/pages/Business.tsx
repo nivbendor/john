@@ -37,6 +37,7 @@ function Business() {
     const urlParams = parseUrlParams();
     return { ...initialIndividualInfo, ...urlParams };
   });
+
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);
@@ -45,7 +46,7 @@ function Business() {
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
     PRODUCTS.reduce((acc, product) => ({
       ...acc,
-      [product]: product === 'STD' ? 'Basic' : 'Basic'
+      [product]: 'Basic'
     }), {} as Record<Product, Plan>)
   );
   const [toggleStates, setToggleStates] = useState<Record<Product, ToggleState>>(() => {
@@ -81,7 +82,7 @@ function Business() {
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    console.log("ALEX!!!!!", name,value)
+    
     setIndividualInfo((prev) => {
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);
@@ -156,14 +157,9 @@ function Business() {
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <h1 className="text-3xl font-bold">Howdy</h1>
+              <IndividualInfoForm individualInfo={individualInfo} handleIndividualInfoChange={handleInputChange} errors={errors} />
             </div>
-            <div className="flex-grow">
-              <IndividualInfoForm
-                individualInfo={individualInfo}
-                handleIndividualInfoChange={handleInputChange}
-                errors={errors}
-              />
-            </div>
+            
             <div className="text-right">
               <h2 className="text-xl font-semibold mb-2">Cost View</h2>
               <Select
@@ -209,16 +205,16 @@ function Business() {
           </div>
           <div className="space-y-8">
             <div className="bg-white rounded-xl shadow-md p-6">
-            <ActiveProductsToggle
-          plan={productPlans}
-          products={activeProducts}
-          premiums={premiums}
-          costView={costView}
-          individualInfo={individualInfo}
-          handleToggleChange={handleToggleChange}
-        />
-      </div>
-    </div>
+              <ActiveProductsToggle
+                plan={productPlans}
+                products={activeProducts}
+                premiums={premiums}
+                costView={costView}
+                individualInfo={individualInfo}
+                handleToggleChange={handleToggleChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
