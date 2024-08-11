@@ -48,7 +48,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     });
   };
   const costPerHour = totalPremium / 40;
-  
+
   return (
     <div className="bg-white p-6">
       <div className="flex justify-between items-center mb-6">
@@ -67,8 +67,8 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
         {Object.entries(products).map(([product, _]) => (
           <div key={product} className={`flex items-center justify-between py-2 border-b border-gray-200 ${activeProducts[product] ? '' : 'opacity-50'}`}>
             <label className="inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
+              <input
+                type="checkbox"
                 checked={activeProducts[product]}
                 onChange={() => handleLocalToggle(product as Product)}
                 className="sr-only peer"

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { Product, IndividualInfo, Plan, USState, ToggleState, CostView } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
-import ActiveProductsToggle from '../components/ActiveProductsToggle';
+import ActiveProductsToggle from '../components/checkout';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
 import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
@@ -159,7 +159,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             </div>
           </div>
           <div className="w-full lg:w-1/3">
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
               <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
               <Select
                 value={costView}
@@ -191,7 +191,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
                 }}
               />
             </div>
-            
+
           </div>
         </div>
       </div>

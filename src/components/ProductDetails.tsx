@@ -5,6 +5,7 @@ import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } fr
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
+import '../styles/premiumview.css'; // Import the CSS file
 
 
 interface ProductDetailsProps {
@@ -35,6 +36,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
+  const secondaryCost = premium * 0.1; // Example calculation: 10% of the primary premium
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
     Individual: 0,
     'Individual + Spouse': 0,
@@ -178,9 +180,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   <div className="bg-gray-100 p-4 rounded-md shadow-md">
     <div className="flex items-baseline space-x-2">
       <p className="text-lg font-semibold text-gray-700">Cost:</p>
-      <p className="text-lg font-bold text-green-600">{formatCurrency(premium)}</p>
+      <p className="price">{formatCurrency(premium)}</p>
       <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
     </div>
+    <div className="small">
+    <span>{formatCurrency(secondaryCost)} /hour </span>
+  </div>
   </div>
 </div>
 

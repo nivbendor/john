@@ -4,7 +4,7 @@ import { calculatePremiums } from '../utils/insuranceUtils';
 import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
 import IndividualInfoForm from '../components/IndividualInfoForm';
-import ActiveProductsToggle from '../components/ActiveProductsToggle';
+import ActiveProductsToggle from '../components/checkout';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
 import Tabs from '../components/ui/tabs';
 import ProductSelector from '../components/ProductSelector';
@@ -51,12 +51,12 @@ function Home() {
   const [activeTab, setActiveTab] = useState<'business' | 'owner' | 'employees'>('business');
   const [totalEmployees, setTotalEmployees] = useState(1);
   const [forceUpdate, setForceUpdate] = useState(0);
-  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() => 
+  const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
     PRODUCTS.reduce((acc, product) => ({
       ...acc,
       [product]: product === 'STD' ? 'Basic' : 'Basic'
     }), {} as Record<Product, Plan>)
-  ); 
+  );
 
   const [toggleStates, setToggleStates] = useState<Record<Product, ToggleState>>(() => {
     const initialStates: Record<Product, ToggleState> = {} as Record<Product, ToggleState>;
@@ -75,13 +75,13 @@ function Home() {
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    
+
     setIndividualInfo((prev) => {
 
       if (name === 'businessEmployees') {
         value = parseInt(value as string, 10);
       }
-const personType = "Individual"
+      const personType = "Individual"
       return {
         ...prev,
         ...(personType && {
@@ -100,38 +100,38 @@ const personType = "Individual"
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     // For LTD, only recalculate if annualSalary or plan changes
-  if (product === 'LTD') {
-    const newPremium = calculatePremiums(individualInfo, plan, product, costView);
-    setPremiums(prev => ({
-      ...prev,
-      [product]: newPremium 
+    if (product === 'LTD') {
+      const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+      setPremiums(prev => ({
+        ...prev,
+        [product]: newPremium
+      }));
+    } else {
+      // For other products, recalculate as before
+      const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+      setPremiums(prev => ({
+        ...prev,
+        [product]: newPremium
+      }));
+    }
+  }, [individualInfo, costView, calculatePremiums]);
+
+  const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
+    const initialState = PRODUCTS.reduce((acc, product) => ({
+      ...acc,
+      [product]: product !== 'Vision' && product !== 'Critical Illness/Cancer'
+    }), {} as Record<Product, boolean>);
+    return initialState;
+  });
+
+
+  const handleToggleChange = (product: Product, isActive: boolean) => {
+    setProducts((prevProducts) => ({
+      ...prevProducts,
+      [product]: isActive,
     }));
-  } else {
-    // For other products, recalculate as before
-    const newPremium = calculatePremiums(individualInfo, plan, product, costView);
-    setPremiums(prev => ({
-      ...prev,
-      [product]: newPremium 
-    }));
-  }
-}, [individualInfo, costView, calculatePremiums]);
-
-const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
-  const initialState = PRODUCTS.reduce((acc, product) => ({
-    ...acc,
-    [product]: product !== 'Vision' && product !== 'Critical Illness/Cancer'
-  }), {} as Record<Product, boolean>);
-  return initialState;
-});
-
-
-const handleToggleChange = (product: Product, isActive: boolean) => {
-  setProducts((prevProducts) => ({
-    ...prevProducts,
-    [product]: isActive,
-  }));
-  setForceUpdate(prev => prev + 1);
-};
+    setForceUpdate(prev => prev + 1);
+  };
 
   const calculateAllPremiums = useCallback(() => {
     const allPremiums: PremiumResult = { ...initialPremiums };
@@ -154,25 +154,25 @@ const handleToggleChange = (product: Product, isActive: boolean) => {
     }
 
 
-  const newPremiums = { ...initialPremiums };
-  Object.keys(productPlans).forEach((product) => {
-    newPremiums[product as Product] = calculatePremiums(
-      individualInfo,
-      productPlans[product as Product],
-      product as Product,
-      costView
-    );
-  });
-  setPremiums(calculateAllPremiums);
-}, [individualInfo.businessEmployees, productPlans, costView, calculatePremiums]);
+    const newPremiums = { ...initialPremiums };
+    Object.keys(productPlans).forEach((product) => {
+      newPremiums[product as Product] = calculatePremiums(
+        individualInfo,
+        productPlans[product as Product],
+        product as Product,
+        costView
+      );
+    });
+    setPremiums(calculateAllPremiums);
+  }, [individualInfo.businessEmployees, productPlans, costView, calculatePremiums]);
 
-const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
-  const rawValue = e.target.value;
-  const numericValue = parseFloat(rawValue.replace(/[^0-9.-]+/g, ""));
-  if (!isNaN(numericValue)) {
-    handleInputChange({ name: 'annualSalary', value: numericValue });
-  }
-};
+  const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const rawValue = e.target.value;
+    const numericValue = parseFloat(rawValue.replace(/[^0-9.-]+/g, ""));
+    if (!isNaN(numericValue)) {
+      handleInputChange({ name: 'annualSalary', value: numericValue });
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -183,18 +183,18 @@ const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
         <div className="main-container flex w-full md:gap-24">
           <div className="md:w-3/4 flex flex-col items-center">
             <div className="w-full md:mb-2 p-1 md:mt-2">ч
-              
+
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <IndividualInfoForm
-          individualInfo={individualInfo}
-          handleIndividualInfoChange={handleInputChange}
-          handleSalaryChange={handleSalaryChange}
-          errors={errors}
-          costView={costView}
-          setCostView={setCostView}
-        />
+                individualInfo={individualInfo}
+                handleIndividualInfoChange={handleInputChange}
+                handleSalaryChange={handleSalaryChange}
+                errors={errors}
+                costView={costView}
+                setCostView={setCostView}
+              />
             </div>
-            
+
             <div className="product-tabs-container w-full ">
               <ProductSelector
                 selectedProduct={selectedProduct}
@@ -203,16 +203,16 @@ const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
               />
               <div className="w-full">
                 <ProductDetails
-                   plans={productPlans}
-                   selectedProduct={selectedProduct}
-                   premium={premiums[selectedProduct]}
-                   costView={costView}
-                   individualInfo={individualInfo}
-                   setProductPlan={setProductPlan}
-                   handleIndividualInfoChange={handleInputChange}
-                   errors={errors}
-                   recalculatePremium={recalculatePremium}
-                   activeProducts={products}
+                  plans={productPlans}
+                  selectedProduct={selectedProduct}
+                  premium={premiums[selectedProduct]}
+                  costView={costView}
+                  individualInfo={individualInfo}
+                  setProductPlan={setProductPlan}
+                  handleIndividualInfoChange={handleInputChange}
+                  errors={errors}
+                  recalculatePremium={recalculatePremium}
+                  activeProducts={products}
 
                 />
               </div>
@@ -236,17 +236,17 @@ const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <ActiveProductsToggle
-          plan={productPlans}
-          products={activeProducts}
-          premiums={premiums}
-          costView={costView}
-          individualInfo={individualInfo}
-          handleToggleChange={handleToggleChange}
-        />
-      </div>
-    </div>
+              plan={productPlans}
+              products={activeProducts}
+              premiums={premiums}
+              costView={costView}
+              individualInfo={individualInfo}
+              handleToggleChange={handleToggleChange}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
