@@ -159,22 +159,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             </div>
           </div>
           <div className="w-full lg:w-1/3">
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
-              <ActiveProductsToggle
-                plan={productPlans}
-                products={localProducts} // Use localProducts for local state
-                premiums={premiums}
-                costView={costView}
-                individualInfo={individualInfo}
-                handleToggleChange={(product, isActive) => {
-                  setLocalProducts(prev => ({
-                    ...prev,
-                    [product]: isActive,
-                  }));
-                }}
-              />
-            </div>
-            <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between">
               <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
               <Select
                 value={costView}
@@ -191,6 +176,22 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
                 </SelectContent>
               </Select>
             </div>
+            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
+              <ActiveProductsToggle
+                plan={productPlans}
+                products={localProducts} // Use localProducts for local state
+                premiums={premiums}
+                costView={costView}
+                individualInfo={individualInfo}
+                handleToggleChange={(product, isActive) => {
+                  setLocalProducts(prev => ({
+                    ...prev,
+                    [product]: isActive,
+                  }));
+                }}
+              />
+            </div>
+            
           </div>
         </div>
       </div>

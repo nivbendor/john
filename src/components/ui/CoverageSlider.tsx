@@ -1,7 +1,6 @@
 import React from 'react';
 import { Slider, Box, Typography } from '@mui/material';
 import { Card, CardContent } from "./card";
-import { Label } from "./label";
 import { EligibilityOption, IndividualInfo } from '../../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG } from '../../utils/insuranceConfig';
 import { getLifeADDRate } from '../../utils/insuranceUtils';
@@ -22,43 +21,26 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
     LIFE_ADD_CONFIG.max_coverage_amount_spouse
   );
 
-  const handleChange = (event: Event, newValue: number | number[], activeThumb: number) => {
-  if (!Array.isArray(newValue)) {
-    return;
-  }
+  const handleEmployeeCoverageChange = (event: Event, newValue: number | number[]) => {
+    const newEmployeeCoverage = Array.isArray(newValue) ? newValue[0] : newValue;
 
-  let newEmployeeCoverage = newValue[1];
-  let newSpouseCoverage = newValue[0];
-
-  console.log('Slider Moved:', { newEmployeeCoverage, newSpouseCoverage, activeThumb });
-
-  // Calculate the maximum spouse coverage based on employee coverage
-  const maxSpouseCoverage = eligibility === 'Individual + Spouse' || eligibility === 'Family'
-    ? Math.min(newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional, LIFE_ADD_CONFIG.max_coverage_amount_spouse)
-    : 0;
-
-  if (activeThumb === 1) {
-    // Adjusting employee coverage
-    newEmployeeCoverage = Math.min(newEmployeeCoverage, LIFE_ADD_CONFIG.max_coverage_amount_individual);
-    
+    let newSpouseCoverage = spouseCoverage;
     if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
-      // Constrain spouse coverage
-      newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
+      newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
     } else {
       newSpouseCoverage = 0;
     }
-  } else if (activeThumb === 0 && (eligibility === 'Individual + Spouse' || eligibility === 'Family')) {
-    // Constrain spouse coverage when adjusting spouse slider
-    newSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
-    // Ensure employee coverage is sufficient to support the spouse coverage
-    newEmployeeCoverage = Math.max(newEmployeeCoverage, newSpouseCoverage / LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
-  }
 
-  console.log('Updated Coverage Values:', { newEmployeeCoverage, newSpouseCoverage });
-  onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
-};
-  
-  
+    onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
+  };
+
+  const handleSpouseCoverageChange = (event: Event, newValue: number | number[]) => {
+    const newSpouseCoverage = Array.isArray(newValue) ? newValue[0] : newValue;
+
+    const constrainedSpouseCoverage = Math.min(newSpouseCoverage, maxSpouseCoverage);
+
+    onCoverageChange(employeeCoverage, constrainedSpouseCoverage);
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -75,32 +57,42 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
   const spousePremium = showSpouseCoverage ? (spouseCoverage / LIFE_ADD_CONFIG.units) * rate : 0;
 
   return (
-    <Card className="w-[350px]">
+    <Card className="w-full max-w-md mx-auto lg:max-w-sm"> {/* Responsive width adjustment */}
       <CardContent>
         <Box sx={{ width: '100%' }}>
-          <Typography gutterBottom>Coverage Amount</Typography>
+          <Typography gutterBottom>Individual Coverage</Typography>
+          <Box display="flex" alignItems="center" justifyContent="space-between">
+          </Box>
           <Slider
-            getAriaLabel={() => 'Coverage amount'}
-            value={[employeeCoverage, showSpouseCoverage ? spouseCoverage : employeeCoverage]}
-            onChange={handleChange}
-            valueLabelDisplay="auto"
+            getAriaLabel={() => 'Individual Coverage'}
+            value={employeeCoverage}
+            onChange={handleEmployeeCoverageChange}
+            valueLabelDisplay="on" // Always show the value
             getAriaValueText={formatCurrency}
             valueLabelFormat={formatCurrency}
             min={0}
             max={maxEmployeeCoverage}
-            step={LIFE_ADD_CONFIG.units}
-            disableSwap
-            sx={{
-              '& .MuiSlider-thumb:first-of-type': { color: 'primary.main' },
-              '& .MuiSlider-thumb:last-of-type': { color: 'secondary.main' },
-            }}
+            step={10000} // Increment by 10,000
           />
-          <Box sx={{ mt: 2 }}>
-            <Typography>Employee Coverage: {formatCurrency(employeeCoverage)} (Premium: {formatCurrency(employeePremium)})</Typography>
-            {showSpouseCoverage && (
-              <Typography>Spouse Coverage: {formatCurrency(spouseCoverage)} (Premium: {formatCurrency(spousePremium)})</Typography>
-            )}
-          </Box>
+          {showSpouseCoverage && (
+            <>
+              <Typography gutterBottom>Spouse Coverage</Typography>
+              <Box display="flex" alignItems="center" justifyContent="space-between">
+              </Box>
+              <Slider
+                getAriaLabel={() => 'Spouse coverage amount'}
+                value={spouseCoverage}
+                onChange={handleSpouseCoverageChange}
+                valueLabelDisplay="on" // Always show the value
+                getAriaValueText={formatCurrency}
+                valueLabelFormat={formatCurrency}
+                min={0}
+                max={maxSpouseCoverage}
+                step={10000} // Increment by 10,000
+              />
+            </>
+          )}
+         
         </Box>
       </CardContent>
     </Card>
