@@ -11,6 +11,7 @@ import IndividualInfoForm from '../components/IndividualInfoForm';  // Importing
 import '../styles/iconSettings.css';
 import { parseUrlParams } from 'utils/parseUrlParams';
 
+
 type PremiumResult = Record<Product, number>;
 
 const initialIndividualInfo: IndividualInfo = {
@@ -125,78 +126,82 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-4 py-8 w-full">
-        <IndividualInfoForm
-          individualInfo={individualInfo}
-          handleIndividualInfoChange={handleInputChange}
-          handleSalaryChange={handleSalaryChange}
-          errors={errors}
-          costView={costView}
-          setCostView={setCostView}
-        />
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-2/3 space-y-8">
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <ProductSelector
-                selectedProduct={selectedProduct}
-                setSelectedProduct={setSelectedProduct}
-                products={PRODUCTS}
-              />
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6">
-              <ProductDetails
-                plans={productPlans}
-                selectedProduct={selectedProduct}
-                premium={premiums[selectedProduct]}
-                costView={costView}
-                individualInfo={individualInfo}
-                setProductPlan={setProductPlan}
-                handleIndividualInfoChange={handleInputChange}
-                errors={errors}
-                recalculatePremium={recalculatePremium}
-                activeProducts={localProducts} // Use localProducts for local state
-              />
-            </div>
+      <div className="container mx-auto px-1 py-2 w-full main-container">
+        <div className="w-full lg:w-2/3 space-y-8"> {/* ProductSelector first on desktop */}
+          <div className="bg-white rounded-xl shadow-md p-2">
+            <ProductSelector
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+              products={PRODUCTS}
+            />
           </div>
-          <div className="w-full lg:w-1/3">
-            <div className="flex items-center justify-between">
-              <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
-              <Select
-                value={costView}
-                onValueChange={(value: CostView) => setCostView(value)}
-              >
-                <SelectTrigger className="w-full lg:w-[120px]">
-                  <SelectValue>{costView}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Monthly">Monthly</SelectItem>
-                  <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
-                  <SelectItem value="Weekly">Weekly</SelectItem>
-                  <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
-              <ActiveProductsToggle
-                plan={productPlans}
-                products={localProducts} // Use localProducts for local state
-                premiums={premiums}
-                costView={costView}
-                individualInfo={individualInfo}
-                handleToggleChange={(product, isActive) => {
-                  setLocalProducts(prev => ({
-                    ...prev,
-                    [product]: isActive,
+        </div>
+        <div className="individual-info-form-desktop rightrail"> {/* IndividualInfoForm second on desktop */}
+          <IndividualInfoForm
+            individualInfo={individualInfo}
+            handleIndividualInfoChange={handleInputChange}
+            handleSalaryChange={handleSalaryChange}
+            errors={errors}
+            costView={costView}
+            setCostView={setCostView}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col lg:flex-row gap-8 mt-8">
+        <div className="w-full lg:w-2/3 space-y-8">
+          <div className="bg-white rounded-xl shadow-md p-6">
+            <ProductDetails
+              plans={productPlans}
+              selectedProduct={selectedProduct}
+              premium={premiums[selectedProduct]}
+              costView={costView}
+              individualInfo={individualInfo}
+              setProductPlan={setProductPlan}
+              handleIndividualInfoChange={handleInputChange}
+              errors={errors}
+              recalculatePremium={recalculatePremium}
+              activeProducts={localProducts} // Use localProducts for local state
+            />
+          </div>
+        </div>
+        <div className="w-full lg:w-1/3">
+          <div className="flex items-center justify-between">
+            <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
+            <Select
+              value={costView}
+              onValueChange={(value: CostView) => setCostView(value)}
+            >
+              <SelectTrigger className="w-full lg:w-[120px]">
+                <SelectValue>{costView}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Monthly">Monthly</SelectItem>
+                <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
+                <SelectItem value="Weekly">Weekly</SelectItem>
+                <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
+            <ActiveProductsToggle
+              plan={productPlans}
+              products={localProducts} // Use localProducts for local state
+              premiums={premiums}
+              costView={costView}
+              individualInfo={individualInfo}
+              handleToggleChange={(product, isActive) => {
+                setLocalProducts(prev => ({
+                  ...prev,
+                  [product]: isActive,
                   }));
                 }}
               />
             </div>
-
           </div>
         </div>
       </div>
-    </div>
   );
+  
 };
 
 export default Business;
