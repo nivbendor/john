@@ -1,6 +1,11 @@
 import { IndividualInfo, EligibilityOption } from '../utils/insuranceTypes';
 
-
+const eligibilityMapping: Record<number, EligibilityOption> = {
+  1: 'Individual',
+  2: 'Individual + Spouse',
+  3: 'Individual + Children',
+  4: 'Family'
+};
 
 export function parseUrlParams(): Partial<IndividualInfo> {
   const params = new URLSearchParams(window.location.search);
@@ -16,8 +21,14 @@ export function parseUrlParams(): Partial<IndividualInfo> {
     result.annualSalary = parseInt(params.get('annualSalary')!, 10);
   }
 
-  if (params.get('eligibility')) {
-    result.eligibility = params.get('eligibility') as IndividualInfo['eligibility'];
+  const eligibilityParam = params.get('eligibility');
+  if (eligibilityParam) {
+    const eligibilityNumber = parseInt(eligibilityParam, 10);
+    if (!isNaN(eligibilityNumber) && eligibilityNumber in eligibilityMapping) {
+      result.eligibility = eligibilityMapping[eligibilityNumber];
+    } else if (isValidEligibility(eligibilityParam)) {
+      result.eligibility = eligibilityParam as IndividualInfo['eligibility'];
+    }
   }
 
   return result;
