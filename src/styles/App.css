@@ -2,7 +2,7 @@
 
 .main-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; /* Default is row for desktop */
 }
 
 .rightrail {
@@ -14,7 +14,7 @@
 
 @media (max-width: 1024px) {
   .main-container {
-    flex-direction: column-reverse; /* Reverses the order on mobile */
+    flex-direction: column-reverse; /* Reverse the order on mobile */
   }
 
   .rightrail {

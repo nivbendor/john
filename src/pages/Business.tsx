@@ -126,9 +126,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="container mx-auto px-1 py-2 w-full main-container">
-        <div className="w-full lg:w-2/3 space-y-8"> {/* ProductSelector first on desktop */}
-          <div className="bg-white rounded-xl shadow-md p-2">
+      <div className="container mx-auto px-4 py-8 w-full main-container"> {/* main-container class added */}
+        <div className="w-full lg:w-2/3 space-y-8"> {/* ProductSelector first on desktop, second on mobile */}
+          <div className="bg-white rounded-xl shadow-md p-6 pl-8"> {/* Added padding-left here */}
             <ProductSelector
               selectedProduct={selectedProduct}
               setSelectedProduct={setSelectedProduct}
@@ -136,7 +136,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             />
           </div>
         </div>
-        <div className="individual-info-form-desktop rightrail"> {/* IndividualInfoForm second on desktop */}
+        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop pl-8"> {/* Added padding-left here */}
           <IndividualInfoForm
             individualInfo={individualInfo}
             handleIndividualInfoChange={handleInputChange}
@@ -147,8 +147,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
           />
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-8 mt-8">
-        <div className="w-full lg:w-2/3 space-y-8">
+      <div className="flex flex-col lg:flex-row gap-8 mt-8"> {/* Added margin-top to space out from above */}
+        <div className="w-full lg:w-2/3 space-y-8 pl-8"> {/* Added padding-left here */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <ProductDetails
               plans={productPlans}
@@ -193,14 +193,15 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
                 setLocalProducts(prev => ({
                   ...prev,
                   [product]: isActive,
-                  }));
-                }}
-              />
-            </div>
+                }));
+              }}
+            />
           </div>
         </div>
       </div>
+    </div>
   );
+  
   
 };
 
