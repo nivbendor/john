@@ -13,4 +13,11 @@ module.exports = {
   plugins: [
     ...customConfig.plugins,
   ],
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "components/ui/*": ["components/ui/*"]
+    }
+  },
+  "include": ["src/**/*"]
 }

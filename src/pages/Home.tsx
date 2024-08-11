@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import { Product, IndividualInfo, Plan, USState, CostView, ToggleState } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
 import CostEstimate from '../components/CostEstimate';
@@ -23,6 +23,7 @@ const initialIndividualInfo: IndividualInfo = {
   employeeCoverage: 150000,
   spouseCoverage: 20000,
   numberOfChildren: 2,
+  isExpanded: undefined
 };
 
 const initialProducts: Record<Product, boolean> = {
@@ -165,6 +166,14 @@ const handleToggleChange = (product: Product, isActive: boolean) => {
   setPremiums(calculateAllPremiums);
 }, [individualInfo.businessEmployees, productPlans, costView, calculatePremiums]);
 
+const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const rawValue = e.target.value;
+  const numericValue = parseFloat(rawValue.replace(/[^0-9.-]+/g, ""));
+  if (!isNaN(numericValue)) {
+    handleInputChange({ name: 'annualSalary', value: numericValue });
+  }
+};
+
   return (
     <div className="min-h-screen flex flex-col">
       <div className="top-0 left-0 p-4">
@@ -177,10 +186,13 @@ const handleToggleChange = (product: Product, isActive: boolean) => {
               
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <IndividualInfoForm
-                individualInfo={individualInfo}
-                handleIndividualInfoChange={handleInputChange}
-                errors={errors}
-              />
+          individualInfo={individualInfo}
+          handleIndividualInfoChange={handleInputChange}
+          handleSalaryChange={handleSalaryChange}
+          errors={errors}
+          costView={costView}
+          setCostView={setCostView}
+        />
             </div>
             
             <div className="product-tabs-container w-full ">

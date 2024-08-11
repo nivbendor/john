@@ -106,8 +106,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }).format(value);
   };
 
-  const costPerHour = premium / 40;
-
+  
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -180,10 +179,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <p className="text-lg font-bold text-green-600">{formatCurrency(premium)}</p>
           <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
         </div>
-        <div className="flex items-baseline space-x-1 mt-2">
-          <span className="font-bold">{formatCurrency(costPerHour)}</span>
-          <span className="text-sm text-gray-500">/hour</span>
-        </div>
+        
       </div>
     </div>
   );

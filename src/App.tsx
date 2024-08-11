@@ -7,7 +7,7 @@ import Home from './pages/Home';
 import Business from './pages/Business';
 import StickyProductCostSummary from './components/StickyProductCostSummary';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { CostViewProvider } from './components/CostViewContext';
+import { CostViewProvider } from './components/CostView';
 import { Product } from './utils/insuranceTypes';
 
 const App: React.FC = () => {
@@ -20,11 +20,13 @@ const App: React.FC = () => {
         <div>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/john" element={
-              <Business 
-                setProducts={setProducts} 
-                setTotalCost={setTotalCost}
-              />
+            <Route 
+          path="/john" 
+          element={
+            <Business 
+              setProducts={setProducts} 
+              setTotalCost={setTotalCost} 
+            />
             } />
           </Routes>
           <StickyProductCostSummary products={products} totalCost={totalCost} />

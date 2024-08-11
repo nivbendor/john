@@ -20,6 +20,7 @@ export type USState =
 
 
 export interface IndividualInfo {
+  isExpanded: any;
   zipCode: string;
   businessEmployees: number;
   state: USState;
