@@ -7,9 +7,11 @@ const eligibilityMapping: Record<number, EligibilityOption> = {
   4: 'Family'
 };
 
-export function parseUrlParams(): Partial<IndividualInfo> {
+export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: boolean } {
   const params = new URLSearchParams(window.location.search);
-  const result: Partial<IndividualInfo> = {};
+  const result: Partial<IndividualInfo> & { showCostPerHour: boolean } = {
+    showCostPerHour: false // Default value
+  };
 
   // Business Information
   const zipCode = params.get('zipCode');
@@ -29,6 +31,12 @@ export function parseUrlParams(): Partial<IndividualInfo> {
     } else if (isValidEligibility(eligibilityParam)) {
       result.eligibility = eligibilityParam as IndividualInfo['eligibility'];
     }
+  }
+
+  // Parse the 'cv' parameter
+  const cvParam = params.get('cv');
+  if (cvParam === '1') {
+    result.showCostPerHour = true;
   }
 
   return result;

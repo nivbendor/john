@@ -31,7 +31,7 @@ const IndividualInfoForm = ({
 
   return (
     <div className="w-full">
-      <div className="rounded-xl shadow-md p-6 mb-8 w-full"> {/* Individual box */}
+      <div className="rounded-xl shadow-md p-6 mb-8 w-full 2xl:px-4"> {/* Individual box */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
           <div className="w-full lg:w-4/4">
             <div className="flex items-center justify-between mb-4">

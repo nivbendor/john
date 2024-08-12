@@ -125,7 +125,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 lg: px-6">
       <div className="container mx-auto px-4 py-8 w-full main-container"> {/* main-container class added */}
         <div className="w-full lg:w-2/3 space-y-8"> {/* ProductSelector first on desktop, second on mobile */}
           <div className="bg-white rounded-xl shadow-md p-6 pl-8"> {/* Added padding-left here */}
@@ -149,7 +149,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
       </div>
       <div className="flex flex-col lg:flex-row gap-8 mt-8"> {/* Added margin-top to space out from above */}
         <div className="w-full lg:w-2/3 space-y-8 pl-8"> {/* Added padding-left here */}
-          <div className="bg-white rounded-xl shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-md p-6 px-12">
             <ProductDetails
               plans={productPlans}
               selectedProduct={selectedProduct}

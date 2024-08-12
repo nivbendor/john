@@ -183,9 +183,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       <p className="price">{formatCurrency(premium)}</p>
       <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
     </div>
-    <div className="small">
+    {/* <div className="small">
     <span>{formatCurrency(secondaryCost)} /hour </span>
-  </div>
+  </div> */}
   </div>
 </div>
 
