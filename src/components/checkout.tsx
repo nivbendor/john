@@ -66,16 +66,16 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   return (
     <div className="bg-white p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Checkout</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Summary</h2>
         <div className="text-right">
           <p className="text-4xl font-bold text-gray-800">{formatCurrency(totalPremium)}</p>
           <p className="text-sm text-gray-600">Total {costView.toLowerCase()} Cost</p>
-          {showCostPerHour && (
+          {/* {showCostPerHour && (
             <div className="flex items-baseline space-x-1 mt-2">
               <span className="font-bold">{formatCurrency(costPerHour)}</span>
               <span className="text-sm text-gray-500">/hour</span>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

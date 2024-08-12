@@ -125,10 +125,10 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 lg: px-6">
-      <div className="container mx-auto px-4 py-8 w-full main-container"> {/* main-container class added */}
-        <div className="w-full lg:w-2/3 space-y-8"> {/* ProductSelector first on desktop, second on mobile */}
-          <div className="bg-white rounded-xl shadow-md p-6 pl-8"> {/* Added padding-left here */}
+    <div className="min-h-screen bg-gray-100 lg:px-6">
+      <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
+        <div className="w-full lg:w-2/3 space-y-2">
+          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-8">
             <ProductSelector
               selectedProduct={selectedProduct}
               setSelectedProduct={setSelectedProduct}
@@ -136,7 +136,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             />
           </div>
         </div>
-        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop pl-8"> {/* Added padding-left here */}
+        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
           <IndividualInfoForm
             individualInfo={individualInfo}
             handleIndividualInfoChange={handleInputChange}
@@ -147,9 +147,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
           />
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-8 mt-8"> {/* Added margin-top to space out from above */}
-        <div className="w-full lg:w-2/3 space-y-8 pl-8"> {/* Added padding-left here */}
-          <div className="bg-white rounded-xl shadow-md p-6 px-12">
+      <div className="flex flex-col lg:flex-row gap-7 px-10 	">
+        <div className="w-full lg:w-2/3 space-y-8 lg:pl-8 ">
+          <div className=" bg-white rounded-xl shadow-md p-6">
             <ProductDetails
               plans={productPlans}
               selectedProduct={selectedProduct}
@@ -160,12 +160,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               handleIndividualInfoChange={handleInputChange}
               errors={errors}
               recalculatePremium={recalculatePremium}
-              activeProducts={localProducts} // Use localProducts for local state
+              activeProducts={localProducts}
             />
           </div>
         </div>
         <div className="w-full lg:w-1/3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between px-4 lg:px-0">
             <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
             <Select
               value={costView}
@@ -185,7 +185,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
           <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
             <ActiveProductsToggle
               plan={productPlans}
-              products={localProducts} // Use localProducts for local state
+              products={localProducts}
               premiums={premiums}
               costView={costView}
               individualInfo={individualInfo}
@@ -201,8 +201,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
       </div>
     </div>
   );
-  
-  
 };
 
 export default Business;

@@ -110,10 +110,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   
   return (
-    <div className="space-y-4">
-  <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+    <div className="space-y-4 px-4 ">
+  <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 ">
     <h2 className="text-2xl font-bold">{selectedProduct}</h2>
-    <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4">
+    <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 ">
       {selectedProduct === 'Life / AD&D' && (
         <div className="w-full lg:w-auto">
           <CoverageSlider

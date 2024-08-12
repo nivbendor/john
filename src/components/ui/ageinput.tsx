@@ -3,14 +3,14 @@ import { Input } from './input';
 
 const styles: { Stepper: CSSProperties } = {
   Stepper: {
-    width: '80%',
+    width: '100%',
     padding: '0px 8px',
     border: '1px solid #ccc',
     boxSizing: 'border-box',
     borderRadius: '8px',
     backgroundColor: '#ffffff',
     color: '#333',
-    fontSize: '16px',
+    fontSize: '14px',
     fontFamily: 'Source Sans Pro',
     lineHeight: '25x',
     textAlign: 'center',
