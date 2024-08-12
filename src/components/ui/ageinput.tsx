@@ -3,8 +3,8 @@ import { Input } from './input';
 
 const styles: { Stepper: CSSProperties } = {
   Stepper: {
-    width: '100%',
-    padding: '0px 8px',
+    // width: '100%',
+    padding: '8px 8px',
     border: '1px solid #ccc',
     boxSizing: 'border-box',
     borderRadius: '8px',
