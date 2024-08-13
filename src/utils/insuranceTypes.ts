@@ -10,7 +10,7 @@ export type PremiumResult = Record<Product, number>;
 
 export type Plan = 'Basic' | 'Premium';
 
-export type USState = 
+export type USState =
   | 'AL' | 'AK' | 'AZ' | 'AR' | 'CA' | 'CO' | 'CT' | 'DE' | 'DC' | 'FL' | 'GA'
   | 'HI' | 'ID' | 'IL' | 'IN' | 'IA' | 'KS' | 'KY' | 'LA' | 'ME' | 'MD'
   | 'MA' | 'MI' | 'MN' | 'MS' | 'MO' | 'MT' | 'NE' | 'NV' | 'NH' | 'NJ'
@@ -51,7 +51,7 @@ export function calculatePremiumByCostView(premium: number, costView: CostView):
     case 'Semi-Monthly':
       return premium / 2;
     case 'Bi-Weekly':
-      return premium / 12;
+      return premium * 12 / 26;
     default:
       console.warn(`Unexpected cost view: ${costView}. Returning monthly premium.`);
       return premium;

@@ -20,3 +20,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.right-background {
+  position: relative;
+}
+
+.right-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 33.33%;
+  background-color: #f0f0f0;
+  z-index: -1;
+}
+
+@media (max-width: 1023px) {
+  .right-background::after {
+    width: 100%;
+    height: 33.33%;
+    top: auto;
+    bottom: 0;
+  }
+}

@@ -9,6 +9,8 @@ import StickyProductCostSummary from './components/StickyProductCostSummary';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { CostViewProvider } from './components/CostView';
 import { Product } from './utils/insuranceTypes';
+import './styles/background.css';
+
 
 const App: React.FC = () => {
   const [products, setProducts] = useState<Record<Product, boolean>>({} as Record<Product, boolean>);
