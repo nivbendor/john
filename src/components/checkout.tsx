@@ -61,7 +61,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     });
   };
 
-  const costPerHour = totalMonthlyPremium / (40 * 4); // Assuming 4 weeks per month
+  const costPerHour = totalMonthlyPremium / (40); // Assuming 4 weeks per month
 
   return (
     <div className="bg-white p-6">
@@ -83,7 +83,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
         {Object.entries(products).map(([product, _]) => {
           const premium = getAdjustedPremium(product as Product);
           const monthlyPremium = getMonthlyPremium(product as Product);
-          const productCostPerHour = monthlyPremium / (40 * 4); // Assuming 4 weeks per month
+          const productCostPerHour = monthlyPremium * (12/52/40); // Assuming 4 weeks per month
           return (
             <div key={product} className={`flex items-center justify-between py-2 border-b border-gray-200 ${activeProducts[product] ? '' : 'opacity-50'}`}>
               <label className="inline-flex items-center cursor-pointer">
