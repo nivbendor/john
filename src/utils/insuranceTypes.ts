@@ -47,7 +47,7 @@ export function calculatePremiumByCostView(premium: number, costView: CostView):
     case 'Monthly':
       return premium;
     case 'Weekly':
-      return premium / 4;  // Approximately 52 weeks / 12 months
+      return premium * 12 / 52;  // Approximately 52 weeks / 12 months
     case 'Semi-Monthly':
       return premium / 2;
     case 'Bi-Weekly':
