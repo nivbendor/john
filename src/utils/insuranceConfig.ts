@@ -240,8 +240,8 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
 export const STD_CONFIG = {
   benefitAmountKey: 0.6,
   unitsKey: 10,
-  maxCoverageAmount: 1100,
-  maxUnits: 110,
+  maxCoverageAmount: 1200,
+  maxUnits: 120,
   weeks: 52,
   ageBandRates: [
     { minAge: 0, maxAge: 29, rate: 0.25 },
