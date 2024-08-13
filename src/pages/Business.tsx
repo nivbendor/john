@@ -7,10 +7,10 @@ import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '.
 import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 import { useCostView } from '../components/CostView';
-import IndividualInfoForm from '../components/IndividualInfoForm';  // Importing the new form component
+import IndividualInfoForm from '../components/IndividualInfoForm';
 import '../styles/iconSettings.css';
 import { parseUrlParams } from 'utils/parseUrlParams';
-
+import InsuranceResources  from '../components/Resource';
 
 type PremiumResult = Record<Product, number>;
 
@@ -95,7 +95,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
         [name]: value,
       };
 
-      // Recalculate LTD plan if annual salary changes
       if (name === 'annualSalary') {
         const newLTDPlan = newInfo.annualSalary >= 100000 ? 'Premium' : 'Basic';
         if (newLTDPlan !== productPlans.LTD) {
@@ -147,9 +146,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
           />
         </div>
       </div>
-      <div className="flex flex-col lg:flex-row gap-7 px-10 	">
+      <div className="flex flex-col lg:flex-row gap-7 px-10 sm:container mx-auto px-0 lg:px-4 py-6 w-full main-container">
         <div className="w-full lg:w-2/3 space-y-8 lg:pl-8 ">
-          <div className=" bg-white rounded-xl shadow-md p-6">
+          <div className="bg-white rounded-xl shadow-md p-6">
             <ProductDetails
               plans={productPlans}
               selectedProduct={selectedProduct}
@@ -182,7 +181,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               </SelectContent>
             </Select>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-6 sticky top-8">
+          <div className="bg-white rounded-xl shadow-md p-6 top-8 mb-8">
             <ActiveProductsToggle
               plan={productPlans}
               products={localProducts}
@@ -197,6 +196,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               }}
             />
           </div>
+          <InsuranceResources />
         </div>
       </div>
     </div>
