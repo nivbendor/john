@@ -98,7 +98,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
     <div className="w-full rounded-lg overflow-hidden p-2">
       <Slider ref={sliderRef} {...settings}>
         {products.map((product) => (
-          <div key={product} className="px-2">
+          <div key={product} className="px-0">
             <button
               className={`w-full flex flex-col items-center justify-center p-2 rounded-md transition-colors duration-150 ease-in-out
                 ${selectedProduct === product
