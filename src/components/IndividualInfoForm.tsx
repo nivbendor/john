@@ -1,9 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import InputStepper from './ui/ageinput';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
-import { CostView } from '../utils/insuranceTypes';
+// import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -24,6 +23,12 @@ const IndividualInfoForm = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  useEffect(() => {
+    // Expand by default on lg screens and larger
+    if (window.innerWidth >= 1024) {
+      setIsExpanded(true);
+    }
+  }, []);
   const toggleExpand = useCallback(() => {
     setIsExpanded((prev) => !prev);
   }, []);

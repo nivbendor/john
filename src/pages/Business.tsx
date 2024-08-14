@@ -9,8 +9,9 @@ import { PRODUCTS } from '../utils/insuranceConfig';
 import { useCostView } from '../components/CostView';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import '../styles/iconSettings.css';
-import { parseUrlParams } from 'utils/parseUrlParams';
-import InsuranceResources  from '../components/Resource';
+import { parseUrlParams, showCostPerHour } from 'utils/parseUrlParams';
+import InsuranceResources from '../components/Resource';
+
 
 type PremiumResult = Record<Product, number>;
 
@@ -45,8 +46,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
     const urlParams = parseUrlParams();
     return { ...initialIndividualInfo, ...urlParams };
   });
+  const [showCostPerHour] = useState(() => {
+    const { showCostPerHour } = parseUrlParams();
+    return showCostPerHour;
+  });
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  // const [isExpanded, setIsExpanded] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const { costView, setCostView } = useCostView();
   const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
@@ -124,7 +129,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
   };
   const QuoteSection = () => (
     <div className="bg-white rounded-xl shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">Are you interested in getting an instant quote?</h3>
+      <h3 className="text-lg font-semibold mb-4">Get My Company Benefits</h3>
       <a 
         href="https://www.jotform.com/form/241625750442150/?utm_source=John" 
         target="_blank" 
@@ -176,9 +181,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               activeProducts={localProducts}
             />
           </div>
+          {showCostPerHour && (
+
           <div className="">
             <QuoteSection />
           </div>
+            )}
+
         </div>
         <div className="w-full lg:w-1/3">
           <div className="flex items-center justify-between px-4 lg:px-0">
@@ -213,7 +222,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               }}
             />
           </div>
+          <span className="hidden lg:block">
           <InsuranceResources />
+          </span>
+          
+
         </div>
       </div>
     </div>

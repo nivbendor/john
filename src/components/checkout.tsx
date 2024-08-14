@@ -61,12 +61,10 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     });
   };
 
-  const costPerHour = totalMonthlyPremium / (40); // Assuming 4 weeks per month
-
   return (
     <div className="bg-white p-6 sm:w-full">
       <div className="flex justify-between items-center mb-6 sm:">
-        <h2 className="text-2xl font-bold text-gray-800">Summary</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Your Cost</h2>
         <div className="text-right">
           <p className="text-4xl font-bold text-gray-800">{formatCurrency(totalPremium)}</p>
           <p className="text-sm text-gray-600">Total {costView.toLowerCase()} Cost</p>

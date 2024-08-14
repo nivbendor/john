@@ -6,7 +6,11 @@ import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
 import '../styles/premiumview.css'; // Import the CSS file
+import Tooltip from './ui/tooltip';
+import { insuranceResources, getProductLabel } from './Resource';
 
+const label = getProductLabel('LTD');
+console.log(label); // Outputs: Long-Term Disability
 
 interface ProductDetailsProps {
   plans: Record<Product, Plan>;
@@ -107,18 +111,43 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       maximumFractionDigits: 2
     }).format(value);
   };
+  const getPDFUrl = (productName: string): string | undefined => {
+    const resource = insuranceResources.find(r => r.name === productName || r.name.includes(productName) || productName.includes(r.name));
+    return resource?.pdfUrl;
+  };
+
+  const handlePDFDownload = () => {
+    const pdfUrl = getPDFUrl(selectedProduct);
+    if (pdfUrl) {
+      window.open(pdfUrl, '_blank');
+    } else {
+      console.error(`No PDF URL found for product: ${selectedProduct}`);
+    }
+  };
 
   
   return (
-    <div className="space-y-4 px-4 ">
-  <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0 ">
-    <h2 className="text-2xl font-bold">{selectedProduct}</h2>
-    <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 ">
-      {selectedProduct === 'Life / AD&D' && (
-        <div className="w-full lg:w-auto">
-          <CoverageSlider
-            individualInfo={individualInfo}
-            onCoverageChange={handleCoverageChange}
+    <div className="space-y-4 px-4">
+      <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+        <div className="flex items-center space-x-4 w-full lg:w-auto">
+          <h2 className="text-2xl font-bold">{getProductLabel(selectedProduct)}</h2>
+          <Tooltip title="Download Slip">
+            <div onClick={handlePDFDownload} className="focus:outline-none cursor-pointer">
+              {/* <img src="/pdf_dl.ico" alt="Download PDF" className="w-6 h-6" /> */}
+              <img 
+                  src={`${process.env.PUBLIC_URL}/pdf_dl.ico`}
+                  alt="pdf" 
+                  className="w-6 h-6"
+                />
+            </div>
+          </Tooltip>
+      </div>
+      <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 w-full lg:w-auto">
+        {selectedProduct === 'Life / AD&D' && (
+          <div className="w-full lg:w-auto">
+            <CoverageSlider
+              individualInfo={individualInfo}
+              onCoverageChange={handleCoverageChange}
           />
         </div>
       )}

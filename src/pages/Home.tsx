@@ -182,7 +182,7 @@ function Home() {
       <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
         <div className="main-container flex w-full md:gap-24">
           <div className="md:w-3/4 flex flex-col items-center">
-            <div className="w-full md:mb-2 p-1 md:mt-2">ч
+            <div className="w-full md:mb-2 p-1 md:mt-2">
 
               <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
               <IndividualInfoForm

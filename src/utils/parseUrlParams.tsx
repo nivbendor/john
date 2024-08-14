@@ -7,16 +7,21 @@ const eligibilityMapping: Record<number, EligibilityOption> = {
   4: 'Family'
 };
 
-export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: boolean } {
+export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: boolean; showQuoteSection: boolean } {
   const params = new URLSearchParams(window.location.search);
-  const result: Partial<IndividualInfo> & { showCostPerHour: boolean } = {
-    showCostPerHour: false // Default value
+  const result: Partial<IndividualInfo> & { showCostPerHour: boolean; showQuoteSection: boolean } = {
+    showCostPerHour: false,
+    showQuoteSection: false
   };
 
   // Business Information
-  const zipCode = params.get('zipCode');
+  const age = params.get('age');
   if (params.get('age')) {
     result.age = parseInt(params.get('age')!, 10);
+  }
+  const zipCode = params.get('zipCode');
+  if (params.get('zipCode')) {
+    result.age = parseInt(params.get('zipCode')!, 10);
   }
 
   if (params.get('annualSalary')) {
@@ -38,6 +43,7 @@ export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: b
   if (cvParam === '1') {
     result.showCostPerHour = true;
   }
+  
 
   return result;
 }
@@ -45,3 +51,5 @@ export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: b
 function isValidEligibility(eligibility: string | null): eligibility is EligibilityOption {
   return eligibility !== null && ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'].includes(eligibility);
 }
+
+export const { showCostPerHour } = parseUrlParams();
