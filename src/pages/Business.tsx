@@ -122,6 +122,20 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
       handleInputChange({ name: 'annualSalary', value: numericValue });
     }
   };
+  const QuoteSection = () => (
+    <div className="bg-white rounded-xl shadow-md p-6">
+      <h3 className="text-lg font-semibold mb-4">Are you interested in getting an instant quote?</h3>
+      <a 
+        href="https://www.jotform.com/form/241625750442150/?utm_source=John" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+      >
+        Get Instant Quote
+      </a>
+    </div>
+  );
+
 
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
@@ -161,6 +175,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
               recalculatePremium={recalculatePremium}
               activeProducts={localProducts}
             />
+          </div>
+          <div className="">
+            <QuoteSection />
           </div>
         </div>
         <div className="w-full lg:w-1/3">
