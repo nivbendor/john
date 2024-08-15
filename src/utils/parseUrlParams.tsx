@@ -16,16 +16,18 @@ export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: b
 
   // Business Information
   const age = params.get('age');
-  if (params.get('age')) {
-    result.age = parseInt(params.get('age')!, 10);
-  }
-  const zipCode = params.get('zipCode');
-  if (params.get('zipCode')) {
-    result.age = parseInt(params.get('zipCode')!, 10);
+  if (age) {
+    result.age = parseInt(age, 10);
   }
 
-  if (params.get('annualSalary')) {
-    result.annualSalary = parseInt(params.get('annualSalary')!, 10);
+  const zipCode = params.get('zipCode');
+  if (zipCode) {
+    result.zipCode = zipCode;
+  }
+
+  const annualSalary = params.get('annualSalary');
+  if (annualSalary) {
+    result.annualSalary = parseInt(annualSalary, 10);
   }
 
   const eligibilityParam = params.get('eligibility');
@@ -38,12 +40,16 @@ export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: b
     }
   }
 
+  const showQuoteParam = params.get('showQuote');
+  if (showQuoteParam === '1') {
+    result.showQuoteSection = true;
+  }
+
   // Parse the 'cv' parameter
   const cvParam = params.get('cv');
   if (cvParam === '1') {
     result.showCostPerHour = true;
   }
-  
 
   return result;
 }
