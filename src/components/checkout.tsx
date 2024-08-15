@@ -61,6 +61,8 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     });
   };
 
+  const totalCostPerHour = totalMonthlyPremium * (12/52/40); // Assuming 52 weeks per year, 40 hours per week
+
   return (
     <div className="bg-white p-6 sm:w-full">
       <div className="flex justify-between items-center mb-6 sm:">
@@ -68,12 +70,6 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
         <div className="text-right">
           <p className="text-4xl font-bold text-gray-800">{formatCurrency(totalPremium)}</p>
           <p className="text-sm text-gray-600">Total {costView.toLowerCase()} Cost</p>
-          {/* {showCostPerHour && (
-            <div className="flex items-baseline space-x-1 mt-2">
-              <span className="font-bold">{formatCurrency(costPerHour)}</span>
-              <span className="text-sm text-gray-500">/hour</span>
-            </div>
-          )} */}
         </div>
       </div>
 
@@ -81,9 +77,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
         {Object.entries(products).map(([product, _]) => {
           const premium = getAdjustedPremium(product as Product);
           const monthlyPremium = getMonthlyPremium(product as Product);
-          const productCostPerHour = monthlyPremium * (12/52/40); // Assuming 4 weeks per month
+          const productCostPerHour = monthlyPremium * (12/52/40); // Assuming 52 weeks per year, 40 hours per week
           return (
-            <div key={product} className={`flex items-center justify-between py-2 border-b border-gray-200 ${activeProducts[product] ? '' : 'opacity-50'}`}>
+            <div key={product} className={`flex items-center justify-between py-1 border-gray-200 ${activeProducts[product] ? '' : 'opacity-50'}`}>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -106,6 +102,21 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
           );
         })}
       </div>
+
+      {/* New totals section */}
+      {showCostPerHour && (
+      <div className="mt-4 pt-4 border-t border-gray-200">
+        {/* <div className="flex justify-between items-center">
+          <span className="text-sm font-semibold text-gray-700">Total {costView} Cost:</span>
+          <span className="text-base font-bold text-gray-900">{formatCurrency(totalPremium)}</span>
+        </div> */}
+          <div className="flex justify-between items-center mt-2">
+            <span className="text-sm font-semibold text-gray-700">Total Cost per Hour:</span>
+            <span className="text-base font-bold text-blue-600">{formatCurrency(totalCostPerHour)}/hr</span>
+          </div>
+        
+      </div>
+    )}
     </div>
   );
 };
