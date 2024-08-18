@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult } from '../utils/insuranceTypes';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 import { parseUrlParams } from 'utils/parseUrlParams';
+import { handleQuoteRequest } from '../utils/quoteUtils';
+
 
 interface ActiveProductsToggleProps {
   plan: Record<Product, Plan>;
@@ -116,7 +118,14 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
             <span className="text-sm font-semibold text-gray-700">Total Cost per Hour:</span>
             <span className="text-base font-bold text-blue-600">{formatCurrency(totalCostPerHour)}/hr</span>
           </div>
-        
+          <div className="mt-4">
+            <button
+              onClick={() => handleQuoteRequest(activeProducts, totalPremium, costView)}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
+            >
+              Request Quote
+            </button>
+</div>
       </div>
     )}
     </div>

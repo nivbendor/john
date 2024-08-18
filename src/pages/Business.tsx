@@ -146,7 +146,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
     <div className="min-h-screen bg-gray-100 lg:px-6">
       <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
         <div className="w-full lg:w-2/3 space-y-2">
-          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-8">
+          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
             <ProductSelector
               selectedProduct={selectedProduct}
               setSelectedProduct={setSelectedProduct}
