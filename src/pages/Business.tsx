@@ -11,8 +11,9 @@ import IndividualInfoForm from '../components/IndividualInfoForm';
 import '../styles/iconSettings.css';
 import { parseUrlParams, showCostPerHour } from 'utils/parseUrlParams';
 import InsuranceResources from '../components/Resource';
+import Funnel from '../components/Funnel';
 
-
+// Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
 
 const initialIndividualInfo: IndividualInfo = {
@@ -39,19 +40,28 @@ const initialPremiums: PremiumResult = {
 type BusinessProps = {
   setProducts: React.Dispatch<React.SetStateAction<Record<Product, boolean>>>;
   setTotalCost: React.Dispatch<React.SetStateAction<number>>;
+  funnelData?: {
+    zipCode: string;
+    age: string;
+    coverage: string;
+  };
 };
 
-const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
+const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelData }) => {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
     const urlParams = parseUrlParams();
-    return { ...initialIndividualInfo, ...urlParams };
+     // Convert age to a number if it's a string
+     const normalizedFunnelData = {
+      ...funnelData,
+      age: funnelData?.age ? parseInt(funnelData.age, 10) : initialIndividualInfo.age,
+    };
+    return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
   const [showCostPerHour] = useState(() => {
     const { showCostPerHour } = parseUrlParams();
     return showCostPerHour;
   });
 
-  // const [isExpanded, setIsExpanded] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const { costView, setCostView } = useCostView();
   const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
@@ -127,6 +137,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
       handleInputChange({ name: 'annualSalary', value: numericValue });
     }
   };
+
   const QuoteSection = () => (
     <div className="bg-white rounded-xl shadow-md p-6">
       <h3 className="text-lg font-semibold mb-4">Get My Company Benefits</h3>
@@ -141,30 +152,46 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
     </div>
   );
 
+  const [showFunnel, setShowFunnel] = useState(() => {
+    const { showFunnel } = parseUrlParams();
+    return showFunnel;
+  });
+
+  const handleFunnelComplete = (funnelData: any) => {
+    setIndividualInfo(prevInfo => ({
+      ...prevInfo,
+      ...funnelData
+    }));
+    setShowFunnel(false);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
-      <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
-        <div className="w-full lg:w-2/3 space-y-2">
-          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
-            <ProductSelector
-              selectedProduct={selectedProduct}
-              setSelectedProduct={setSelectedProduct}
-              products={PRODUCTS}
+      {showFunnel ? (
+        <Funnel onComplete={handleFunnelComplete} />
+      ) : (
+        <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
+          <div className="w-full lg:w-2/3 space-y-2">
+            <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
+              <ProductSelector
+                selectedProduct={selectedProduct}
+                setSelectedProduct={setSelectedProduct}
+                products={PRODUCTS}
+              />
+            </div>
+          </div>
+          <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
+            <IndividualInfoForm
+              individualInfo={individualInfo}
+              handleIndividualInfoChange={handleInputChange}
+              handleSalaryChange={handleSalaryChange}
+              errors={errors}
+              costView={costView}
+              setCostView={setCostView}
             />
           </div>
         </div>
-        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
-          <IndividualInfoForm
-            individualInfo={individualInfo}
-            handleIndividualInfoChange={handleInputChange}
-            handleSalaryChange={handleSalaryChange}
-            errors={errors}
-            costView={costView}
-            setCostView={setCostView}
-          />
-        </div>
-      </div>
+      )}
       <div className="flex flex-col lg:flex-row gap-7 px-10 sm:container mx-auto px-0 lg:px-4 py-6 w-full main-container">
         <div className="w-full lg:w-2/3 space-y-8 lg:pl-8 ">
           <div className="bg-white rounded-xl shadow-md p-6">
@@ -182,12 +209,10 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             />
           </div>
           {showCostPerHour && (
-
-          <div className="">
-            <QuoteSection />
-          </div>
-            )}
-
+            <div className="">
+              <QuoteSection />
+            </div>
+          )}
         </div>
         <div className="w-full lg:w-1/3">
           <div className="flex items-center justify-between px-4 lg:px-0">
@@ -223,10 +248,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost }) => {
             />
           </div>
           <span className="hidden lg:block">
-          <InsuranceResources />
+            <InsuranceResources />
           </span>
-          
-
         </div>
       </div>
     </div>

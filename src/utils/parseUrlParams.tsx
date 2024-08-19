@@ -8,12 +8,25 @@ const eligibilityMapping: Record<number, EligibilityOption> = {
   4: 'Family',
 };
 
-export function parseUrlParams(): Partial<IndividualInfo> & { showCostPerHour: boolean; showQuoteSection: boolean } {
+type ParsedUrlParams = Partial<IndividualInfo> & {
+  showCostPerHour: boolean;
+  showQuoteSection: boolean;
+  showFunnel: boolean;
+};
+
+export function parseUrlParams(): ParsedUrlParams {
   const params = new URLSearchParams(window.location.search);
-  const result: Partial<IndividualInfo> & { showCostPerHour: boolean; showQuoteSection: boolean } = {
+  const result: ParsedUrlParams = {
     showCostPerHour: false,
     showQuoteSection: false,
+    showFunnel: false,
   };
+
+  // Add this check
+  const funParam = params.get('fun');
+  if (funParam === '1') {
+    result.showFunnel = true;
+  }
 
   const userParam = params.get('user');
   const userParams = userParam ? urlParamDefinitions[userParam as keyof typeof urlParamDefinitions] : null;
@@ -69,4 +82,4 @@ function isValidEligibility(eligibility: string | null): eligibility is Eligibil
   return eligibility !== null && ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'].includes(eligibility);
 }
 
-export const { showCostPerHour } = parseUrlParams();
+export const { showCostPerHour, showFunnel } = parseUrlParams();

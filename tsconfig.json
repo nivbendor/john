@@ -18,20 +18,10 @@
     "jsx": "react-jsx",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"],
-      "components/*": ["src/components/*"]},
+      "@/*": ["./*"],
+      "components/*": ["components/*"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["**/node_modules", "**/.*/"]
 }
-
-// {
-//   "compilerOptions": {
-//     // ... other options
-//     "baseUrl": ".",
-//     "paths": {
-//       "components/*": ["src/components/*"]
-//     }
-//   },
-//   "include": ["src/**/*"]
-// }
