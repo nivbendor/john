@@ -86,7 +86,7 @@ export const DENTAL_PREMIUMS: Record<Plan, Record<number, Record<EligibilityOpti
   Basic: {
     1: { Individual: 20.53, 'Individual + Spouse': 40.82, 'Individual + Children': 45.42, Family: 70.37 },
     2: { Individual: 22.29, 'Individual + Spouse': 44.32, 'Individual + Children': 49.2, Family: 76.29 },
-    3: { Individual: 23.6, 'Individual + Spouse': 46.94, 'Individual + Children': 52.39, Family: 81.14 },
+    3: { Individual: 23.62, 'Individual + Spouse': 46.94, 'Individual + Children': 52.39, Family: 81.14 },
     4: { Individual: 25, 'Individual + Spouse': 49.71, 'Individual + Children': 55.29, Family: 85.69 },
     5: { Individual: 28.29, 'Individual + Spouse': 56.25, 'Individual + Children': 62.64, Family: 97.06 },
     6: { Individual: 29.38, 'Individual + Spouse': 58.39, 'Individual + Children': 64.83, Family: 100.5 },

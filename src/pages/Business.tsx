@@ -158,37 +158,41 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   });
 
   const handleFunnelComplete = (funnelData: any) => {
+    console.log('Funnel completed with data:', funnelData); // Check if this logs correctly
     setIndividualInfo(prevInfo => ({
       ...prevInfo,
-      ...funnelData
+      ...funnelData,
     }));
-    setShowFunnel(false);
+    setShowFunnel(false); // This should hide the funnel and show the calculator
+    console.log('showFunnel:', showFunnel); // This should log false after the funnel completes
+
   };
 
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
-      {showFunnel ? (
-        <Funnel onComplete={handleFunnelComplete} />
-      ) : (
-        <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
-          <div className="w-full lg:w-2/3 space-y-2">
-            <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
-              <ProductSelector
-                selectedProduct={selectedProduct}
-                setSelectedProduct={setSelectedProduct}
-                products={PRODUCTS}
-              />
-            </div>
-          </div>
-          <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
-            <IndividualInfoForm
-              individualInfo={individualInfo}
-              handleIndividualInfoChange={handleInputChange}
-              handleSalaryChange={handleSalaryChange}
-              errors={errors}
-              costView={costView}
-              setCostView={setCostView}
+    {showFunnel ? (
+      <Funnel onComplete={handleFunnelComplete} />
+    ) : (
+      <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
+        {/* The calculator UI */}
+        <div className="w-full lg:w-2/3 space-y-2">
+          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
+            <ProductSelector
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+              products={PRODUCTS}
             />
+          </div>
+        </div>
+        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
+          <IndividualInfoForm
+            individualInfo={individualInfo}
+            handleIndividualInfoChange={handleInputChange}
+            handleSalaryChange={handleSalaryChange}
+            errors={errors}
+            costView={costView}
+            setCostView={setCostView}
+          />
           </div>
         </div>
       )}
