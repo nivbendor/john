@@ -157,6 +157,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return showFunnel;
   });
 
+  console.log(showFunnel);
+
   const handleFunnelComplete = (funnelData: any) => {
     console.log('Funnel completed with data:', funnelData); // Check if this logs correctly
     setIndividualInfo(prevInfo => ({
@@ -170,92 +172,94 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
 
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
-    {showFunnel ? (
-      <Funnel onComplete={handleFunnelComplete} />
-    ) : (
-      <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
-        {/* The calculator UI */}
-        <div className="w-full lg:w-2/3 space-y-2">
-          <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
-            <ProductSelector
-              selectedProduct={selectedProduct}
-              setSelectedProduct={setSelectedProduct}
-              products={PRODUCTS}
-            />
-          </div>
-        </div>
-        <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
-          <IndividualInfoForm
-            individualInfo={individualInfo}
-            handleIndividualInfoChange={handleInputChange}
-            handleSalaryChange={handleSalaryChange}
-            errors={errors}
-            costView={costView}
-            setCostView={setCostView}
-          />
-          </div>
-        </div>
-      )}
-      <div className="flex flex-col lg:flex-row gap-7 px-10 sm:container mx-auto px-0 lg:px-4 py-6 w-full main-container">
-        <div className="w-full lg:w-2/3 space-y-8 lg:pl-8 ">
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <ProductDetails
-              plans={productPlans}
-              selectedProduct={selectedProduct}
-              premium={premiums[selectedProduct]}
-              costView={costView}
-              individualInfo={individualInfo}
-              setProductPlan={setProductPlan}
-              handleIndividualInfoChange={handleInputChange}
-              errors={errors}
-              recalculatePremium={recalculatePremium}
-              activeProducts={localProducts}
-            />
-          </div>
-          {showCostPerHour && (
-            <div className="">
-              <QuoteSection />
+      {showFunnel ? (
+        <Funnel onComplete={handleFunnelComplete} />
+      ) : (
+      <div>  
+        <div className="container mx-auto px-0 lg:px-4 py-6 w-full main-container">
+          {/* The calculator UI */}
+          <div className="w-full lg:w-2/3 space-y-2">
+            <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
+              <ProductSelector
+                selectedProduct={selectedProduct}
+                setSelectedProduct={setSelectedProduct}
+                products={PRODUCTS}
+              />
             </div>
-          )}
-        </div>
-        <div className="w-full lg:w-1/3">
-          <div className="flex items-center justify-between px-4 lg:px-0">
-            <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
-            <Select
-              value={costView}
-              onValueChange={(value: CostView) => setCostView(value)}
-            >
-              <SelectTrigger className="w-full lg:w-[120px]">
-                <SelectValue>{costView}</SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Monthly">Monthly</SelectItem>
-                <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
-                <SelectItem value="Weekly">Weekly</SelectItem>
-                <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
-          <div className="bg-white rounded-xl shadow-md p-6 top-8 mb-8">
-            <ActiveProductsToggle
-              plan={productPlans}
-              products={localProducts}
-              premiums={premiums}
-              costView={costView}
+          <div className="w-full lg:w-1/3 rightrail individual-info-form-desktop lg:pl-8">
+            <IndividualInfoForm
               individualInfo={individualInfo}
-              handleToggleChange={(product, isActive) => {
-                setLocalProducts(prev => ({
-                  ...prev,
-                  [product]: isActive,
-                }));
-              }}
+              handleIndividualInfoChange={handleInputChange}
+              handleSalaryChange={handleSalaryChange}
+              errors={errors}
+              costView={costView}
+              setCostView={setCostView}
             />
+            </div>
+        </div>
+        <div className="flex flex-col lg:flex-row gap-7 px-10 sm:container mx-auto px-0 lg:px-4 py-6 w-full main-container">
+          <div className="w-full lg:w-2/3 space-y-8 lg:pl-8 ">
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <ProductDetails
+                plans={productPlans}
+                selectedProduct={selectedProduct}
+                premium={premiums[selectedProduct]}
+                costView={costView}
+                individualInfo={individualInfo}
+                setProductPlan={setProductPlan}
+                handleIndividualInfoChange={handleInputChange}
+                errors={errors}
+                recalculatePremium={recalculatePremium}
+                activeProducts={localProducts}
+              />
+            </div>
+            {showCostPerHour && (
+              <div className="">
+                <QuoteSection />
+              </div>
+            )}
           </div>
-          <span className="hidden lg:block">
-            <InsuranceResources />
-          </span>
+          <div className="w-full lg:w-1/3">
+            <div className="flex items-center justify-between px-4 lg:px-0">
+              <h2 className="p-3 text-xl font-semibold mb-2">Cost View</h2>
+              <Select
+                value={costView}
+                onValueChange={(value: CostView) => setCostView(value)}
+              >
+                <SelectTrigger className="w-full lg:w-[120px]">
+                  <SelectValue>{costView}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Monthly">Monthly</SelectItem>
+                  <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
+                  <SelectItem value="Weekly">Weekly</SelectItem>
+                  <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 top-8 mb-8">
+              <ActiveProductsToggle
+                plan={productPlans}
+                products={localProducts}
+                premiums={premiums}
+                costView={costView}
+                individualInfo={individualInfo}
+                handleToggleChange={(product, isActive) => {
+                  setLocalProducts(prev => ({
+                    ...prev,
+                    [product]: isActive,
+                  }));
+                }}
+              />
+            </div>
+            <span className="hidden lg:block">
+              <InsuranceResources />
+            </span>
+          </div>
         </div>
       </div>
+      )}
     </div>
   );
 };
