@@ -11,7 +11,7 @@ import { CostViewProvider } from './components/CostView';
 import { Product } from './utils/insuranceTypes';
 import './styles/background.css';
 import Funnel from './components/Funnel';
-import './styles/funnel.css';
+import './styles/Funnel.css';
 import { parseUrlParams } from './utils/parseUrlParams';
 
 const App: React.FC = () => {
@@ -30,13 +30,14 @@ const App: React.FC = () => {
     <CostViewProvider>
       <Router>
         <Routes>
-          {/* <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} /> */}
+          <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
           <Route path="/john" element={
+            showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
             <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
           } />
-          {/* <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} /> */}
+          <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
         </Routes>
-        {/* {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />} */}
+        {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />}
       </Router>
     </CostViewProvider>
   );
