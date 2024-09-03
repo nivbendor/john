@@ -49,8 +49,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
         <h3 className="text-xl font-semibold mb-2 text-center">Individual Information</h3>
         <div className="flex flex-col space-y-4">
         <div className="flex justify-around items-center">
-            <div className="flex flex-col items-center flex-1">
-              <Label htmlFor="age" className="mb-2 text-sm font-normal text-gray-600">Age</Label>
+            <div className="flex flex-col items-center flex-1 pr-3">
+              <Label htmlFor="age" className=" pr-2 text-sm font-normal text-gray-600">Age</Label>
               <Select
                 value={individualInfo.age.toString()}
                 onValueChange={(value) => handleIndividualInfoChange({ name: 'age', value: parseInt(value) })}
@@ -66,8 +66,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               </Select>
             </div>
             <div className="w-px h-10 bg-gray-300"></div>
-              <div className="flex flex-col items-center flex-1">
-                <Label htmlFor="zipCode" className="mb-2 text-sm font-normal text-gray-600">Zip Code</Label>
+              <div className="flex flex-col items-center flex-1 pr-3">
+                <Label htmlFor="zipCode" className="text-sm font-normal text-gray-600">Zip Code</Label>
                 <Input
                   id="zipCode"
                   name="zipCode"
@@ -76,23 +76,23 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
                   className="w-24 h-10 bg-white-100 rounded-lg border-0 text-center"
                 />
               </div>
-              <div className="w-px h-10 bg-gray-300"></div>
-              <div className="flex flex-col items-center flex-1">
-                <Label htmlFor="annualSalary" className="mb-2 text-lg font-normal text-gray-600">Annual Salary</Label>
+              <div className="w-px h-10 bg-gray-300 "></div>
+              <div className="flex flex-col items-center flex-1 pr-3">
+                <Label htmlFor="annualSalary" className="text-lg font-normal text-gray-600">Annual Salary</Label>
                 <Input
                   id="annualSalary"
                   name="annualSalary"
                   value={formatCurrency(individualInfo.annualSalary)}
                   onChange={handleSalaryChange}
-                  className={`w-28 h-10 bg-white-100 rounded-lg border-0 text-center ${errors["AnnualSalary"] ? 'border-red-500' : ''}`}
+                  className={`w-24 h-10 bg-white-100 rounded-lg border-0 text-center ${errors["AnnualSalary"] ? 'border-red-500' : ''}`}
                 />
               </div>
           </div>
-          <div className="flex items-center justify-center space-x-1 -mt-1">
+          <div className="flex items-center justify-center space-x-1 -mt-1 pt-0.1">
 
           <Label htmlFor="costView" className="text-sm font-normal text-gray-600">Cost View</Label>
-          <Select value={costView} onValueChange={setCostView}>
-            <SelectTrigger className="w-28 h-10 bg-white rounded-lg border border-gray-300 text-center">
+          <Select className="w-28" value={costView} onValueChange={setCostView}>
+            <SelectTrigger >
               <SelectValue>{costView}</SelectValue>
             </SelectTrigger>
             <SelectContent>

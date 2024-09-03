@@ -7,12 +7,12 @@ interface SelectProps<T> extends React.SelectHTMLAttributes<HTMLSelectElement> {
   className?: string;
 }
 
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>( // Use generics instead of "any"
+export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
   <T,>({ children, onValueChange, className, ...props }: SelectProps<T>, ref: React.Ref<HTMLSelectElement>) => (
-    <div className="flex justify-center md:mb-2  md:mt-2"> {/* Center the select element within its container */}
+    <div className="flex justify-center"> {/* Ensure this div doesn't affect the alignment */}
       <select
         ref={ref}
-        className={`*w-full border-solid	rounded-xl p-2 text-center text-base font-medium* ${className || ''}`} // Add rounded-xl, padding, text-center, text size, and font weight
+        className={`w-12 h-[40px] border-solid rounded-lg p-1 text-center text-base font-medium ${className || ''}`}
         onChange={(e) => onValueChange && onValueChange(e.target.value as unknown as T)}
         {...props}
       >
@@ -30,7 +30,9 @@ interface SelectTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 export const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
   ({ children, ...props }, ref) => (
-    <button ref={ref} {...props}>{children}</button>
+    <button ref={ref} className="w-40 h-10 bg-white rounded-lg border border-gray-300 text-center" {...props}>
+      {children}
+    </button>
   )
 );
 
@@ -42,7 +44,7 @@ interface SelectValueProps {
 }
 
 export const SelectValue: React.FC<SelectValueProps> = ({ children, placeholder }) => (
-  <span>{children || placeholder}</span>
+  <span className="w-full text-center">{children || placeholder}</span>
 );
 
 interface SelectContentProps {
@@ -62,7 +64,9 @@ interface SelectItemProps extends React.OptionHTMLAttributes<HTMLOptionElement> 
 
 export const SelectItem = React.forwardRef<HTMLOptionElement, SelectItemProps>(
   ({ children, ...props }, ref) => (
-    <option ref={ref} {...props}>{children}</option>
+    <option ref={ref} {...props} className="text-center">
+      {children}
+    </option>
   )
 );
 
