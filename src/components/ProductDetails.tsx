@@ -39,6 +39,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 }) => {
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
+  const getDynamicParagraph = (selectedProduct: Product, currentPlan: Plan): string => {
+    if (selectedProduct === 'Critical Illness/Cancer') {
+      return "Money won’t fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.";
+    }
+    return '';
+    };
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
   const secondaryCost = premium * 0.1; // Example calculation: 10% of the primary premium
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
@@ -124,101 +130,104 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       console.error(`No PDF URL found for product: ${selectedProduct}`);
     }
   };
+  const dynamicParagraph = getDynamicParagraph(selectedProduct, currentPlan);
 
   
   return (
     <div className="space-y-4 px-4">
       <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
-        <div className="flex items-center space-x-4 w-full lg:w-auto">
+        <div className="flex flex-col w-full lg:w-auto">
+          {/* Product Title */}
           <h2 className="text-2xl font-bold">{getProductLabel(selectedProduct)}</h2>
-          <Tooltip title="Download Slip">
-            <div onClick={handlePDFDownload} className="focus:outline-none cursor-pointer">
-              {/* <img src="/pdf_dl.ico" alt="Download PDF" className="w-6 h-6" /> */}
-              <img 
-                  src={`${process.env.PUBLIC_URL}/pdf_dl.ico`}
-                  alt="pdf" 
-                  className="w-6 h-6"
-                />
-            </div>
-          </Tooltip>
-      </div>
-      <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 w-full lg:w-auto">
-        {selectedProduct === 'Life / AD&D' && (
-          <div className="w-full lg:w-auto">
-            <CoverageSlider
-              individualInfo={individualInfo}
-              onCoverageChange={handleCoverageChange}
-          />
+          {/* New Row for the Hyperlink */}
+          <a
+            href={getPDFUrl(selectedProduct)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 underline text-sm mt-1"
+          >
+            View/Download Benefit Details
+          </a>
         </div>
+  
+        <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 w-full lg:w-auto">
+          {selectedProduct === 'Life / AD&D' && (
+            <div className="w-full lg:w-auto">
+              <CoverageSlider
+                individualInfo={individualInfo}
+                onCoverageChange={handleCoverageChange}
+              />
+            </div>
+          )}
+          {hasMultiplePlans(selectedProduct) && (
+            <Dropdown onSelect={handlePlanChange}>
+              <Dropdown.Toggle variant="primary" id="dropdown-plan">
+                {currentPlan}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {['Basic', 'Premium'].map((plan) => (
+                  <Dropdown.Item key={plan} eventKey={plan} active={currentPlan === plan}>
+                    <div className="flex justify-between items-center w-full">
+                      <span>{plan}</span>
+                      <span className="ml-4">{formatCurrency(planPremiums[plan as Plan])} / {costView.toLowerCase()}</span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+          {eligibilityOptions.length > 1 && (
+            <Dropdown onSelect={handleEligibilityChange}>
+              <Dropdown.Toggle variant="primary" id="dropdown-eligibility">
+                {individualInfo.eligibility}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {eligibilityOptions.map((option) => (
+                  <Dropdown.Item key={option} eventKey={option} active={option === individualInfo.eligibility}>
+                    <div className="flex justify-between items-center w-full">
+                      <span>{option}</span>
+                      <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
+        </div>
+      </div>
+  
+      <div>
+        {/* Dynamic paragraph */}
+      {dynamicParagraph && (
+        <p className="text-gray-900 mb-4 mb-2">{dynamicParagraph}</p>
       )}
-      {hasMultiplePlans(selectedProduct) && (
-        <Dropdown onSelect={handlePlanChange}>
-          <Dropdown.Toggle variant="primary" id="dropdown-plan">
-            {currentPlan}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {['Basic', 'Premium'].map((plan) => (
-              <Dropdown.Item key={plan} eventKey={plan} active={currentPlan === plan}>
-                <div className="flex justify-between items-center w-full">
-                  <span>{plan}</span>
-                  <span className="ml-4">{formatCurrency(planPremiums[plan as Plan])} / {costView.toLowerCase()}</span>
-                </div>
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
+        <ul className="list-disc pl-2 sm:pl-9">
+          {bulletPoints.map((point, index) => (
+            <li key={index}>{point}</li>
+          ))}
+        </ul>
+      </div>
+  
+      {selectedProduct === 'Life / AD&D' && (errors.employeeCoverage || errors.spouseCoverage) && (
+        <Alert variant="destructive">
+          <AlertDescription>
+            {errors.employeeCoverage && <div>{errors.employeeCoverage}</div>}
+            {errors.spouseCoverage && <div>{errors.spouseCoverage}</div>}
+          </AlertDescription>
+        </Alert>
       )}
-      {eligibilityOptions.length > 1 && (
-        <Dropdown onSelect={handleEligibilityChange}>
-          <Dropdown.Toggle variant="primary" id="dropdown-eligibility">
-            {individualInfo.eligibility}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            {eligibilityOptions.map((option) => (
-              <Dropdown.Item key={option} eventKey={option} active={option === individualInfo.eligibility}>
-                <div className="flex justify-between items-center w-full">
-                  <span>{option}</span>
-                  <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>
-                </div>
-              </Dropdown.Item>
-            ))}
-          </Dropdown.Menu>
-        </Dropdown>
-      )}
+  
+      <div className="bg-gray-100 p-3 rounded-md shadow-md">
+        <div className="flex items-baseline space-x-2">
+          <p className="text-lg font-semibold text-gray-700">Cost:</p>
+          <p className="price">{formatCurrency(premium)}</p>
+          <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div>
-    <h3 className="text-lg font-semibold mb-2">Plan Details:</h3>
-    <ul className="list-disc pl-5">
-      {bulletPoints.map((point, index) => (
-        <li key={index}>{point}</li>
-      ))}
-    </ul>
-  </div>
-
-  {selectedProduct === 'Life / AD&D' && (errors.employeeCoverage || errors.spouseCoverage) && (
-    <Alert variant="destructive">
-      <AlertDescription>
-        {errors.employeeCoverage && <div>{errors.employeeCoverage}</div>}
-        {errors.spouseCoverage && <div>{errors.spouseCoverage}</div>}
-      </AlertDescription>
-    </Alert>
-  )}
-
-  <div className="bg-gray-100 p-4 rounded-md shadow-md">
-    <div className="flex items-baseline space-x-2">
-      <p className="text-lg font-semibold text-gray-700">Cost:</p>
-      <p className="price">{formatCurrency(premium)}</p>
-      <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
-    </div>
-    {/* <div className="small">
-    <span>{formatCurrency(secondaryCost)} /hour </span>
-  </div> */}
-  </div>
-</div>
-
   );
+  
+  
 };
 
 export default ProductDetails;

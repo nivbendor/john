@@ -46,7 +46,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       <div className="h-2 bg-blue-500 rounded-b-full"></div>
 
       <div className="px-4 py-1">
-        <h3 className="text-xl font-semibold mb-2 text-center">Individual Information</h3>
+        <h3 className="text-xl font-semibold mb-3 text-center">Individual Information</h3>
         <div className="flex flex-col space-y-4">
         <div className="flex justify-around items-center">
             <div className="flex flex-col items-center flex-1 pr-3">

@@ -189,14 +189,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   setCostView={setCostView}
                 />
               </div>
-              <div className="bg-white rounded-xl shadow-md p-4 lg:pl-2">
+              <div className="bg-white rounded-xl shadow-md p-2 lg:pl-2">
                 <ProductSelector
                   selectedProduct={selectedProduct}
                   setSelectedProduct={setSelectedProduct}
                   products={PRODUCTS}
                 />
               </div>
-              <div className="bg-white rounded-xl shadow-md p-6">
+              <div className="bg-white rounded-xl shadow-md p-3">
                 <ProductDetails
                   plans={productPlans}
                   selectedProduct={selectedProduct}
