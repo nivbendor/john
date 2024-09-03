@@ -89,6 +89,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
 
   return (
     <div className="w-full rounded-lg overflow-hidden p-2">
+      <h3 className="text-lg font-semibold mb-4">Choose Your Coverage</h3>
       <Slider ref={sliderRef} {...settings}>
         {products.map((product) => (
           <div key={product} className="px-0">

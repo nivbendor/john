@@ -66,9 +66,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   const totalCostPerHour = totalMonthlyPremium * (12/52/40); // Assuming 52 weeks per year, 40 hours per week
 
   return (
-    <div className="bg-white p-6 sm:w-full">
+    <div className="bg-white p-2 sm:w-full">
       <div className="flex justify-between items-center mb-6 sm:">
-        <h2 className="text-2xl font-bold text-gray-800">Your Cost</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Total</h2>
         <div className="text-right">
           <p className="text-4xl font-bold text-gray-800">{formatCurrency(totalPremium)}</p>
           <p className="text-sm text-gray-600">Total {costView.toLowerCase()} Cost</p>
@@ -119,16 +119,18 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
             <span className="text-base font-bold text-blue-600">{formatCurrency(totalCostPerHour)}/hr</span>
           </div>
           <div className="mt-4">
-            <button
-              onClick={() => handleQuoteRequest(activeProducts, totalPremium, costView)}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300"
-            >
-              Request Quote
-            </button>
+
 </div>
       </div>
     )}
+                <button
+              onClick={() => handleQuoteRequest(activeProducts, totalPremium, costView)}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-300 mt-4 mb-4"
+              >
+              Register My Company
+            </button>
     </div>
+    
   );
 };
 

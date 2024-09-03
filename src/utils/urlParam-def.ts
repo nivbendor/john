@@ -20,7 +20,7 @@ export const urlParamDefinitions = {
       age: 50,
       annualSalary: 180000,
       eligibility: 1,
-      cv: 1,
+      cv: 0,
     },
     // You can add more user types as needed
   };

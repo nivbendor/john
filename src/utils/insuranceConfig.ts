@@ -223,16 +223,23 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
   },
   'Critical Illness/Cancer': {
     'Basic': [
-      "Pays a lump sum amount for initial diagnosis",
+      "Helps cover expenses that other insurance won’t",
+      "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
       "Pays same lump sum for reoccurrence",
-      "Pays 100% on the initial diagnosis of invasive cancer",
-      "Dozens of covered illnesses"
+      "Pays $15,000 on the initial diagnosis of invasive cancer",
+      "Benefit is paid directly to you",
+      "Dozens of illnesses are covered by this policy",
+      "Available for employees and dependents"
     ],
     'Premium': [
-      "Pays a lump sum amount for initial diagnosis",
+      "Helps cover expenses that other insurance won’t",
+      "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
       "Pays same lump sum for reoccurrence",
-      "Pays 100% on the initial diagnosis of invasive cancer",
-      "Dozens of covered illnesses"
+      "Pays $15,000 on the initial diagnosis of invasive cancer",
+      "Benefit is paid directly to you",
+      "Dozens of illnesses are covered by this policy",
+      "Available for employees and dependents"
+
     ]
   }
 };

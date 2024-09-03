@@ -11,7 +11,7 @@ import { CostViewProvider } from './components/CostView';
 import { Product } from './utils/insuranceTypes';
 import './styles/background.css';
 import Funnel from './components/Funnel';
-import './styles/Funnel.css';
+import './styles/funnel.css';
 import { parseUrlParams } from './utils/parseUrlParams';
 
 const App: React.FC = () => {
