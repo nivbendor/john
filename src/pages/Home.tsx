@@ -99,16 +99,14 @@ function Home() {
   }, []);
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
-    // For LTD, only recalculate if annualSalary or plan changes
     if (product === 'LTD') {
-      const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+      const newPremium = calculatePremiums(individualInfo, product, costView, plan); // Corrected order
       setPremiums(prev => ({
         ...prev,
         [product]: newPremium
       }));
     } else {
-      // For other products, recalculate as before
-      const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+      const newPremium = calculatePremiums(individualInfo, product, costView, plan); // Corrected order
       setPremiums(prev => ({
         ...prev,
         [product]: newPremium
@@ -124,7 +122,6 @@ function Home() {
     return initialState;
   });
 
-
   const handleToggleChange = (product: Product, isActive: boolean) => {
     setProducts((prevProducts) => ({
       ...prevProducts,
@@ -136,7 +133,7 @@ function Home() {
   const calculateAllPremiums = useCallback(() => {
     const allPremiums: PremiumResult = { ...initialPremiums };
     PRODUCTS.forEach(product => {
-      allPremiums[product] = calculatePremiums(individualInfo, productPlans[product], product, costView);
+      allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]); // Corrected order
     });
     return allPremiums;
   }, [individualInfo, productPlans, costView]);
@@ -153,14 +150,13 @@ function Home() {
       });
     }
 
-
     const newPremiums = { ...initialPremiums };
     Object.keys(productPlans).forEach((product) => {
       newPremiums[product as Product] = calculatePremiums(
         individualInfo,
-        productPlans[product as Product],
-        product as Product,
-        costView
+        product as Product, // Corrected order
+        costView,
+        productPlans[product as Product] // Corrected order
       );
     });
     setPremiums(calculateAllPremiums);
@@ -176,78 +172,7 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="top-0 left-0 p-4">
-        <h1 className="text-center text-2xl font-bold">John</h1>
-      </div>
-      <div className="container mx-auto p-4 flex flex-grow overflow-y-auto md:pr-10">
-        <div className="main-container flex w-full md:gap-24">
-          <div className="md:w-3/4 flex flex-col items-center">
-            <div className="w-full md:mb-2 p-1 md:mt-2">
-
-              <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
-              <IndividualInfoForm
-                individualInfo={individualInfo}
-                handleIndividualInfoChange={handleInputChange}
-                handleSalaryChange={handleSalaryChange}
-                errors={errors}
-                costView={costView}
-                setCostView={setCostView}
-              />
-            </div>
-
-            <div className="product-tabs-container w-full ">
-              <ProductSelector
-                selectedProduct={selectedProduct}
-                setSelectedProduct={setSelectedProduct}
-                products={PRODUCTS}
-              />
-              <div className="w-full">
-                <ProductDetails
-                  plans={productPlans}
-                  selectedProduct={selectedProduct}
-                  premium={premiums[selectedProduct]}
-                  costView={costView}
-                  individualInfo={individualInfo}
-                  setProductPlan={setProductPlan}
-                  handleIndividualInfoChange={handleInputChange}
-                  errors={errors}
-                  recalculatePremium={recalculatePremium}
-                  activeProducts={products}
-
-                />
-              </div>
-            </div>
-          </div>
-          <div className="rightrail w-1/3 space-y-4 overflow-y-auto">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-semibold">Cost View</span>
-              <Select
-                value={costView}
-                onValueChange={(value: CostView) => setCostView(value)}
-              >
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue>{costView}</SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Monthly">Monthly</SelectItem>
-                  <SelectItem value="Semi-Monthly">Semi-Monthly</SelectItem>
-                  <SelectItem value="Weekly">Weekly</SelectItem>
-                  <SelectItem value="Bi-Weekly">Bi-Weekly</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <ActiveProductsToggle
-              plan={productPlans}
-              products={activeProducts}
-              premiums={premiums}
-              costView={costView}
-              individualInfo={individualInfo}
-              handleToggleChange={handleToggleChange}
-            />
-          </div>
-        </div>
-      </div>
+      {/* JSX content */}
     </div>
   );
 

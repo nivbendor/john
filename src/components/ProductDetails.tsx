@@ -46,7 +46,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     return '';
     };
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
-  const secondaryCost = premium * 0.1; // Example calculation: 10% of the primary premium
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
     Individual: 0,
     'Individual + Spouse': 0,

@@ -5,7 +5,7 @@ import ProductDetails from '../components/ProductDetails';
 import ActiveProductsToggle from '../components/checkout';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
 import ProductSelector from '../components/ProductSelector';
-import { PRODUCTS } from '../utils/insuranceConfig';
+import { defaultPlans, PRODUCTS } from '../utils/insuranceConfig';
 import { useCostView } from '../components/CostView';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import '../styles/iconSettings.css';
@@ -50,13 +50,13 @@ type BusinessProps = {
 const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelData }) => {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
     const urlParams = parseUrlParams();
-     // Convert age to a number if it's a string
-     const normalizedFunnelData = {
+    const normalizedFunnelData = {
       ...funnelData,
       age: funnelData?.age ? parseInt(funnelData.age, 10) : initialIndividualInfo.age,
     };
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
+  
   const [showCostPerHour] = useState(() => {
     const { showCostPerHour } = parseUrlParams();
     return showCostPerHour;
@@ -66,33 +66,36 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   const { costView, setCostView } = useCostView();
   const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
-  const [errors] = useState<Record<string, string>>({});
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
     PRODUCTS.reduce((acc, product) => ({
       ...acc,
-      [product]: 'Basic'
+      [product]: defaultPlans[product], // Fetch the default plan from defaultPlans
     }), {} as Record<Product, Plan>)
   );
+  
 
-  const calculateAllPremiums = useCallback(() => {
-    const allPremiums: PremiumResult = { ...initialPremiums };
-    PRODUCTS.forEach(product => {
-      allPremiums[product] = calculatePremiums(individualInfo, productPlans[product], product, costView);
-    });
-    return allPremiums;
-  }, [individualInfo, productPlans, costView]);
-
+  // Recalculate premiums when products or plans are changed
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
-    const newPremium = calculatePremiums(individualInfo, plan, product, costView);
+    const newPremium = calculatePremiums(individualInfo, product, costView, plan);
     setPremiums(prev => ({
       ...prev,
-      [product]: newPremium
+      [product]: newPremium,
     }));
   }, [individualInfo, costView]);
 
+  // Calculate all premiums
+  const calculateAllPremiums = useCallback(() => {
+    const allPremiums: PremiumResult = { ...initialPremiums };
+    PRODUCTS.forEach(product => {
+      allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]);
+    });
+    return allPremiums; // Ensure this returns the calculated premiums
+  }, [individualInfo, costView, productPlans]);
+
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
     setProductPlans(prev => ({ ...prev, [product]: plan }));
-  }, []);
+    recalculatePremium(product, plan);
+  }, [recalculatePremium]);
 
   const handleInputChange = useCallback((
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | { name: string; value: string | number },
@@ -105,10 +108,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         value = parseInt(value as string, 10);
       }
 
-      const newInfo = {
-        ...prev,
-        [name]: value,
-      };
+      const newInfo = { ...prev, [name]: value };
 
       if (name === 'annualSalary') {
         const newLTDPlan = newInfo.annualSalary >= 100000 ? 'Premium' : 'Basic';
@@ -126,7 +126,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   }, [productPlans.LTD, recalculatePremium]);
 
   useEffect(() => {
-    const newPremiums = calculateAllPremiums();
+    const newPremiums = calculateAllPremiums(); // Correct: calculate and set premiums
     setPremiums(newPremiums);
   }, [calculateAllPremiums]);
 
@@ -157,15 +157,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return showFunnel;
   });
 
-  console.log(showFunnel);
-
   const handleFunnelComplete = (funnelData: any) => {
-    console.log('Funnel completed with data:', funnelData);
     setIndividualInfo(prevInfo => ({
       ...prevInfo,
       ...funnelData,
     }));
-    setShowFunnel(false); // This should hide the funnel and show the calculator
+    setShowFunnel(false); // Hide funnel after completion
   };
   
   return (
@@ -174,17 +171,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         <Funnel onComplete={handleFunnelComplete} />
       ) : (
         <div className="container mx-auto px-0 lg:px-4 py-6">
-          {/* Main content area */}
           <div className="flex flex-col lg:flex-row gap-7">
-            {/* Left column */}
             <div className="w-full lg:w-2/3 space-y-8">
-              {/* Individual Information at the top of the left column */}
               <div className="bg-white rounded-xl shadow-md p-4">
                 <IndividualInfoForm
                   individualInfo={individualInfo}
                   handleIndividualInfoChange={handleInputChange}
                   handleSalaryChange={handleSalaryChange}
-                  errors={errors}
+                  errors={{}}
                   costView={costView}
                   setCostView={setCostView}
                 />
@@ -205,19 +199,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   individualInfo={individualInfo}
                   setProductPlan={setProductPlan}
                   handleIndividualInfoChange={handleInputChange}
-                  errors={errors}
+                  errors={{}}
                   recalculatePremium={recalculatePremium}
                   activeProducts={localProducts}
                 />
               </div>
-              {showCostPerHour && (
-                <div>
-                  <QuoteSection />
-                </div>
-              )}
+              {showCostPerHour && <QuoteSection />}
             </div>
-  
-            {/* Right column */}
+
             <div className="w-full lg:w-1/3 space-y-8">
               <div className="bg-white rounded-xl shadow-md p-6">
                 <ActiveProductsToggle
@@ -234,9 +223,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   }}
                 />
               </div>
-              <span className="hidden lg:block">
-                <InsuranceResources />
-              </span>
+              <InsuranceResources />
             </div>
           </div>
         </div>

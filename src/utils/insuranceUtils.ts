@@ -8,7 +8,6 @@ import {
   USState,
   Plan,
   IndividualInfo,
-  PRODUCTS,
   ELIGIBILITY_OPTIONS,
   US_STATES,
   CostView,
@@ -29,6 +28,8 @@ import {
   CRITICAL_ILLNESS_RATES,
   PRODUCT_ELIGIBILITY_OPTIONS,
   insuranceConfig,
+  defaultPlans,
+  PRODUCTS,
 } from './insuranceConfig';
 
 export function cn(...inputs: ClassValue[]) {
@@ -106,9 +107,12 @@ export const getDefaultIndividualData = () => {
   return { ...insuranceConfig.Individual };
 };
 
+// Display / Hide plan dropdown
 export function hasMultiplePlans(product: Product): boolean {
-  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD'].includes(product);
+  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD', 'Accident', 'Dental', 'Vision'].includes(product);
 }
+
+
 
 function getLTDPlan(annualSalary: number): Plan {
   return annualSalary >= 100000 ? 'Premium' : 'Basic';
@@ -199,9 +203,9 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
 
 export const calculatePremiums = (
   individualInfo: IndividualInfo,
-  plan: Plan,
   selectedProduct: Product,
-  costView: CostView
+  costView: CostView,
+  plan: Plan = defaultPlans[selectedProduct] // Use the default plan from defaultPlans
 ): number => {
   const calculatePremium = PREMIUM_CALCULATIONS[selectedProduct];
 

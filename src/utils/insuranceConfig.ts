@@ -8,6 +8,16 @@ import { getDefaultIndividualData } from './insuranceUtils';
 
 export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
 
+export const defaultPlans: Record<Product, Plan> = {
+  LTD: 'Premium',
+  STD: 'Premium',
+  'Life / AD&D': 'Basic',
+  Accident: 'Premium',
+  Dental: 'Basic',
+  Vision: 'Premium',
+  'Critical Illness/Cancer': 'Basic',
+};
+
 export const ELIGIBILITY_OPTIONS: EligibilityOption[] = ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'];
 
 export const US_STATES: USState[] = [
