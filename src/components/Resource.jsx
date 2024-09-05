@@ -26,7 +26,7 @@ export const insuranceResources = [
 
 const InsuranceResources: React.FC = () => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mt-8">
+    <div className="hidden lg:block bg-white rounded-xl shadow-md p-6 mt-8">
       <h2 className="text-2xl font-bold mb-2">Insurance Resources</h2>
       <p className="text-gray-600 mb-4">
         Explore our collection of insurance product information.
