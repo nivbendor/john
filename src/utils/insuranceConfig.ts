@@ -159,78 +159,145 @@ export const STATE_CATEGORIES: Record<string, USState[]> = {
   Other: US_STATES.filter(state => !['AK', 'CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state))
 };
 
+
+export const PRODUCT_DYNAMIC_PARAGRAPHS: Record<Product, Record<Plan, string>> = {
+  'LTD': {
+    'Basic': "How would you pay your expenses if you cannot work because of injury or illness?",
+    'Premium': "How would you pay your expenses if you cannot work because of injury or illness?"
+  },
+  'STD': {
+    'Basic': "How would you pay your monthly expenses if you cannot work because of injury or illness?",
+    'Premium': "How would you pay your monthly expenses if you cannot work because of injury or illness?"
+  },
+  'Life / AD&D': {
+    'Basic': "Life insurance helps loved ones financially in the event of a premature death.",
+    'Premium': "Life insurance helps loved ones financially in the event of a premature death."
+  },
+  'Accident': {
+    'Basic': "It’s not if you have an accident rather, when?  Accident insurance helps with expenses that may not be covered by other insurances.",
+    'Premium': "It’s not if you have an accident rather, when?  Accident insurance helps with expenses that may not be covered by other insurances."
+  },
+  'Dental': {
+    'Basic': "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+    'Premium': "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?"
+  },
+  'Vision': {
+    'Basic': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages. $10 copay for an annual eye exam. You can get frames and lenses every year. VSP Network. Check for an in-network doctor HERE. $10 copay for annual eye exam. Available for employee and dependents.",
+    'Premium': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages. $10 copay for an annual eye exam. You can get frames and lenses every year. VSP Network. Check for an in-network doctor HERE. $10 copay for annual eye exam. Available for employee and dependents."
+  },
+  'Critical Illness/Cancer': {
+    'Basic': "Money won’t fix everything but our lump some payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
+    'Premium': "Money won’t fix everything but our lump some payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike."
+  },
+};
+
+
+
+
 export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
   'LTD': {
     'Basic': [
-      "Income protection",
-      "Protects Gross 1099 income",
-      "Benefit maximum of $8,333.33 per month",
-      "Guaranteed Issue"
+      "LTD Insurance protects your ability to earn an income",
+      "Up to $15,000 of monthly benefit",
+      "Your benefit will be $XX,XXX of lost income per month",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Benefit can be paid up to your normal retirement age",
+      "Available for employees only"
     ],
     'Premium': [
-      "Protect your ability to earn an income",
-      "Protects Gross 1099 income",
-      "Benefit maximum of $15,000 per month",
-      "Guaranteed Issue"
+      "LTD Insurance protects your ability to earn an income",
+      "Up to $15,000 of monthly benefit",
+      "Your benefit will be $XX,XXX of lost income per month",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Benefit can be paid up to your normal retirement age",
+      "Available for employees only"
     ]
   },
   'STD': {
     'Basic': [
-      "Income protection",
-      "Covers pregnancy",
-      "Benefit maximum of $1,200 per week",
-      "Guaranteed Issue"
+      "Up to $1,200 of weekly benefit",
+      "Your benefit will be $X,XXX of lost income per week",
+      "Includes missing work due to pregnancy (women only)",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Available for employees only"
     ],
-    'Premium': []
+    'Premium': [
+      "Up to $1,200 of weekly benefit",
+      "Your benefit will be $X,XXX of lost income per week",
+      "Includes missing work due to pregnancy (women only)",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Available for employees only"
+    ]
   },
   'Life / AD&D': {
     'Basic': [
       "$150,000 of coverage",
-      "Guaranteed issue",
-      "Coverage for spouse and children"
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Spouse is eligible for up to $20,000 of coverage",
+      "$2.50 provides $10,000 of coverage for all your children",
+      "Available for employees and dependents"
     ],
     'Premium': [
       "$150,000 of coverage",
-      "Guaranteed issue",
-      "Coverage for spouse and children"
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
+      "Spouse is eligible for up to $20,000 of coverage",
+      "$2.50 provides $10,000 of coverage for all your children",
+      "Available for employees and dependents"
     ]
   },
   'Accident': {
     'Basic': [
-      "Pays on and off job",
-      "Large benefit payouts",
-      "25% organized sport bonus"
+      "Pays large benefit amounts for accidents needing medical attention",
+      "Benefit is paid directly to you",
+      "Pays for on and off the job accidents",
+      "An extra 25% is paid for accidents that occur playing organized sports",
+      "Available for employees and dependents"
     ],
     'Premium': [
-      "Pays on and off job",
-      "Large benefit payouts",
-      "25% organized sport bonus"
-    ]
-  },
-  'Vision': {
-    'Basic': [
-      "Frames and lenses every year",
-      "VSP Network"
-    ],
-    'Premium': [
-      "Frames and lenses every year",
-      "VSP Network"
+      "Pays large benefit amounts for accidents needing medical attention",
+      "Benefit is paid directly to you",
+      "Pays for on and off the job accidents",
+      "An extra 25% is paid for accidents that occur playing organized sports",
+      "Available for employees and dependents"
     ]
   },
   'Dental': {
     'Basic': [
-      "Great benefit if your dentist is in network",
-      "$1000 annual maximum per person",
-      "Root canals covered in basic at 80% (typically root canals are major coverage)"
+      "Great benefit if your dentist is in network.",
+      "Check for an in-network dentist HERE.",
+      "$1000 annual maximum per person.",
+      "Root canals covered in basic at 80% (typically root canals are major coverage).",
+      "Available for employees and dependents"
     ],
     'Premium': [
-      "If your dentist is out-of-network it doesn't matter",
-      "Pays the same percentage for out-of-network",
-      "$1,500 annual maximum per person",
-      "Root canals covered in basic at 80% (typically root canals are major coverage)",
-      "$1,000 child ortho (lifetime max)"
+      "Pays the same if your dentist is in-network or out-of-network.",
+      "Check for an in-network dentist HERE for bigger savings.",
+      "$1,500 annual maximum per person.",
+      "Root canals are covered in the basic level at 80% (typically root canals are major coverage at 50% or less).",
+      "$1,000 child ortho (lifetime max).",
+      "Available for employees and dependents"
     ]
   },
+
+  'Vision': {
+    'Basic': [
+      "$10 copay for an annual eye exam.",
+      "You can get frames and lenses every year.",
+      "VSP Network.",
+      "Check for an in-network doctor HERE.",
+      "Available for employee and dependents"
+    ],
+    'Premium': [
+      "$10 copay for an annual eye exam.",
+      "You can get frames and lenses every year.",
+      "VSP Network.",
+      "Check for an in-network doctor HERE.",
+      "Available for employee and dependents"
+    ]
+  },
+
+
+
   'Critical Illness/Cancer': {
     'Basic': [
       "Helps cover expenses that other insurance won’t",
@@ -249,10 +316,10 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
       "Benefit is paid directly to you",
       "Dozens of illnesses are covered by this policy",
       "Available for employees and dependents"
-
     ]
   }
 };
+
 
 export const STD_CONFIG = {
   benefitAmountKey: 0.6,

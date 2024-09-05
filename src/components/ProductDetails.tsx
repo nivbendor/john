@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText } from '../utils/insuranceTypes';
-import { LIFE_ADD_CONFIG, PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceConfig';
+import { LIFE_ADD_CONFIG, PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_DYNAMIC_PARAGRAPHS } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
@@ -40,11 +40,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const currentPlan = plans[selectedProduct];
   const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
   const getDynamicParagraph = (selectedProduct: Product, currentPlan: Plan): string => {
-    if (selectedProduct === 'Critical Illness/Cancer') {
-      return "Money won’t fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.";
-    }
-    return '';
-    };
+    return PRODUCT_DYNAMIC_PARAGRAPHS[selectedProduct]?.[currentPlan] || '';
+  };
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
     Individual: 0,
@@ -196,10 +193,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
   
       <div>
-        {/* Dynamic paragraph */}
       {dynamicParagraph && (
-        <p className="text-gray-900 mb-4 mb-2">{dynamicParagraph}</p>
-      )}
+          <p className="text-gray-900 mb-4 mb-2">{dynamicParagraph}</p>
+        )}
         <ul className="list-disc pl-2 sm:pl-9">
           {bulletPoints.map((point, index) => (
             <li key={index}>{point}</li>
