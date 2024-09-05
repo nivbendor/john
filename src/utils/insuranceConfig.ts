@@ -182,8 +182,8 @@ export const PRODUCT_DYNAMIC_PARAGRAPHS: Record<Product, Record<Plan, string>> =
     'Premium': "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?"
   },
   'Vision': {
-    'Basic': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages. $10 copay for an annual eye exam. You can get frames and lenses every year. VSP Network. Check for an in-network doctor HERE. $10 copay for annual eye exam. Available for employee and dependents.",
-    'Premium': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages. $10 copay for an annual eye exam. You can get frames and lenses every year. VSP Network. Check for an in-network doctor HERE. $10 copay for annual eye exam. Available for employee and dependents."
+    'Basic': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
+    'Premium': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages."
   },
   'Critical Illness/Cancer': {
     'Basic': "Money won’t fix everything but our lump some payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
@@ -231,20 +231,25 @@ export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
   },
   'Life / AD&D': {
     'Basic': [
-      "$150,000 of coverage",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Spouse is eligible for up to $20,000 of coverage",
-      "$2.50 provides $10,000 of coverage for all your children",
+      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
+      "Up to $150,000 of coverage.",
+      "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled.",
+      "Spouse is eligible for up to $20,000 of coverage.",
+      "$2.50 provides $10,000 of coverage for all your children.",
       "Available for employees and dependents"
     ],
     'Premium': [
-      "$150,000 of coverage",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Spouse is eligible for up to $20,000 of coverage",
-      "$2.50 provides $10,000 of coverage for all your children",
+      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
+      "Up to $150,000 of coverage.",
+      "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
+      "Guaranteed Issue - meaning just sign-up and you’re enrolled.",
+      "Spouse is eligible for up to $20,000 of coverage.",
+      "$2.50 provides $10,000 of coverage for all your children.",
       "Available for employees and dependents"
     ]
   },
+
   'Accident': {
     'Basic': [
       "Pays large benefit amounts for accidents needing medical attention",
