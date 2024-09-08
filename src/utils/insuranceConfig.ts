@@ -13,7 +13,7 @@ export const defaultPlans: Record<Product, Plan> = {
   STD: 'Premium',
   'Life / AD&D': 'Basic',
   Accident: 'Premium',
-  Dental: 'Basic',
+  Dental: 'Premium',
   Vision: 'Premium',
   'Critical Illness/Cancer': 'Basic',
 };
