@@ -42,12 +42,14 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
   return (
     <div className="w-full bg-white">
+              <h1 className="text-2xl font-semibold mb-3 text-center">Get Started</h1>
+
       {/* Blue wavy borders */}
-      <div className="h-2 bg-blue-500 rounded-b-full"></div>
+      <div className="h-1 bg-blue-500 rounded-b-full"></div>
       
-      <div className="px-4 py-1">
-        <h3 className="text-xl font-semibold mb-3 text-center">Individual Information</h3>
-  
+      <div className="px-4 py-3">
+        <h3 className="text-lg font-semibold mb-4 text-left">Individual Information</h3>
+        
         {/* Form Fields */}
         <div className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0">
           
@@ -161,7 +163,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       </div>
   
       {/* Blue wavy borders */}
-      <div className="h-2 bg-blue-500 rounded-t-full"></div>
+      <div className="h-1 bg-blue-500 rounded-t-full"></div>
     </div>
   );
   
