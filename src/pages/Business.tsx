@@ -147,7 +147,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         rel="noopener noreferrer"
         className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
       >
-        Get Instant Quote
+        Register My Company
       </a>
     </div>
   );
@@ -204,7 +204,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   activeProducts={localProducts}
                 />
               </div>
-              {showCostPerHour && <QuoteSection />}
+              <QuoteSection />
+              {showCostPerHour}
             </div>
 
             <div className="w-full lg:w-1/3 space-y-8">
