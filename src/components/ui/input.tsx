@@ -16,7 +16,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         shadow-sm
         focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
         transition duration-150 ease-in-out
-        hover:bg-blue-50
+        hover:bg-blue-100
         text-center
         w-28 sm:w-32 md:w-36 lg:w-20
         text-sm sm:text-sm md:text-base

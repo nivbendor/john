@@ -31,7 +31,7 @@ export const insuranceConfig = {
   Individual: {
     // Define properties and default values
     name: '',
-    age: 0,
+    age: '',
     // Add other necessary properties
   },
   // Add other configurations as needed
@@ -160,168 +160,174 @@ export const STATE_CATEGORIES: Record<string, USState[]> = {
 };
 
 
-export const PRODUCT_DYNAMIC_PARAGRAPHS: Record<Product, Record<Plan, string>> = {
+export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
+  paragraph: string;
+  bulletPoints: string[];
+}>> = {
   'LTD': {
-    'Basic': "How would you pay your expenses if you cannot work because of injury or illness?",
-    'Premium': "How would you pay your expenses if you cannot work because of injury or illness?"
+    'Basic': {
+      paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
+      bulletPoints: [
+        "LTD Insurance protects your ability to earn an income",
+        "Up to $15,000 of monthly benefit",
+        "Your benefit will be ${monthlyBenefit} of lost income per month",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "Benefit can be paid up to your normal retirement age",
+        "Available for employees only"
+      ]
+    },
+    'Premium': {
+      paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
+      bulletPoints: [
+        "LTD Insurance protects your ability to earn an income",
+        "Up to $15,000 of monthly benefit",
+        "Your benefit will be ${monthlyBenefit} of lost income per month",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "Benefit can be paid up to your normal retirement age",
+        "Available for employees only"
+      ]
+    }
   },
   'STD': {
-    'Basic': "How would you pay your monthly expenses if you cannot work because of injury or illness?",
-    'Premium': "How would you pay your monthly expenses if you cannot work because of injury or illness?"
+    'Basic': {
+      paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
+      bulletPoints: [
+        "Up to $1,200 of weekly benefit",
+        "Your benefit will be ${weeklyBenefit} of lost income per week",
+        "Includes missing work due to pregnancy (women only)",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "Available for employees only"
+      ]
+    },
+    'Premium': {
+      paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
+      bulletPoints: [
+        "Up to $1,200 of weekly benefit",
+        "Your benefit will be ${weeklyBenefit} of lost income per week",
+        "Includes missing work due to pregnancy (women only)",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "Available for employees only"
+      ]
+    }
   },
   'Life / AD&D': {
-    'Basic': "Life insurance helps loved ones financially in the event of a premature death.",
-    'Premium': "Life insurance helps loved ones financially in the event of a premature death."
+    'Basic': {
+      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
+      bulletPoints: [
+        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
+        "Up to $150,000 of coverage.",
+        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
+        "Spouse is eligible for up to $20,000 of coverage.",
+        "$2.50 provides $10,000 of coverage for all your children.",
+        "Available for employees and dependents"
+      ]
+    },
+    'Premium': {
+      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
+      bulletPoints: [
+        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
+        "Up to $150,000 of coverage.",
+        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
+        "Spouse is eligible for up to $20,000 of coverage.",
+        "$2.50 provides $10,000 of coverage for all your children.",
+        "Available for employees and dependents"
+      ]
+    }
   },
   'Accident': {
-    'Basic': "It’s not if you have an accident rather, when?  Accident insurance helps with expenses that may not be covered by other insurances.",
-    'Premium': "It’s not if you have an accident rather, when?  Accident insurance helps with expenses that may not be covered by other insurances."
+    'Basic': {
+      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
+      bulletPoints: [
+        "Pays large benefit amounts for accidents needing medical attention",
+        "Benefit is paid directly to you",
+        "Pays for on and off the job accidents",
+        "An extra 25% is paid for accidents that occur playing organized sports",
+        "Available for employees and dependents"
+      ]
+    },
+    'Premium': {
+      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
+      bulletPoints: [
+        "Pays large benefit amounts for accidents needing medical attention",
+        "Benefit is paid directly to you",
+        "Pays for on and off the job accidents",
+        "An extra 25% is paid for accidents that occur playing organized sports",
+        "Available for employees and dependents"
+      ]
+    }
   },
   'Dental': {
-    'Basic': "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
-    'Premium': "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?"
+    'Basic': {
+      paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+      bulletPoints: [
+        "Great benefit if your dentist is in network.",
+        "Check for an in-network dentist [HERE](https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife).",
+        "$1000 annual maximum per person.",
+        "Root canals covered in basic at 80% (typically root canals are major coverage).",
+        "Available for employees and dependents"
+      ]
+    },
+    'Premium': {
+      paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+      bulletPoints: [
+        "Pays the same if your dentist is in-network or out-of-network.",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} for bigger savings.",
+        "$1,500 annual maximum per person.",
+        "Root canals are covered in the basic level at 80% (typically root canals are major coverage at 50% or less).",
+        "$1,000 child ortho (lifetime max).",
+        "Available for employees and dependents"
+      ]
+    }
   },
   'Vision': {
-    'Basic': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
-    'Premium': "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages."
+    'Basic': {
+      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
+      bulletPoints: [
+        "$10 copay for an annual eye exam.",
+        "You can get frames and lenses every year.",
+        "VSP Network.",
+        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
+        "Available for employee and dependents"
+      ]
+    },
+    'Premium': {
+      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
+      bulletPoints: [
+        "$10 copay for an annual eye exam.",
+        "You can get frames and lenses every year.",
+        "VSP Network.",
+        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
+        "Available for employee and dependents"
+      ]
+    }
   },
   'Critical Illness/Cancer': {
-    'Basic': "Money won’t fix everything but our lump some payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
-    'Premium': "Money won’t fix everything but our lump some payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike."
-  },
-};
-
-
-
-
-export const PRODUCT_BULLET_POINTS: Record<Product, Record<Plan, string[]>> = {
-  'LTD': {
-    'Basic': [
-      "LTD Insurance protects your ability to earn an income",
-      "Up to $15,000 of monthly benefit",
-      "Your benefit will be $XX,XXX of lost income per month",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Benefit can be paid up to your normal retirement age",
-      "Available for employees only"
-    ],
-    'Premium': [
-      "LTD Insurance protects your ability to earn an income",
-      "Up to $15,000 of monthly benefit",
-      "Your benefit will be $XX,XXX of lost income per month",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Benefit can be paid up to your normal retirement age",
-      "Available for employees only"
-    ]
-  },
-  'STD': {
-    'Basic': [
-      "Up to $1,200 of weekly benefit",
-      "Your benefit will be $X,XXX of lost income per week",
-      "Includes missing work due to pregnancy (women only)",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Available for employees only"
-    ],
-    'Premium': [
-      "Up to $1,200 of weekly benefit",
-      "Your benefit will be $X,XXX of lost income per week",
-      "Includes missing work due to pregnancy (women only)",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled",
-      "Available for employees only"
-    ]
-  },
-  'Life / AD&D': {
-    'Basic': [
-      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-      "Up to $150,000 of coverage.",
-      "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled.",
-      "Spouse is eligible for up to $20,000 of coverage.",
-      "$2.50 provides $10,000 of coverage for all your children.",
-      "Available for employees and dependents"
-    ],
-    'Premium': [
-      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-      "Up to $150,000 of coverage.",
-      "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-      "Guaranteed Issue - meaning just sign-up and you’re enrolled.",
-      "Spouse is eligible for up to $20,000 of coverage.",
-      "$2.50 provides $10,000 of coverage for all your children.",
-      "Available for employees and dependents"
-    ]
-  },
-
-  'Accident': {
-    'Basic': [
-      "Pays large benefit amounts for accidents needing medical attention",
-      "Benefit is paid directly to you",
-      "Pays for on and off the job accidents",
-      "An extra 25% is paid for accidents that occur playing organized sports",
-      "Available for employees and dependents"
-    ],
-    'Premium': [
-      "Pays large benefit amounts for accidents needing medical attention",
-      "Benefit is paid directly to you",
-      "Pays for on and off the job accidents",
-      "An extra 25% is paid for accidents that occur playing organized sports",
-      "Available for employees and dependents"
-    ]
-  },
-  'Dental': {
-    'Basic': [
-      "Great benefit if your dentist is in network.",
-      "Check for an in-network dentist HERE.",
-      "$1000 annual maximum per person.",
-      "Root canals covered in basic at 80% (typically root canals are major coverage).",
-      "Available for employees and dependents"
-    ],
-    'Premium': [
-      "Pays the same if your dentist is in-network or out-of-network.",
-      "Check for an in-network dentist HERE for bigger savings.",
-      "$1,500 annual maximum per person.",
-      "Root canals are covered in the basic level at 80% (typically root canals are major coverage at 50% or less).",
-      "$1,000 child ortho (lifetime max).",
-      "Available for employees and dependents"
-    ]
-  },
-
-  'Vision': {
-    'Basic': [
-      "$10 copay for an annual eye exam.",
-      "You can get frames and lenses every year.",
-      "VSP Network.",
-      "Check for an in-network doctor HERE.",
-      "Available for employee and dependents"
-    ],
-    'Premium': [
-      "$10 copay for an annual eye exam.",
-      "You can get frames and lenses every year.",
-      "VSP Network.",
-      "Check for an in-network doctor HERE.",
-      "Available for employee and dependents"
-    ]
-  },
-
-
-
-  'Critical Illness/Cancer': {
-    'Basic': [
-      "Helps cover expenses that other insurance won’t",
-      "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
-      "Pays same lump sum for reoccurrence",
-      "Pays $15,000 on the initial diagnosis of invasive cancer",
-      "Benefit is paid directly to you",
-      "Dozens of illnesses are covered by this policy",
-      "Available for employees and dependents"
-    ],
-    'Premium': [
-      "Helps cover expenses that other insurance won’t",
-      "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
-      "Pays same lump sum for reoccurrence",
-      "Pays $15,000 on the initial diagnosis of invasive cancer",
-      "Benefit is paid directly to you",
-      "Dozens of illnesses are covered by this policy",
-      "Available for employees and dependents"
-    ]
+    'Basic': {
+      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
+      bulletPoints: [
+        "Helps cover expenses that other insurance won't",
+        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
+        "Pays same lump sum for reoccurrence",
+        "Pays $15,000 on the initial diagnosis of invasive cancer",
+        "Benefit is paid directly to you",
+        "Dozens of illnesses are covered by this policy",
+        "Available for employees and dependents"
+      ]
+    },
+    'Premium': {
+      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
+      bulletPoints: [
+        "Helps cover expenses that other insurance won't",
+        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
+        "Pays same lump sum for reoccurrence",
+        "Pays $15,000 on the initial diagnosis of invasive cancer",
+        "Benefit is paid directly to you",
+        "Dozens of illnesses are covered by this policy",
+        "Available for employees and dependents"
+      ]
+    }
   }
 };
 

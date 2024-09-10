@@ -48,18 +48,18 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       <div className="h-1 bg-blue-500 rounded-b-full"></div>
       
       <div className="py-2 pl-0.5">
-        <h3 className="text-lg font-semibold mb-4 text-left">Individual Information</h3>
+        <h3 className="text-lg font-semibold mb-1 text-left">Individual Information</h3>
         
         {/* Form Fields */}
         <div className="flex flex-col space-y-4">
           
           {/* Mobile layout */}
-<div className="lg:hidden">
+<div className="lg:hidden xl:hidden 2xl:hidden">
   {/* First row: Age, Zip Code, Annual Salary */}
   <div className="flex justify-between items-end mb-2">
     {/* Age Field */}
-    <div className="flex flex-col items-center w-1/3">
-      <Label htmlFor="age" className="text-sm font-normal text-gray-600 mb-1">
+    <div className="flex flex-col items-center w-1/3 pt-2">
+      <Label htmlFor="age" className="text-sm font-normal text-gray-600 mb-3">
         Age
       </Label>
       <Select
@@ -83,6 +83,9 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       </Select>
     </div>
 
+    <div className="w-px h-10 bg-gray-300"></div>
+    
+
     {/* Zip Code Field */}
     <div className="flex flex-col items-center w-1/3 px-2">
       <Label htmlFor="zipCode" className="text-sm font-normal text-gray-600 mb-1">
@@ -96,6 +99,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
         className="w-full h-10 bg-white-100 rounded-lg border border-gray-300 text-center px-2"
       />
     </div>
+    <div className="w-px h-10 bg-gray-300"></div>
 
     {/* Annual Salary Field */}
     <div className="flex flex-col items-center w-1/3">
@@ -138,8 +142,96 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 </div>
   
           {/* Desktop layout (unchanged) */}
-          <div className="hidden lg:flex lg:items-center lg:space-y-0">
+      <div className="hidden lg:flex lg:items-center lg:space-y-0">
             {/* ... (keep the existing desktop layout code here) ... */}
+            <div className="hidden lg:block lg:mr-4">    
+              
+              <img
+                  src={`${process.env.PUBLIC_URL}/profile_avatar.png`}
+                  alt="Profile Avatar"
+              className="w-16 h-16 rounded-full"
+              />
+            </div>
+                          {/* Age Field */}
+                      <div className="flex flex-col items-center flex-1 pr-2 pl-1" >
+                        <Label htmlFor="age" className="text-sm font-normal text-gray-600 pb-2">
+                          Age
+                        </Label>
+                        <Select
+                          value={individualInfo.age.toString()}
+                          onValueChange={(value) =>
+                            handleIndividualInfoChange({
+                              target: { name: 'age', value: parseInt(value) },
+                            } as any)
+                          }
+                        >
+                          <SelectTrigger className="w-24 h-10 bg-white rounded-lg border border-gray-300 text-center">
+                            <SelectValue>{individualInfo.age}</SelectValue>
+                          </SelectTrigger>
+                          <SelectContent>
+                            {ageOptions.map((age) => (
+                              <SelectItem key={age} value={age.toString()}>
+                                {age}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+
+                      </div>
+              
+                      <div className="w-px h-10 bg-gray-300"></div>
+              
+                      {/* Zip Code Field */}
+                      <div className="flex flex-col items-center flex-1 pr-2 pl-1">
+                        <Label htmlFor="zipCode" className="text-sm font-normal text-gray-600">
+                          Zip Code
+                        </Label>
+                        <Input
+                          id="zipCode"
+                          name="zipCode"
+                          value={individualInfo.zipCode}
+                          onChange={handleIndividualInfoChange}
+                          className="w-24 h-10 bg-white-100 rounded-lg border-0 text-center"
+                        />
+                      </div>
+              
+                      <div className="w-px h-10 bg-gray-300"></div>
+              
+                      {/* Annual Salary Field */}
+                      <div className="flex flex-col items-center flex-1 pr-2 pl-1">
+                        <Label htmlFor="annualSalary" className="text-sm font-normal text-gray-600">
+                          Annual Salary
+                        </Label>
+                        <Input
+                          id="annualSalary"
+                          name="annualSalary"
+                          value={formatCurrency(individualInfo.annualSalary)}
+                          onChange={handleSalaryChange}
+                          className={`w-24 h-10 bg-white-100 rounded-lg border-0 text-center ${
+                            errors['AnnualSalary'] ? 'border-red-500' : ''
+                          }`}
+                        />
+                      </div>
+        {/* Cost View for Large Screens */}
+        <div className="flex flex-col items-center flex-1 pr-2 pl-1">
+          <Label htmlFor="costView" className="text-sm font-normal text-gray-600 pb-2">
+            Cost View
+          </Label>
+          <Select className="w-28" value={costView} onValueChange={setCostView}>
+            <SelectTrigger>
+              <SelectValue>{costView}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {costViewOptions.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+                      
           </div>
         </div>
       </div>

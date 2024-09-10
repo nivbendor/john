@@ -20,8 +20,8 @@ type PremiumResult = Record<Product, number>;
 const initialIndividualInfo: IndividualInfo = {
   zipCode: '',
   businessEmployees: 3,
-  state: 'NJ' as USState,
-  age: 0,
+  state: '' as USState,
+  age: 21,
   annualSalary: 0,
   eligibility: 'Individual',
   employeeCoverage: 150000,

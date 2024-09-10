@@ -1,6 +1,8 @@
+// src\components\ProductDetails.tsx
+
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText } from '../utils/insuranceTypes';
-import { LIFE_ADD_CONFIG, PRODUCT_BULLET_POINTS, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_DYNAMIC_PARAGRAPHS } from '../utils/insuranceConfig';
+import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
@@ -38,10 +40,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   activeProducts,
 }) => {
   const currentPlan = plans[selectedProduct];
-  const bulletPoints = PRODUCT_BULLET_POINTS[selectedProduct][currentPlan];
-  const getDynamicParagraph = (selectedProduct: Product, currentPlan: Plan): string => {
-    return PRODUCT_DYNAMIC_PARAGRAPHS[selectedProduct]?.[currentPlan] || '';
-  };
+
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
     Individual: 0,
@@ -126,8 +125,66 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       console.error(`No PDF URL found for product: ${selectedProduct}`);
     }
   };
-  const dynamicParagraph = getDynamicParagraph(selectedProduct, currentPlan);
+  const getFormattedContent = (content: { paragraph: string; bulletPoints: string[] }) => {
+    const formattedParagraph = content.paragraph.replace(/\${(\w+)}/g, (match, p1) => {
+      switch (p1) {
+        case 'monthlyBenefit':
+        case 'weeklyBenefit':
+          return formatCurrency(premium);
+        case 'employeeCoverage':
+          return formatCurrency(individualInfo.employeeCoverage);
+        case 'spouseCoverage':
+          return formatCurrency(individualInfo.spouseCoverage);
+        default:
+          return match;
+      }
 
+    });
+
+    const formattedBulletPoints = content.bulletPoints.map(point =>
+      point.replace(/\${(\w+)}/g, (match, p1) => {
+        switch (p1) {
+          case 'monthlyBenefit':
+          case 'weeklyBenefit':
+            return formatCurrency(premium);
+          case 'employeeCoverage':
+            return formatCurrency(individualInfo.employeeCoverage);
+          case 'spouseCoverage':
+            return formatCurrency(individualInfo.spouseCoverage);
+          default:
+            return match;
+        }
+      })
+    );
+
+    return { paragraph: formattedParagraph, bulletPoints: formattedBulletPoints };
+  };
+
+  const renderBulletPoint = (point: string) => {
+    const linkRegex = /{{([^|]+)\|([^}]+)}}/;
+    const parts = point.split(linkRegex);
+
+    if (parts.length === 4) {
+      return (
+        <>
+          {parts[0]}
+          <a href={parts[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+            {parts[1]}
+          </a>
+          {parts[3]}
+        </>
+      );
+    }
+
+    return point;
+  };
+
+  
+
+  const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
+  const formattedContent = getFormattedContent(content);
+
+  
   
   return (
     <div className="space-y-4 px-4">
@@ -193,12 +250,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
   
       <div>
-      {dynamicParagraph && (
-          <p className="text-gray-900 mb-4 mb-2">{dynamicParagraph}</p>
-        )}
+        <p className="text-gray-900 mb-4">{formattedContent.paragraph}</p>
         <ul className="list-disc pl-2 sm:pl-9">
-          {bulletPoints.map((point, index) => (
-            <li key={index}>{point}</li>
+          {formattedContent.bulletPoints.map((point, index) => (
+            <li key={index}>{renderBulletPoint(point)}</li>
           ))}
         </ul>
       </div>
