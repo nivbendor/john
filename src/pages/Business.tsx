@@ -16,12 +16,13 @@ import Funnel from '../components/Funnel';
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
 
+// Individual Info - Defaults
 const initialIndividualInfo: IndividualInfo = {
-  zipCode: '37707',
+  zipCode: '',
   businessEmployees: 3,
   state: 'NJ' as USState,
-  age: 45,
-  annualSalary: 200000,
+  age: 0,
+  annualSalary: 0,
   eligibility: 'Individual',
   employeeCoverage: 150000,
   spouseCoverage: 20000,
@@ -173,7 +174,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         <div className="container mx-auto px-0 lg:px-4 py-6">
           <div className="flex flex-col lg:flex-row gap-7">
             <div className="w-full lg:w-2/3 space-y-8">
-              <div className="bg-white rounded-xl shadow-md p-4">
+              <div className="bg-white rounded-xl shadow-md p-2">
                 <IndividualInfoForm
                   individualInfo={individualInfo}
                   handleIndividualInfoChange={handleInputChange}

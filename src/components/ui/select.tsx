@@ -12,7 +12,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
     <div className="flex justify-center"> {/* Ensure this div doesn't affect the alignment */}
       <select
         ref={ref}
-        className={`w-12 h-[40px] border-solid rounded-lg p-1 text-center text-base font-medium ${className || ''}`}
+        className={`w-12 h-[38px] border-solid rounded-lg p-1 text-center text-base font-medium ${className || ''}`}
         onChange={(e) => onValueChange && onValueChange(e.target.value as unknown as T)}
         {...props}
       >
