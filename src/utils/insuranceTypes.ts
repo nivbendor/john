@@ -4,6 +4,8 @@ export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'V
 
 export type EligibilityOption = 'Individual' | 'Individual + Spouse' | 'Individual + Children' | 'Family';
 
+export type EligibilityPerProduct = Record<Product, EligibilityOption>;
+
 export type CostView = 'Monthly' | 'Semi-Monthly' | 'Weekly' | 'Bi-Weekly';
 
 export type PremiumResult = Record<Product, number>;

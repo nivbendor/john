@@ -1,7 +1,7 @@
 // src\components\ProductDetails.tsx
 
 import React, { useEffect, useState } from 'react';
-import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
@@ -21,8 +21,10 @@ interface ProductDetailsProps {
   costView: CostView;
   individualInfo: IndividualInfo;
   setProductPlan: (product: Product, plan: Plan) => void;
+  selectedEligibilityPerProduct: EligibilityPerProduct;
+  setSelectedEligibilityPerProduct: React.Dispatch<React.SetStateAction<EligibilityPerProduct>>;
   handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: string | number }) => void;
-  errors: Record<string, string>;
+  errors: Record<string, string>
   recalculatePremium: (product: Product, plan: Plan) => void;
   activeProducts: Record<Product, boolean>;
 }
@@ -34,6 +36,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   costView,
   individualInfo,
   setProductPlan,
+  selectedEligibilityPerProduct,
+  setSelectedEligibilityPerProduct,
   handleIndividualInfoChange,
   errors,
   recalculatePremium,
@@ -84,6 +88,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const handleEligibilityChange = (eventKey: string | null) => {
     if (eventKey) {
       handleIndividualInfoChange({ name: 'eligibility', value: eventKey });
+      setSelectedEligibilityPerProduct((prevEligibilities) => {
+        return {
+          ...prevEligibilities,
+          [selectedProduct]: eventKey,
+        }
+      });
     }
   };
 
@@ -232,11 +242,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {eligibilityOptions.length > 1 && (
             <Dropdown onSelect={handleEligibilityChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-eligibility">
-                {individualInfo.eligibility}
+                {selectedEligibilityPerProduct[selectedProduct]}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {eligibilityOptions.map((option) => (
-                  <Dropdown.Item key={option} eventKey={option} active={option === individualInfo.eligibility}>
+                  <Dropdown.Item key={option} eventKey={option} active={option === selectedEligibilityPerProduct[selectedProduct]}>
                     <div className="flex justify-between items-center w-full">
                       <span>{option}</span>
                       <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>

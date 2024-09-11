@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult, EligibilityPerProduct } from '../utils/insuranceTypes';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 import { parseUrlParams } from 'utils/parseUrlParams';
 import { handleQuoteRequest } from '../utils/quoteUtils';
@@ -11,6 +11,7 @@ interface ActiveProductsToggleProps {
   premiums: PremiumResult;
   costView: CostView;
   individualInfo: IndividualInfo;
+  selectedEligibilityPerProduct: EligibilityPerProduct;
   handleToggleChange: (product: Product, isActive: boolean) => void;
 }
 
@@ -20,6 +21,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   premiums,
   costView,
   individualInfo,
+  selectedEligibilityPerProduct,
   handleToggleChange,
 }) => {
   const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
@@ -41,13 +43,21 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
 
   const getAdjustedPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
-    const premium = calculatePremium(individualInfo, plan[product]);
+    const tempIndividualInfo = {
+      ...individualInfo,
+      eligibility: selectedEligibilityPerProduct[product],
+    };
+    const premium = calculatePremium(tempIndividualInfo, plan[product]);
     return calculatePremiumByCostView(premium, costView);
   }, [individualInfo, plan, costView]);
 
   const getMonthlyPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
-    const premium = calculatePremium(individualInfo, plan[product]);
+    const tempIndividualInfo = {
+      ...individualInfo,
+      eligibility: selectedEligibilityPerProduct[product],
+    };
+    const premium = calculatePremium(tempIndividualInfo, plan[product]);
     return calculatePremiumByCostView(premium, 'Monthly');
   }, [individualInfo, plan]);
 

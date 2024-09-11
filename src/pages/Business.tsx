@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { Product, IndividualInfo, Plan, USState, CostView } from '../utils/insuranceTypes';
-import { calculatePremiums } from '../utils/insuranceUtils';
+import { Product, IndividualInfo, Plan, USState, CostView, EligibilityOption, EligibilityPerProduct } from '../utils/insuranceTypes';
+import { calculatePremiums, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
 import ActiveProductsToggle from '../components/checkout';
 import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
@@ -23,7 +23,7 @@ const initialIndividualInfo: IndividualInfo = {
   state: '' as USState,
   age: 21,
   annualSalary: 0,
-  eligibility: 'Individual',
+  eligibility: 'Individual', // won't be needed in future, since eligibility is per product and not global
   employeeCoverage: 150000,
   spouseCoverage: 20000,
   numberOfChildren: 2,
@@ -55,12 +55,17 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       ...funnelData,
       age: funnelData?.age ? parseInt(funnelData.age, 10) : initialIndividualInfo.age,
     };
+    // TODO: change url params...
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
   
   const [showCostPerHour] = useState(() => {
     const { showCostPerHour } = parseUrlParams();
     return showCostPerHour;
+  });
+
+  const [selectedEligibilityPerProduct, setSelectedEligibilityPerProduct] = useState<EligibilityPerProduct>(() => {
+    return Object.entries(PRODUCT_ELIGIBILITY_OPTIONS).reduce((prev, array) => ({ ...prev, [array[0]]: array[1][0] }), {}) as EligibilityPerProduct;
   });
 
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
@@ -199,6 +204,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   costView={costView}
                   individualInfo={individualInfo}
                   setProductPlan={setProductPlan}
+                  selectedEligibilityPerProduct={selectedEligibilityPerProduct}
+                  setSelectedEligibilityPerProduct={setSelectedEligibilityPerProduct}
                   handleIndividualInfoChange={handleInputChange}
                   errors={{}}
                   recalculatePremium={recalculatePremium}
@@ -216,6 +223,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   premiums={premiums}
                   costView={costView}
                   individualInfo={individualInfo}
+                  selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   handleToggleChange={(product, isActive) => {
                     setLocalProducts(prev => ({
                       ...prev,
