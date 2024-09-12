@@ -1,8 +1,6 @@
 // utils/insuranceConfig.ts
 
-import { useState } from 'react';
 import { Product, EligibilityOption, USState, Plan } from './insuranceTypes';
-import { getDefaultIndividualData } from './insuranceUtils';
 
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 

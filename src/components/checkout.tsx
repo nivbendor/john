@@ -26,12 +26,12 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
 }) => {
   const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
     const initialState = { ...products };
-    initialState['LTD'] = false;
+    initialState['LTD'] = true;
     initialState['STD'] = false;
-    initialState['Life / AD&D'] = false;
+    initialState['Life / AD&D'] = true;
     initialState['Critical Illness/Cancer'] = false;
     initialState['Vision'] = false;
-    initialState['Dental'] = false;
+    initialState['Dental'] = true;
     initialState['Accident'] = false;
     
     //default: return product;//

@@ -21,10 +21,10 @@ const initialIndividualInfo: IndividualInfo = {
   zipCode: '',
   businessEmployees: 3,
   state: '' as USState,
-  age: 21,
+  age: 0,
   annualSalary: 0,
   eligibility: 'Individual', // won't be needed in future, since eligibility is per product and not global
-  employeeCoverage: 150000,
+  employeeCoverage: 20000,
   spouseCoverage: 20000,
   numberOfChildren: 2,
   isExpanded: undefined

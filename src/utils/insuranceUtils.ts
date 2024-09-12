@@ -158,6 +158,9 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   LTD: calculateLTDPremium,
   'Life / AD&D': (individualInfo, plan) => {
     const { age, employeeCoverage = 0, spouseCoverage = 0, eligibility } = individualInfo;
+    if (age === 0) {
+      return 0;
+    }
     const rate = getLifeADDRate(age);
     
     // Calculate individual premium
@@ -186,17 +189,33 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     // Sum up all applicable premiums
     return monthly_premium_individual + monthly_premium_spouse + monthly_premium_children;
   },
-  Accident: (individualInfo, plan) => ACCIDENT_PREMIUMS[plan][individualInfo.eligibility],
+
+  Accident: (individualInfo, plan) => {
+    // Return 0 if age is 0
+    if (individualInfo.age === 0) {
+      return 0;
+    }
+    return ACCIDENT_PREMIUMS[plan][individualInfo.eligibility];
+  },
+
   Dental: (individualInfo, plan) => {
     const region = getZipCodeRegion(individualInfo.zipCode);
     return region !== null ? (DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo.eligibility] || 0) : 0;
   },
   
   Vision: (individualInfo, plan) => {
+    // Return 0 if age is 0
+    if (individualInfo.age === 0) {
+      return 0;
+    }
     const stateCategory = getStateCategory(individualInfo.state);
     return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
   },
   'Critical Illness/Cancer': (individualInfo, plan) => {
+    // Return 0 if age is 0
+    if (individualInfo.age === 0) {
+      return 0;
+    }
     return getCriticalIllnessRate(individualInfo.age, individualInfo.eligibility);
   }
 };

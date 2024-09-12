@@ -37,8 +37,16 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   costView,
   setCostView
 }) => {
-  const ageOptions = Array.from({ length: 100 }, (_, i) => i + 1);
+  const ageOptions = Array.from({ length: 100 }, (_, i) => i); // Create age options from 1 to 100
   const costViewOptions: CostView[] = ['Monthly', 'Semi-Monthly', 'Bi-Weekly', 'Weekly'];
+ 
+  // Function to display the age field, showing a dash if age is 0 (unset)
+  const displayAge = () => {
+    if (individualInfo.age === 0) {
+      return '-'; // Display dash if age is unset
+    }
+    return individualInfo.age.toString(); // Display the actual age if set
+  };
 
   return (
     <div className="w-full bg-white">
@@ -59,7 +67,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   <div className="flex justify-between items-end mb-2">
     {/* Age Field */}
     <div className="flex flex-col items-center w-1/3 pt-2">
-      <Label htmlFor="age" className="text-sm font-normal text-gray-600 mb-3">
+      <Label htmlFor="age" className="font-normal text-gray-600 mb-3">
         Age
       </Label>
       <Select
@@ -88,7 +96,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
     {/* Zip Code Field */}
     <div className="flex flex-col items-center w-1/3 px-2">
-      <Label htmlFor="zipCode" className="text-sm font-normal text-gray-600 mb-1">
+      <Label htmlFor="zipCode" className="font-normal text-gray-600 mb-1">
         Zip Code
       </Label>
       <Input
@@ -103,8 +111,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
     {/* Annual Salary Field */}
     <div className="flex flex-col items-center w-1/3">
-      <Label htmlFor="annualSalary" className="text-sm font-normal text-gray-600 mb-1">
-        Annual Salary
+      <Label htmlFor="annualSalary" className="font-normal text-gray-600 mb-1">
+        Annual Income
       </Label>
       <Input
         id="annualSalary"
@@ -123,7 +131,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
   {/* Third row: Cost View */}
   <div className="flex flex-row items-center justify-center mt-2">
-    <Label htmlFor="costView" className="text-sm font-normal text-gray-600 mb-1">
+    <Label htmlFor="costView" className="font-normal text-gray-600 mb-1">
       Cost View
     </Label>
     <Select className="w-3/4" value={costView} onValueChange={setCostView}>
@@ -154,19 +162,19 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
             </div>
                           {/* Age Field */}
                       <div className="flex flex-col items-center flex-1 pr-2 pl-1" >
-                        <Label htmlFor="age" className="text-sm font-normal text-gray-600 pb-2">
+                        <Label htmlFor="age" className="font-normal text-gray-600 pb-2">
                           Age
                         </Label>
                         <Select
-                          value={individualInfo.age.toString()}
-                          onValueChange={(value) =>
+                            value={individualInfo.age !== 0 ? individualInfo.age.toString() : '-'} // Use dash if age is 0
+                            onValueChange={(value) =>
                             handleIndividualInfoChange({
                               target: { name: 'age', value: parseInt(value) },
                             } as any)
                           }
                         >
                           <SelectTrigger className="w-24 h-10 bg-white rounded-lg border border-gray-300 text-center">
-                            <SelectValue>{individualInfo.age}</SelectValue>
+                            <SelectValue>{displayAge()}</SelectValue> {/* Dash or actual age */}
                           </SelectTrigger>
                           <SelectContent>
                             {ageOptions.map((age) => (
@@ -184,7 +192,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               
                       {/* Zip Code Field */}
                       <div className="flex flex-col items-center flex-1 pr-2 pl-1">
-                        <Label htmlFor="zipCode" className="text-sm font-normal text-gray-600">
+                        <Label htmlFor="zipCode" className="font-normal text-gray-600">
                           Zip Code
                         </Label>
                         <Input
@@ -200,8 +208,9 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               
                       {/* Annual Salary Field */}
                       <div className="flex flex-col items-center flex-1 pr-2 pl-1">
-                        <Label htmlFor="annualSalary" className="text-sm font-normal text-gray-600">
-                          Annual Salary
+                        <Label htmlFor="annualSalary" className="font-normal text-gray-600">
+                        Annual Income
+
                         </Label>
                         <Input
                           id="annualSalary"
@@ -215,8 +224,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
                       </div>
         {/* Cost View for Large Screens */}
         <div className="flex flex-col items-center flex-1 pr-2 pl-1">
-          <Label htmlFor="costView" className="text-sm font-normal text-gray-600 pb-2">
-            Cost View
+          <Label htmlFor="costView" className="font-normal text-gray-600 pb-2">
+            Pay Period
           </Label>
           <Select className="w-28" value={costView} onValueChange={setCostView}>
             <SelectTrigger>

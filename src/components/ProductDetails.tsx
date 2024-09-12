@@ -281,7 +281,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>
           <p className="price">{formatCurrency(premium)}</p>
-          <span className="text-sm text-gray-500">/{getCostViewDisplayText(costView)}</span>
+          <span className="text-base text-gray-500">/{getCostViewDisplayText(costView)}</span>
         </div>
       </div>
     </div>
