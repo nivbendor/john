@@ -1,6 +1,10 @@
 // utils/insuranceConfig.ts
 
 import { Product, EligibilityOption, USState, Plan } from './insuranceTypes';
+import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
+
+
+
 
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
@@ -168,7 +172,7 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       bulletPoints: [
         "LTD Insurance protects your ability to earn an income",
         "Up to $15,000 of monthly benefit",
-        "Your benefit will be ${monthlyBenefit} of lost income per month",
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only"
@@ -179,7 +183,7 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       bulletPoints: [
         "LTD Insurance protects your ability to earn an income",
         "Up to $15,000 of monthly benefit",
-        "Your benefit will be ${monthlyBenefit} of lost income per month",
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only"
@@ -191,7 +195,7 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "Up to $1,200 of weekly benefit",
-        "Your benefit will be ${weeklyBenefit} of lost income per week",
+        "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Available for employees only"
@@ -201,7 +205,7 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "Up to $1,200 of weekly benefit",
-        "Your benefit will be ${weeklyBenefit} of lost income per week",
+        "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Available for employees only"

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView } from '../utils/insuranceUtils';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -44,6 +44,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   activeProducts,
 }) => {
   const currentPlan = plans[selectedProduct];
+  const { annualSalary } = individualInfo;
+
 
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
   const [eligibilityPremiums, setEligibilityPremiums] = useState<Record<EligibilityOption, number>>({
@@ -156,7 +158,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         switch (p1) {
           case 'monthlyBenefit':
           case 'weeklyBenefit':
-            return formatCurrency(premium);
+            return formatCurrency(premium);  // Ensure correct premium
           case 'employeeCoverage':
             return formatCurrency(individualInfo.employeeCoverage);
           case 'spouseCoverage':
@@ -166,30 +168,26 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         }
       })
     );
-
+  
     return { paragraph: formattedParagraph, bulletPoints: formattedBulletPoints };
   };
 
-  const renderBulletPoint = (point: string) => {
-    const linkRegex = /{{([^|]+)\|([^}]+)}}/;
-    const parts = point.split(linkRegex);
-
-    if (parts.length === 4) {
-      return (
-        <>
-          {parts[0]}
-          <a href={parts[2]} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-            {parts[1]}
-          </a>
-          {parts[3]}
-        </>
-      );
+  const renderBulletPoint = (point: string): string => {
+    // Replace {monthlyBenefit} in the bullet point if it exists
+    if (point.includes('{calculateLTDBenefit}')) {
+      const monthlyBenefit = calculateLTDBenefit(annualSalary); // Calculate LTD benefit based on dynamic annual salary
+      const formattedBenefit = formatCurrency(Number(monthlyBenefit)); // Ensure it's formatted as currency
+      return point.replace('{calculateLTDBenefit}', formattedBenefit); // Replace the placeholder with the actual benefit
     }
-
+    if (point.includes('{weeklySTDBenefit}')) {
+      const monthlyBenefit = calculateSTDBenefit(annualSalary); // Calculate LTD benefit based on dynamic annual salary
+      const formattedBenefit = formatCurrency(Number(monthlyBenefit)); // Ensure it's formatted as currency
+      return point.replace('{weeklySTDBenefit}', formattedBenefit); // Replace the placeholder with the actual benefit
+    }
     return point;
   };
-
   
+
 
   const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
   const formattedContent = getFormattedContent(content);
@@ -204,7 +202,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <h2 className="text-2xl font-bold">{getProductLabel(selectedProduct)}</h2>
           {/* New Row for the Hyperlink */}
           <a
-            href={getPDFUrl(selectedProduct)}
+            href={getPDFUrl(selectedProduct)} //href={resource.pdfUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline text-sm mt-1"
@@ -260,13 +258,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
   
       <div>
-        <p className="text-gray-900 mb-4">{formattedContent.paragraph}</p>
-        <ul className="list-disc pl-2 sm:pl-9">
-          {formattedContent.bulletPoints.map((point, index) => (
-            <li key={index}>{renderBulletPoint(point)}</li>
+      <p className="text-gray-900 mb-4">{formattedContent.paragraph}</p>
+      <ul className="list-disc pl-2 sm:pl-9">
+        {formattedContent.bulletPoints.map((point, index) => (
+          <li key={index}>{renderBulletPoint(point)}</li>
           ))}
         </ul>
       </div>
+
   
       {selectedProduct === 'Life / AD&D' && (errors.employeeCoverage || errors.spouseCoverage) && (
         <Alert variant="destructive">

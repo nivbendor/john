@@ -103,6 +103,27 @@ const getStateCategory = (state: USState): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other' 
   return 'Other';
 };
 
+// Dynamic content
+export function calculateLTDBenefit(annualSalary: number): number {
+  if (annualSalary <= 0) {
+    return 0;
+  }
+
+  const monthlyBenefit = (annualSalary / 12) * 0.6;
+  return Math.round(monthlyBenefit * 10) / 10; // Rounded to one decimal place
+}
+
+//incontent Dynamic - STD Weekly
+export function calculateSTDBenefit(annualSalary: number): number {
+  if (annualSalary <= 0) {
+    return 0;
+  }
+
+  const weeklyBenefit = (annualSalary / 52) * 0.6;
+  return Math.round(weeklyBenefit * 10) / 10; // Rounded to one decimal place
+}
+
+
 export const getDefaultIndividualData = () => {
   return { ...insuranceConfig.Individual };
 };
