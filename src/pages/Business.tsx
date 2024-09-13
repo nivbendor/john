@@ -139,9 +139,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const rawValue = e.target.value;
     const numericValue = parseFloat(rawValue.replace(/[^0-9.-]+/g, ""));
-    if (!isNaN(numericValue)) {
-      handleInputChange({ name: 'annualSalary', value: numericValue });
-    }
+    const value = isNaN(numericValue) ? 0 : numericValue;
+    handleInputChange({ name: 'annualSalary', value });
   };
 
   const QuoteSection = () => (
