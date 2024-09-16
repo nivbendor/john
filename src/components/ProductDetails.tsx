@@ -202,7 +202,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           <h2 className="text-2xl font-bold">{getProductLabel(selectedProduct)}</h2>
           {/* New Row for the Hyperlink */}
           <a
-            href={getPDFUrl(selectedProduct)} //href={resource.pdfUrl}
+            href={getPDFUrl(getProductLabel(selectedProduct))}
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-600 underline text-sm mt-1"
