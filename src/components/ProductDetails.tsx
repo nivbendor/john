@@ -192,6 +192,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
   const formattedContent = getFormattedContent(content);
 
+  const SVGCheckmark = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" width="14" height="14" className="inline-block mr-2">
+      <g>
+        <path stroke="#000cfe" strokeLinecap="round" strokeLinejoin="round" d="M0.75 8.5625 5.29545 13.25C7.43437 7.10579 9.2157 4.40965 13.25 0.75" strokeWidth="1"></path>
+      </g>
+    </svg>
+  );
+
   
   
   return (
@@ -258,10 +266,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       </div>
   
       <div>
-      <p className="text-gray-900 mb-4">{formattedContent.paragraph}</p>
-      <ul className="list-disc pl-2 sm:pl-9">
-        {formattedContent.bulletPoints.map((point, index) => (
-          <li key={index}>{renderBulletPoint(point)}</li>
+        <p className="text-gray-600 mb-2 text-lg ">{formattedContent.paragraph}</p>
+        <ul className="list-none pl-2 sm:pl-9">
+          {formattedContent.bulletPoints.map((point, index) => (
+            <li key={index} className="flex items-start mb-2 text-gray-500">
+              <SVGCheckmark />
+              <span>{renderBulletPoint(point)}</span>
+            </li>
           ))}
         </ul>
       </div>

@@ -110,7 +110,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
     <div className="w-px h-10 bg-gray-300"></div>
 
     {/* Annual Salary Field */}
-    <div className="flex flex-col items-center w-1/3">
+    <div className="flex flex-col items-center w-1/3 px-2">
       <Label htmlFor="annualSalary" className="font-normal text-gray-600 mb-1">
         Annual Income
       </Label>

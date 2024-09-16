@@ -177,7 +177,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       ) : (
         <div className="container mx-auto px-0 lg:px-4 py-6">
           <div className="flex flex-col lg:flex-row gap-7">
-            <div className="w-full lg:w-2/3 space-y-8">
+            <div className="w-full lg:w-2/3 space-y-6">
               <div className="bg-white rounded-xl shadow-md p-2">
                 <IndividualInfoForm
                   individualInfo={individualInfo}
