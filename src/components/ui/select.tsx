@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { CostView } from 'utils/insuranceTypes';
 
 interface SelectProps<T> extends React.SelectHTMLAttributes<HTMLSelectElement> {
   children: ReactNode;
@@ -12,7 +11,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps<any>>(
     <div className="flex justify-center"> {/* Ensure this div doesn't affect the alignment */}
       <select
         ref={ref}
-        className={`border-solid rounded-lg p-1 text-center text-base font-medium ${className || ''}`}
+        className={`border-solid rounded-lg p-1 text-center text-base font-normal ${className || ''}`}
         onChange={(e) => onValueChange && onValueChange(e.target.value as unknown as T)}
         {...props}
       >

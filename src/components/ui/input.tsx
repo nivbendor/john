@@ -19,7 +19,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         hover:bg-blue-100
         text-center
         w-28 sm:w-32 md:w-36 lg:w-20
-        text-sm sm:text-sm md:text-base
+        text-base sm:text-base md:text-base
         ${className}
       `}
       ref={ref}
