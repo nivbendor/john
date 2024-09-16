@@ -25,7 +25,7 @@ const initialIndividualInfo: IndividualInfo = {
   annualSalary: 0,
   eligibility: 'Individual', // won't be needed in future, since eligibility is per product and not global
   employeeCoverage: 20000,
-  spouseCoverage: 20000,
+  spouseCoverage: 10000,
   numberOfChildren: 2,
   isExpanded: undefined
 };

@@ -31,7 +31,7 @@ interface ProductSelectorProps {
 
 const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setSelectedProduct, products }) => {
   const sliderRef = useRef<Slider>(null);
-  const [slidesToShow, setSlidesToShow] = useState(4);
+  const [slidesToShow, setSlidesToShow] = useState(5);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
 
@@ -42,9 +42,9 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
       } else if (window.innerWidth >= 768) {
         setSlidesToShow(4);
       } else if (window.innerWidth >= 640) {
-        setSlidesToShow(3);
+        setSlidesToShow(5);
       } else {
-        setSlidesToShow(2);
+        setSlidesToShow(5);
       }
     };
 
@@ -54,7 +54,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
   }, [products.length]);
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: slidesToShow,
@@ -78,7 +78,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
       {
         breakpoint: 640,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 5,
           slidesToScroll: 1,
         }
       }
@@ -125,20 +125,20 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
       <ArrowButton direction="right" onClick={handleNext} show={showRightArrow} />
       <Slider ref={sliderRef} {...settings}>
         {products.map((product) => (
-          <div key={product} className="px-0">
+          <div key={product} className="px-0 sm:px-1">
             <button
-              className={`w-full flex flex-col items-center justify-center p-2 rounded-md transition-colors duration-150 ease-in-out
+              className={`w-full flex flex-col items-center justify-center p-1 sm:p-2 rounded-md transition-colors duration-150 ease-in-out
                 ${selectedProduct === product
                   ? 'bg-blue-500 text-white'
                   : 'text-gray-700 hover:bg-gray-200'
                 }`}
               onClick={() => setSelectedProduct(product)}
             >
-              <div className={`w-11 h-11 flex items-center justify-center rounded-full mb-2
+              <div className={`w-8 h-8 sm:w-11 sm:h-11 flex items-center justify-center rounded-full mb-1 sm:mb-2
                 ${selectedProduct === product ? 'bg-white text-blue-500' : ' text-blue-500'}`}>
                 {getProductIcon(product)}
               </div>
-              <span className="text-base text-center whitespace-normal h-10">{product}</span>
+              <span className="text-xs sm:text-base text-center whitespace-normal h-8 sm:h-10 overflow-hidden">{product}</span>
             </button>
           </div>
         ))}

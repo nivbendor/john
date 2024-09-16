@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit } from '../utils/insuranceUtils';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -200,7 +200,57 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     </svg>
   );
 
-  
+  const getCostBreakdown = () => {
+    if (selectedProduct !== 'Life / AD&D') {
+      return null; // Only Life / AD&D has a detailed breakdown
+    }
+
+    const { age, employeeCoverage = 0, spouseCoverage = 0, eligibility } = individualInfo;
+    const rate = getLifeADDRate(age);
+
+    const units_individual = Math.min(employeeCoverage / LIFE_ADD_CONFIG.units, LIFE_ADD_CONFIG.units_max_individual);
+    const monthly_premium_individual = units_individual * rate;
+
+    let monthly_premium_spouse = 0;
+    let monthly_premium_children = 0;
+
+    if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
+      const max_coverage_spouse = Math.min(
+        employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
+        LIFE_ADD_CONFIG.max_coverage_amount_spouse
+      );
+      const units_spouse = Math.min(spouseCoverage / LIFE_ADD_CONFIG.units, max_coverage_spouse / LIFE_ADD_CONFIG.units);
+      const units_max_spouse = Math.min(units_spouse, LIFE_ADD_CONFIG.units_max_spouse);
+      monthly_premium_spouse = units_max_spouse * rate;
+    }
+
+    if (eligibility === 'Individual + Children' || eligibility === 'Family') {
+      monthly_premium_children = LIFE_ADD_CONFIG.children_rate;
+    }
+
+    return { 
+      individual: monthly_premium_individual, 
+      spouse: monthly_premium_spouse, 
+      children: monthly_premium_children 
+    };
+  };
+
+  const renderCostBreakdown = () => {
+    const breakdown = getCostBreakdown();
+    if (!breakdown || individualInfo.eligibility === 'Individual') return null;
+
+    return (
+      <div className="mt-2 text-sm text-gray-600">
+        <div>Individual: {formatCurrency(calculatePremiumByCostView(breakdown.individual, costView))}/{getCostViewDisplayText(costView)}</div>
+        {breakdown.spouse > 0 && (
+          <div>Spouse: {formatCurrency(calculatePremiumByCostView(breakdown.spouse, costView))}/{getCostViewDisplayText(costView)}</div>
+        )}
+        {breakdown.children > 0 && (
+          <div>Children: {formatCurrency(calculatePremiumByCostView(breakdown.children, costView))}/{getCostViewDisplayText(costView)}</div>
+        )}
+      </div>
+    );
+  };
   
   return (
     <div className="space-y-4 px-4">
@@ -287,17 +337,17 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         </Alert>
       )}
   
-      <div className="bg-gray-100 p-3 rounded-md shadow-md">
+  <div className="bg-gray-100 p-3 rounded-md shadow-md">
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>
           <p className="price">{formatCurrency(premium)}</p>
           <span className="text-base text-gray-500">/{getCostViewDisplayText(costView)}</span>
         </div>
+        {renderCostBreakdown()}
+
       </div>
     </div>
   );
-  
-  
 };
 
 export default ProductDetails;
