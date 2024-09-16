@@ -50,7 +50,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
   return (
     <div className="w-full bg-white">
-      <h1 className="text-2xl font-semibold mb-3 text-center">Get Started</h1>
+      {/* <h1 className="text-2xl font-semibold mb-3 text-center">Get Started</h1> */}
   
       {/* Blue wavy borders */}
       <div className="h-1 bg-blue-500 rounded-b-full"></div>

@@ -17,29 +17,44 @@ import { parseUrlParams } from './utils/parseUrlParams';
 const App: React.FC = () => {
   const [products, setProducts] = useState<Record<Product, boolean>>({} as Record<Product, boolean>);
   const [totalCost, setTotalCost] = useState(0);
-  const [funnelData, setFunnelData] = useState<any>(null); // Define funnelData state
+  const [funnelData, setFunnelData] = useState<any>(null);
   const { showFunnel } = parseUrlParams();
 
-  // Function to handle the completion of the funnel
   const handleFunnelComplete = (data: any) => {
-    setFunnelData(data); // Correctly set the funnelData
+    setFunnelData(data);
     console.log('Funnel completed with data:', data);
   };
 
   return (
+    <div className="w-full py-2 shadow-md">
+          <div className="container mx-auto">
+            
+            <img
+              src={`${process.env.PUBLIC_URL}/Cakewalk_LOGO.png`}
+              alt="Cakewalk_LOGO"
+              className="mx-auto h-14 object-contain rounded-full"
+              />
+          </div>
     <CostViewProvider>
-      <Router>
-        <Routes>
-          <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
-          <Route path="/john" element={
-            showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
-            <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
-          } />
-          <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
-        </Routes>
-        {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />}
-      </Router>
+      
+      <div className="flex flex-col min-h-screen">
+        
+        <main className="flex-grow">
+          <Router>
+            <Routes>
+              <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
+              <Route path="/john" element={
+                showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
+                <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
+              } />
+              <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
+            </Routes>
+            {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />}
+          </Router>
+        </main>
+      </div>
     </CostViewProvider>
+    </div>
   );
 };
 
