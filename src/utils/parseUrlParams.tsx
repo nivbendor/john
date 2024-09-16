@@ -12,6 +12,7 @@ type ParsedUrlParams = Partial<IndividualInfo> & {
   showCostPerHour: boolean;
   showQuoteSection: boolean;
   showFunnel: boolean;
+  showSplash: boolean;
 };
 
 export function parseUrlParams(): ParsedUrlParams {
@@ -20,9 +21,18 @@ export function parseUrlParams(): ParsedUrlParams {
     showCostPerHour: false,
     showQuoteSection: false,
     showFunnel: false,
+    showSplash: false,
   };
+  
+  
+  // Splashscreen param check
+  const splashParam = params.get('splash');
+  if (splashParam === '1') {
+    result.showSplash = true;
+  }
 
-  // Add this check
+
+// Funnel param check
   const funParam = params.get('fun');
   if (funParam === '1') {
     result.showFunnel = true;
@@ -82,4 +92,4 @@ function isValidEligibility(eligibility: string | null): eligibility is Eligibil
   return eligibility !== null && ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'].includes(eligibility);
 }
 
-export const { showCostPerHour, showFunnel } = parseUrlParams();
+export const { showCostPerHour, showFunnel, showSplash } = parseUrlParams();

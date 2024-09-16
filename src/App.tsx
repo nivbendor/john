@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+// src\App.tsx
+
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './styles/global.css';
 import './styles/ProductTabs.css';
@@ -13,47 +15,59 @@ import './styles/background.css';
 import Funnel from './components/Funnel';
 import './styles/funnel.css';
 import { parseUrlParams } from './utils/parseUrlParams';
+import SplashScreen from './components/SplashScreen';
+
 
 const App: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(false);
   const [products, setProducts] = useState<Record<Product, boolean>>({} as Record<Product, boolean>);
   const [totalCost, setTotalCost] = useState(0);
   const [funnelData, setFunnelData] = useState<any>(null);
-  const { showFunnel } = parseUrlParams();
+  const { showFunnel, showSplash: shouldShowSplash } = parseUrlParams();
+
+  useEffect(() => {
+    setShowSplash(shouldShowSplash);
+  }, [shouldShowSplash]);
+
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+  };
 
   const handleFunnelComplete = (data: any) => {
     setFunnelData(data);
     console.log('Funnel completed with data:', data);
   };
 
+  if (showSplash) {
+    return <SplashScreen onFinish={handleSplashFinish} />;
+  }
+
   return (
     <div className="w-full py-2 shadow-md">
-          <div className="container mx-auto">
-            
-            <img
-              src={`${process.env.PUBLIC_URL}/Cakewalk_LOGO.png`}
-              alt="Cakewalk_LOGO"
-              className="mx-auto h-14 object-contain rounded-full"
-              />
-          </div>
-    <CostViewProvider>
-      
-      <div className="flex flex-col min-h-screen">
-        
-        <main className="flex-grow">
-          <Router>
-            <Routes>
-              <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
-              <Route path="/john" element={
-                showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
-                <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
-              } />
-              <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
-            </Routes>
-            {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />}
-          </Router>
-        </main>
+      <div className="container mx-auto">
+        <img
+          src={`${process.env.PUBLIC_URL}/Cakewalk_LOGO.png`}
+          alt="Cakewalk_LOGO"
+          className="mx-auto h-14 object-contain rounded-full"
+        />
       </div>
-    </CostViewProvider>
+      <CostViewProvider>
+        <div className="flex flex-col min-h-screen">
+          <main className="flex-grow">
+            <Router>
+              <Routes>
+                <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
+                <Route path="/john" element={
+                  showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
+                  <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
+                } />
+                <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
+              </Routes>
+              {!showFunnel && <StickyProductCostSummary products={products} totalCost={totalCost} />}
+            </Router>
+          </main>
+        </div>
+      </CostViewProvider>
     </div>
   );
 };
