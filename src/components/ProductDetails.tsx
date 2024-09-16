@@ -172,19 +172,44 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     return { paragraph: formattedParagraph, bulletPoints: formattedBulletPoints };
   };
 
-  const renderBulletPoint = (point: string): string => {
-    // Replace {monthlyBenefit} in the bullet point if it exists
+  const renderBulletPoint = (point: string): React.ReactNode => {
+    // First, handle the existing special cases
     if (point.includes('{calculateLTDBenefit}')) {
-      const monthlyBenefit = calculateLTDBenefit(annualSalary); // Calculate LTD benefit based on dynamic annual salary
-      const formattedBenefit = formatCurrency(Number(monthlyBenefit)); // Ensure it's formatted as currency
-      return point.replace('{calculateLTDBenefit}', formattedBenefit); // Replace the placeholder with the actual benefit
+      const monthlyBenefit = calculateLTDBenefit(annualSalary);
+      const formattedBenefit = formatCurrency(Number(monthlyBenefit));
+      point = point.replace('{calculateLTDBenefit}', formattedBenefit);
     }
     if (point.includes('{weeklySTDBenefit}')) {
-      const monthlyBenefit = calculateSTDBenefit(annualSalary); // Calculate LTD benefit based on dynamic annual salary
-      const formattedBenefit = formatCurrency(Number(monthlyBenefit)); // Ensure it's formatted as currency
-      return point.replace('{weeklySTDBenefit}', formattedBenefit); // Replace the placeholder with the actual benefit
+      const monthlyBenefit = calculateSTDBenefit(annualSalary);
+      const formattedBenefit = formatCurrency(Number(monthlyBenefit));
+      point = point.replace('{weeklySTDBenefit}', formattedBenefit);
     }
-    return point;
+
+    // Now, handle hyperlinks
+    const linkRegex = /\{\{([^|]+)\|([^}]+)\}\}/g;
+    const parts = point.split(linkRegex);
+
+    return parts.map((part, index) => {
+      if (index % 3 === 1) {
+        // This is the link text
+        const url = parts[index + 1];
+        return (
+          <a
+            key={index}
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            {part}
+          </a>
+        );
+      } else if (index % 3 === 0) {
+        // This is regular text
+        return <React.Fragment key={index}>{part}</React.Fragment>;
+      }
+      return null; // This is the URL part, we don't render it directly
+    });
   };
   
 
@@ -341,7 +366,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>
           <p className="price">{formatCurrency(premium)}</p>
-          <span className="text-base text-gray-500">/{getCostViewDisplayText(costView)}</span>
+          <span className="text-base text-gray-500"> /{getCostViewDisplayText(costView)}</span>
         </div>
         {renderCostBreakdown()}
 
