@@ -1,7 +1,7 @@
 import React from 'react';
-import { Slider, Box, Typography } from '@mui/material';
+import { Slider, Box, Typography, Input, Grid } from '@mui/material';
 import { Card, CardContent } from "./card";
-import { EligibilityOption, IndividualInfo } from '../../utils/insuranceTypes';
+import { IndividualInfo } from '../../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG } from '../../utils/insuranceConfig';
 import { getLifeADDRate } from '../../utils/insuranceUtils';
 
@@ -42,6 +42,18 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
     onCoverageChange(employeeCoverage, constrainedSpouseCoverage);
   };
 
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    coverageType: 'employee' | 'spouse'
+  ) => {
+    const value = Number(event.target.value.replace(/[^0-9]/g, ''));
+    if (coverageType === 'employee') {
+      onCoverageChange(Math.min(value, maxEmployeeCoverage), spouseCoverage);
+    } else {
+      onCoverageChange(employeeCoverage, Math.min(value, maxSpouseCoverage));
+    }
+  };
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -52,48 +64,64 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
 
   const showSpouseCoverage = eligibility === 'Individual + Spouse' || eligibility === 'Family';
 
-  const rate = getLifeADDRate(age);
-  const employeePremium = (employeeCoverage / LIFE_ADD_CONFIG.units) * rate;
-  const spousePremium = showSpouseCoverage ? (spouseCoverage / LIFE_ADD_CONFIG.units) * rate : 0;
 
   return (
-    <Card className="w-full max-w-md mx-auto lg:max-w-sm"> {/* Responsive width adjustment */}
+    <Card className="w-full max-w-md mx-auto lg:max-w-sm">
       <CardContent>
-        <Box sx={{ width: '100%' }}>
-          <Typography gutterBottom>Individual Coverage</Typography>
-          <Box display="flex" alignItems="center" justifyContent="space-between">
-          </Box>
-          <Slider
-            getAriaLabel={() => 'Individual Coverage'}
-            value={employeeCoverage}
-            onChange={handleEmployeeCoverageChange}
-            valueLabelDisplay="on" // Always show the value
-            getAriaValueText={formatCurrency}
-            valueLabelFormat={formatCurrency}
-            min={0}
-            max={maxEmployeeCoverage}
-            step={10000} // Increment by 10,000
-          />
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={showSpouseCoverage ? 6 : 12}>
+            <Typography className='m-0' gutterBottom>Your Coverage:
+              <Input className='px-1.5'
+                value={formatCurrency(employeeCoverage)}
+                size="small"
+                onChange={(e) => handleInputChange(e, 'employee')}
+                inputProps={{
+                  step: 10000,
+                  min: 0,
+                  max: maxEmployeeCoverage,
+                  type: 'text',
+                  'aria-labelledby': 'input-slider',
+                }}
+                sx={{ width: '50%', maxWidth: '80px', mb: 2 }}
+              />
+            </Typography>
+            <Slider
+              getAriaLabel={() => 'Individual Coverage'}
+              value={employeeCoverage}
+              onChange={handleEmployeeCoverageChange}
+              min={0}
+              max={maxEmployeeCoverage}
+              step={10000}
+            />
+          </Grid>
           {showSpouseCoverage && (
-            <>
-              <Typography gutterBottom>Spouse Coverage</Typography>
-              <Box display="flex" alignItems="center" justifyContent="space-between">
-              </Box>
+            <Grid item xs={12} sm={6}>
+              <Typography gutterBottom>Spouse Coverage:
+                <Input className='px-1.5 font-semibold'
+                  value={formatCurrency(spouseCoverage)}
+                  size="small"
+                  onChange={(e) => handleInputChange(e, 'spouse')}
+                  inputProps={{
+                    step: 5000,
+                    min: 0,
+                    max: maxSpouseCoverage,
+                    type: 'text',
+                    'aria-labelledby': 'input-slider',
+                  }}
+                  sx={{ width: '50%', maxWidth: '80px', mb: 2 }}
+                />
+              </Typography>
               <Slider
                 getAriaLabel={() => 'Spouse coverage amount'}
                 value={spouseCoverage}
                 onChange={handleSpouseCoverageChange}
-                valueLabelDisplay="on" // Always show the value
-                getAriaValueText={formatCurrency}
-                valueLabelFormat={formatCurrency}
                 min={0}
                 max={maxSpouseCoverage}
-                step={10000} // Increment by 10,000
+                step={10000}
               />
-            </>
+            </Grid>
           )}
-         
-        </Box>
+        </Grid>
       </CardContent>
     </Card>
   );
