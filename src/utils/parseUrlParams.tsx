@@ -21,7 +21,7 @@ export function parseUrlParams(): ParsedUrlParams {
     showCostPerHour: false,
     showQuoteSection: false,
     showFunnel: false,
-    showSplash: false,
+    showSplash: true,
   };
   
   

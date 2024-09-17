@@ -6,7 +6,7 @@ const SplashScreen: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
 
   useEffect(() => {
     const timer1 = setTimeout(() => setShowSlogan(true), 1000);
-    const timer2 = setTimeout(() => onFinish(), 2400);
+    const timer2 = setTimeout(() => onFinish(), 2600);
 
     return () => {
       clearTimeout(timer1);
@@ -22,7 +22,7 @@ const SplashScreen: React.FC<{ onFinish: () => void }> = ({ onFinish }) => {
         className="logo"
       />
       <h2 className={`slogan ${showSlogan ? 'show' : ''}`}>
-        Accessible, Affordable & Peace of Mind
+        Accessible, Affordable Peace of Mind
       </h2>
     </div>
   );
