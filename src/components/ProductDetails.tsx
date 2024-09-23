@@ -10,6 +10,30 @@ import CoverageSlider from './ui/CoverageSlider';
 import '../styles/premiumview.css'; // Import the CSS file
 import Tooltip from './ui/tooltip';
 import { insuranceResources, getProductLabel } from './Resource';
+import colors from '../styles/colors';
+
+// Add the useColorFromUrl hook
+const useColorFromUrl = () => {
+  const [color, setColor] = useState(colors.default);
+
+  useEffect(() => {
+    const updateColor = () => {
+      const params = new URLSearchParams(window.location.search);
+      const colorParam = params.get('color');
+      if (colorParam === '1') setColor(colors.color1);
+      else if (colorParam === '2') setColor(colors.color2);
+      else if (colorParam === '3') setColor(colors.color3);
+      else setColor(colors.default);
+    };
+
+    updateColor();
+
+    window.addEventListener('popstate', updateColor);
+    return () => window.removeEventListener('popstate', updateColor);
+  }, []);
+
+  return color;
+};
 
 const label = getProductLabel('LTD');
 console.log(label); // Outputs: Long-Term Disability
@@ -45,6 +69,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 }) => {
   const currentPlan = plans[selectedProduct];
   const { annualSalary } = individualInfo;
+  const dynamicColor = useColorFromUrl();
+
+  const SVGCheckmark = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" width="14" height="14" className="inline-block mr-2">
+      <g>
+        <path stroke={dynamicColor} strokeLinecap="round" strokeLinejoin="round" d="M0.75 8.5625 5.29545 13.25C7.43437 7.10579 9.2157 4.40965 13.25 0.75" strokeWidth="1"></path>
+      </g>
+    </svg>
+  );
+
 
 
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
@@ -217,13 +251,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
   const formattedContent = getFormattedContent(content);
 
-  const SVGCheckmark = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14" width="14" height="14" className="inline-block mr-2">
-      <g>
-        <path stroke="#000cfe" strokeLinecap="round" strokeLinejoin="round" d="M0.75 8.5625 5.29545 13.25C7.43437 7.10579 9.2157 4.40965 13.25 0.75" strokeWidth="1"></path>
-      </g>
-    </svg>
-  );
+  
 
   const getCostBreakdown = () => {
     if (selectedProduct !== 'Life / AD&D') {
@@ -277,12 +305,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     );
   };
   
+  
   return (
     <div className="space-y-4 px-4">
       <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
         <div className="flex flex-col w-full lg:w-auto">
           {/* Product Title */}
-          <h2 className="text-2xl font-bold">{getProductLabel(selectedProduct)}</h2>
+          <h2 className="text-2xl font-bold" style={{ color: dynamicColor }}>{getProductLabel(selectedProduct)}</h2>
+
           {/* New Row for the Hyperlink */}
           <a
             href={getPDFUrl(getProductLabel(selectedProduct))}

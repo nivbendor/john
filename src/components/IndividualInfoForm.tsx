@@ -1,7 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import colors from '../styles/colors';
+
+const useColorFromUrl = () => {
+  const [color, setColor] = useState(colors.default);
+
+  useEffect(() => {
+    const updateColor = () => {
+      const params = new URLSearchParams(window.location.search);
+      const colorParam = params.get('color');
+      if (colorParam === '1') setColor(colors.color1);
+      else if (colorParam === '2') setColor(colors.color2);
+      else if (colorParam === '3') setColor(colors.color3);
+      else setColor(colors.default);
+    };
+
+    updateColor();
+
+    // Listen for changes in the URL
+    window.addEventListener('popstate', updateColor);
+    return () => window.removeEventListener('popstate', updateColor);
+  }, []);
+
+  return color;
+};
 
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
@@ -39,6 +63,8 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 }) => {
   const ageOptions = Array.from({ length: 100 }, (_, i) => i); // Create age options from 1 to 100
   const costViewOptions: CostView[] = ['Monthly', 'Semi-Monthly', 'Bi-Weekly', 'Weekly'];
+  const borderColor = useColorFromUrl();
+
  
   // Function to display the age field, showing a dash if age is 0 (unset)
   const displayAge = () => {
@@ -53,7 +79,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       {/* <h1 className="text-2xl font-semibold mb-3 text-center">Get Started</h1> */}
   
       {/* Blue wavy borders */}
-      <div className="h-1 bg-blue-500 rounded-b-full"></div>
+      <div className="h-1 rounded-b-full" style={{ backgroundColor: borderColor }}> </div>
       
       <div className="py-2 pl-0.5">
         <h3 className="text-lg font-semibold mb-1 text-left">Individual Information</h3>
@@ -91,7 +117,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       </Select>
     </div>
 
-    <div className="w-px h-10 bg-gray-300"></div>
+    <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>
     
 
     {/* Zip Code Field */}
@@ -107,7 +133,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
         className="w-full h-10 bg-white-100 rounded-lg border border-gray-300 text-center px-2"
       />
     </div>
-    <div className="w-px h-10 bg-gray-300"></div>
+    <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>
 
     {/* Annual Salary Field */}
     <div className="flex flex-col items-center w-1/3 px-2">
@@ -188,7 +214,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
 
                       </div>
               
-                      <div className="w-px h-10 bg-gray-300"></div>
+                      <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>
               
                       {/* Zip Code Field */}
                       <div className="flex flex-col items-center flex-1 pr-2 pl-1">
@@ -204,7 +230,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
                         />
                       </div>
               
-                      <div className="w-px h-10 bg-gray-300"></div>
+                      <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>
               
                       {/* Annual Salary Field */}
                       <div className="flex flex-col items-center flex-1 pr-2 pl-1">
@@ -246,7 +272,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       </div>
   
       {/* Blue wavy borders */}
-      <div className="h-1 bg-blue-500 rounded-t-full"></div>
+      <div className="h-1 rounded-t-full" style={{ backgroundColor: borderColor }}></div>
     </div>
   );
 };

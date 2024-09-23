@@ -150,7 +150,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         href="https://www.jotform.com/form/241625750442150/?utm_source=John" 
         target="_blank" 
         rel="noopener noreferrer"
-        className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+        className="inline-block px-4 py-2 bg-[#2df1ac] text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
       >
         Register My Company
       </a>
