@@ -16,6 +16,9 @@ import Funnel from './components/Funnel';
 import './styles/funnel.css';
 import { parseUrlParams } from './utils/parseUrlParams';
 import SplashScreen from './components/SplashScreen';
+import ZipDebugPopup from './components/ZipDebugPopup';
+import ZipDebugPanel from './components/ZipDebugPopup';
+
 
 
 const App: React.FC = () => {
@@ -23,7 +26,20 @@ const App: React.FC = () => {
   const [products, setProducts] = useState<Record<Product, boolean>>({} as Record<Product, boolean>);
   const [totalCost, setTotalCost] = useState(0);
   const [funnelData, setFunnelData] = useState<any>(null);
-  const { showFunnel, showSplash: shouldShowSplash } = parseUrlParams();
+  const { showFunnel, showSplash: shouldShowSplash, zipDebug } = parseUrlParams();
+
+  const [zipDebugInfo, setZipDebugInfo] = useState({
+    zipInput: '',
+    matchingPrefix: '',
+    matchingRegionRate: '',
+    matchingState: '',
+  });
+
+  const handleZipDebug = (debugInfo: typeof zipDebugInfo) => {
+    if (zipDebug) {
+      setZipDebugInfo(debugInfo);
+    }
+  };
 
   useEffect(() => {
     setShowSplash(shouldShowSplash);
@@ -59,7 +75,12 @@ const App: React.FC = () => {
                 <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
                 <Route path="/john" element={
                   showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
-                  <Business setProducts={setProducts} setTotalCost={setTotalCost} funnelData={funnelData} />
+                  <Business 
+                    setProducts={setProducts} 
+                    setTotalCost={setTotalCost} 
+                    funnelData={funnelData} 
+                    onZipDebug={handleZipDebug}
+                  />
                 } />
                 <Route path="/:step" element={<Funnel onComplete={handleFunnelComplete} />} />
               </Routes>
@@ -68,6 +89,14 @@ const App: React.FC = () => {
           </main>
         </div>
       </CostViewProvider>
+      {zipDebug && (
+        <ZipDebugPanel
+          zipInput={zipDebugInfo.zipInput}
+          matchingPrefix={zipDebugInfo.matchingPrefix}
+          matchingRegionRate={zipDebugInfo.matchingRegionRate}
+          matchingState={zipDebugInfo.matchingState}
+        />
+      )}
     </div>
   );
 };

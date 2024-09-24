@@ -5,7 +5,7 @@ export const urlParamDefinitions = {
       zipCode: '07030',
       age: 45,
       annualSalary: 25000,
-      eligibility: 4,
+      eligibility: 1,
       cv: 0,
     },
     employee: {

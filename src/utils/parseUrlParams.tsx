@@ -13,6 +13,7 @@ type ParsedUrlParams = Partial<IndividualInfo> & {
   showQuoteSection: boolean;
   showFunnel: boolean;
   showSplash: boolean;
+  zipDebug: boolean;
 };
 
 export function parseUrlParams(): ParsedUrlParams {
@@ -22,6 +23,7 @@ export function parseUrlParams(): ParsedUrlParams {
     showQuoteSection: false,
     showFunnel: false,
     showSplash: true,
+    zipDebug: false,
   };
   
   
@@ -36,6 +38,12 @@ export function parseUrlParams(): ParsedUrlParams {
   const funParam = params.get('fun');
   if (funParam === '1') {
     result.showFunnel = true;
+  }
+
+  // ZIP debug param check
+  const zipDebugParam = params.get('zipdebug');
+  if (zipDebugParam === '1') {
+    result.zipDebug = true;
   }
 
   const userParam = params.get('user');
@@ -92,4 +100,4 @@ function isValidEligibility(eligibility: string | null): eligibility is Eligibil
   return eligibility !== null && ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'].includes(eligibility);
 }
 
-export const { showCostPerHour, showFunnel, showSplash } = parseUrlParams();
+export const { showCostPerHour, showFunnel, showSplash, zipDebug } = parseUrlParams();

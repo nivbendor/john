@@ -35,57 +35,32 @@ import {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-const getZipCodeRegion = (zipCode: string | number | null | undefined): number | null => {
-  console.log(`--- Debug: getZipCodeRegion ---`);
-  console.log(`Input ZIP code: ${zipCode}`);
-
-  // Convert to string and trim
-  const zipString = String(zipCode || '').trim();
-
-  // Check if the resulting string is empty or not a valid zip code format
-  if (!zipString || !/^\d{5}$/.test(zipString)) {
-    console.log(`Invalid zip code: ${zipString}`);
-    return null;
-  }
-
-  const zipPrefix = zipString.substring(0, 3);
-  console.log(`ZIP prefix: ${zipPrefix}`);
-
+const getZipCodeRegion = (zipCode: string): number | null => {
+  const zipPrefix = zipCode.substring(0, 3);
   for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
-    console.log(`Checking region ${region}`);
-    console.log(`Prefixes: ${prefixes.join(', ')}`);
     if (prefixes.includes(zipPrefix)) {
-      console.log(`Found matching region: ${region}`);
       return parseInt(region, 10);
     }
   }
-
-  console.log(`No exact match found. Searching for closest region.`);
-
-  // If no exact match found, try to find the closest region
-  const numericPrefix = parseInt(zipPrefix, 10);
-  let closestRegion: number | null = null;
-  let smallestDifference = Infinity;
-
-  for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
-    for (const prefix of prefixes) {
-      const difference = Math.abs(parseInt(prefix, 10) - numericPrefix);
-      if (difference < smallestDifference) {
-        smallestDifference = difference;
-        closestRegion = parseInt(region, 10);
-      }
-    }
-  }
-
-  if (closestRegion !== null) {
-    console.log(`Closest region found: ${closestRegion}`);
-    return closestRegion;
-  }
-
-  console.warn(`No region found for zip prefix: ${zipPrefix}`);
-  console.log(`--- End Debug: getZipCodeRegion ---`);
   return null;
 };
+
+
+
+const getStateFromZip = (zipCode: string): string | null => {
+  // This is a simplified version. In a real-world scenario, you'd want a more comprehensive ZIP code to state mapping.
+  const zipPrefix = parseInt(zipCode.substring(0, 3), 10);
+  if (zipPrefix >= 0 && zipPrefix <= 999) {
+    // This is just an example. You'd need to replace this with accurate mappings.
+    if (zipPrefix >= 0 && zipPrefix <= 299) return 'NY';
+    if (zipPrefix >= 300 && zipPrefix <= 599) return 'CA';
+    if (zipPrefix >= 600 && zipPrefix <= 899) return 'TX';
+    return 'Other';
+  }
+  return null;
+};
+
+
 const getSTDRate = (age: number): number => {
   const ageGroup = STD_CONFIG.ageBandRates.find(band => age >= band.minAge && age <= band.maxAge);
   return ageGroup ? ageGroup.rate : STD_CONFIG.ageBandRates[STD_CONFIG.ageBandRates.length - 1].rate;
@@ -290,5 +265,8 @@ export type {
     LIFE_ADD_CONFIG,
     ACCIDENT_PREMIUMS,
     PRODUCT_ELIGIBILITY_OPTIONS,
-    calculatePremiumByCostView, getLifeADDRate
+    calculatePremiumByCostView,
+  getLifeADDRate,
+  getZipCodeRegion,
+  getStateFromZip,
   };
