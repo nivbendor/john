@@ -69,5 +69,6 @@ export function findStateByZipCode(zipCode: string): USState | null {
   const stateEntry = zipCodePrefixes.find((entry) =>
     entry.prefixes.some((p) => p.includes('-') ? isInRange(prefix, p) : p === prefix)
   );
+  console.log(`ZIP: ${zipCode}, Prefix: ${prefix}, State Found: ${stateEntry ? stateEntry.state : 'Not found'}`); // Add this log
   return stateEntry ? stateEntry.state : null;
 }

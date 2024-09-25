@@ -1,6 +1,9 @@
 // utils/insuranceUtils.ts
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useMemo } from 'react';
+import { findStateByZipCode } from './loadStateFromZip';
+
 
 import {
   Product,
@@ -35,6 +38,55 @@ import {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+
+const getStateFromZip = (zipCode: string): USState | null => {
+  console.log(`getStateFromZip called with: ${zipCode}`);
+  console.trace(); // This will print the call stack
+  return findStateByZipCode(zipCode); // Use the existing mapping function
+};
+
+export const memoizedVisionPremium = (() => {
+  let lastInputs: { zipCode: string; plan: Plan; eligibility: EligibilityOption } | null = null;
+  let lastResult: number | null = null;
+
+  return (individualInfo: IndividualInfo, plan: Plan) => {
+    const currentInputs = {
+      zipCode: individualInfo.zipCode,
+      plan,
+      eligibility: individualInfo.eligibility
+    };
+
+    if (
+      lastInputs &&
+      lastResult !== null &&
+      lastInputs.zipCode === currentInputs.zipCode &&
+      lastInputs.plan === currentInputs.plan &&
+      lastInputs.eligibility === currentInputs.eligibility
+    ) {
+      return lastResult;
+    }
+
+    const stateCategory = getStateCategory(individualInfo.zipCode);
+    console.log(`ZIP Code: ${individualInfo.zipCode}, State Category: ${stateCategory}`);
+
+    const premium = VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
+
+    console.log('Vision Premium Calculation:', {
+      zipCode: individualInfo.zipCode,
+      stateCategory: stateCategory,
+      plan: plan,
+      eligibility: individualInfo.eligibility,
+      premium: premium
+    });
+
+    lastInputs = currentInputs;
+    lastResult = premium;
+
+    return premium;
+  };
+})();
+
 const getZipCodeRegion = (zipCode: string): number | null => {
   const zipPrefix = zipCode.substring(0, 3);
   for (const [region, prefixes] of Object.entries(ZIP_CODE_REGIONS)) {
@@ -47,18 +99,7 @@ const getZipCodeRegion = (zipCode: string): number | null => {
 
 
 
-const getStateFromZip = (zipCode: string): string | null => {
-  // This is a simplified version. In a real-world scenario, you'd want a more comprehensive ZIP code to state mapping.
-  const zipPrefix = parseInt(zipCode.substring(0, 3), 10);
-  if (zipPrefix >= 0 && zipPrefix <= 999) {
-    // This is just an example. You'd need to replace this with accurate mappings.
-    if (zipPrefix >= 0 && zipPrefix <= 299) return 'NY';
-    if (zipPrefix >= 300 && zipPrefix <= 599) return 'CA';
-    if (zipPrefix >= 600 && zipPrefix <= 899) return 'TX';
-    return 'Other';
-  }
-  return null;
-};
+
 
 
 const getSTDRate = (age: number): number => {
@@ -72,20 +113,30 @@ const getLifeADDRate = (age: number): number => {
 };
 
 
-const getStateCategory = (state: USState): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other' => {
+const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other' => {
+  const state = getStateFromZip(zipCode); // Use the corrected function to get the state from the ZIP code
+
+  if (!state) {
+    return 'Other'; // Default category if the state is not found
+  }
+
+  // Existing state category logic
   if (state === 'AK') return 'AK';
   if (['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
   return 'Other';
 };
 
 // Dynamic content
-export function calculateLTDBenefit(annualSalary: number): number {
+export function calculateLTDBenefit(annualSalary: number, plan: 'Basic' | 'Premium'): number {
   if (annualSalary <= 0) {
     return 0;
   }
 
   const monthlyBenefit = (annualSalary / 12) * 0.6;
-  return Math.round(monthlyBenefit * 10) / 10; // Rounded to one decimal place
+  const maxBenefit = LTD_CONFIG.maxBenefitAmount[plan];
+  const cappedBenefit = Math.min(monthlyBenefit, maxBenefit);
+  
+  return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
 
 //incontent Dynamic - STD Weekly
@@ -94,8 +145,10 @@ export function calculateSTDBenefit(annualSalary: number): number {
     return 0;
   }
 
-  const weeklyBenefit = (annualSalary / 52) * 0.6;
-  return Math.round(weeklyBenefit * 10) / 10; // Rounded to one decimal place
+  const weeklyBenefit = (annualSalary / STD_CONFIG.weeks) * STD_CONFIG.benefitAmountKey;
+  const cappedBenefit = Math.min(weeklyBenefit, STD_CONFIG.maxCoverageAmount);
+  
+  return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
 
 
@@ -204,9 +257,20 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     if (individualInfo.age === 0) {
       return 0;
     }
+    
+    
     const stateCategory = getStateCategory(individualInfo.state);
+    console.log('Vision Premium Calculation:', {
+      state: individualInfo.state,
+      stateCategory: stateCategory,
+      plan: plan,
+      eligibility: individualInfo.eligibility,
+      premium: VISION_PREMIUMS
+    });
     return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
   },
+
+
   'Critical Illness/Cancer': (individualInfo, plan) => {
     // Return 0 if age is 0
     if (individualInfo.age === 0) {

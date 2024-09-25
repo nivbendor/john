@@ -14,6 +14,7 @@ const ZipDebugPanel: React.FC<ZipDebugPanelProps> = ({
   matchingState,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  console.log('ZipDebugPanel rendering');
 
   return (
     <div className="fixed bottom-4 right-4 bg-white shadow-lg rounded-lg overflow-hidden">

@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
+import React, { useState, useCallback, useEffect, ChangeEvent, useMemo } from 'react';
 import { Product, IndividualInfo, Plan, USState, CostView, EligibilityOption, EligibilityPerProduct } from '../utils/insuranceTypes';
 import { calculatePremiums, getStateFromZip, getZipCodeRegion, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
 import ActiveProductsToggle from '../components/checkout';
-import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
+// import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
 import ProductSelector from '../components/ProductSelector';
 import { defaultPlans, PRODUCTS } from '../utils/insuranceConfig';
 import { useCostView } from '../components/CostView';
@@ -12,7 +12,6 @@ import '../styles/iconSettings.css';
 import { parseUrlParams, zipDebug} from 'utils/parseUrlParams';
 import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
-import ZipDebugPopup from '../components/ZipDebugPopup';
 import ZipDebugPanel from '../components/ZipDebugPopup';
 
 
@@ -58,6 +57,8 @@ type BusinessProps = {
 };
 
 const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelData, onZipDebug }) => {
+  const { costView, setCostView } = useCostView();
+
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
     const urlParams = parseUrlParams();
     const normalizedFunnelData = {
@@ -67,6 +68,28 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
   
+  const zipDebugProps = useMemo(() => ({
+    zipInput: individualInfo.zipCode,
+    matchingPrefix: individualInfo.zipCode.substring(0, 3),
+    matchingRegionRate: getZipCodeRegion(individualInfo.zipCode)?.toString() || 'Not found',
+    matchingState: getStateFromZip(individualInfo.zipCode) || individualInfo.state || 'Not found'
+  }), [individualInfo.zipCode, individualInfo.state]);
+
+  const updateZipDebugInfo = useCallback(() => {
+    if (zipDebug) {
+      onZipDebug(zipDebugProps);
+    }
+  }, [onZipDebug, zipDebugProps]);
+
+
+  useEffect(() => {
+    updateZipDebugInfo();
+    console.log('individualInfo changed:', individualInfo);
+    console.log('costView changed:', costView);
+  }, [individualInfo, costView, updateZipDebugInfo]);
+
+
+
   const [showCostPerHour] = useState(() => {
     const { showCostPerHour } = parseUrlParams();
     return showCostPerHour;
@@ -77,7 +100,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   });
 
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
-  const { costView, setCostView } = useCostView();
   const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
@@ -86,25 +108,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       [product]: defaultPlans[product],
     }), {} as Record<Product, Plan>)
   );
-
-  const updateZipDebugInfo = useCallback((zipCode: string, state: USState) => {
-    if (zipDebug) {
-      const region = getZipCodeRegion(zipCode);
-      const derivedState = getStateFromZip(zipCode);
-      onZipDebug({
-        zipInput: zipCode,
-        matchingPrefix: zipCode.substring(0, 3),
-        matchingRegionRate: region ? region.toString() : 'Not found',
-        matchingState: derivedState || state || 'Not found',
-      });
-    }
-  }, [onZipDebug]);
-
-  useEffect(() => {
-    if (zipDebug) {
-      updateZipDebugInfo(individualInfo.zipCode, individualInfo.state);
-    }
-  }, [zipDebug, individualInfo.zipCode, individualInfo.state, updateZipDebugInfo]);
+  
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     const newPremium = calculatePremiums(individualInfo, product, costView, plan);
@@ -114,12 +118,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     }));
   }, [individualInfo, costView]);
 
-  const calculateAllPremiums = useCallback(() => {
-    const allPremiums: PremiumResult = { ...initialPremiums };
-    PRODUCTS.forEach(product => {
-      allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]);
-    });
-    return allPremiums;
+  const calculateAllPremiums = useMemo(() => {
+    return () => {
+      const allPremiums: PremiumResult = { ...initialPremiums };
+      PRODUCTS.forEach(product => {
+        allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]);
+      });
+      return allPremiums;
+    };
   }, [individualInfo, costView, productPlans]);
 
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
@@ -132,10 +138,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
+    console.log(`Input changed: ${name} = ${value}`);
 
     setIndividualInfo((prev) => {
-      if (name === 'businessEmployees') {
-        value = parseInt(value as string, 10);
+      if (prev[name as keyof IndividualInfo] === value) {
+        return prev; // Return previous state if value hasn't changed
       }
 
       const newInfo = { ...prev, [name]: value };
@@ -147,22 +154,24 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
             ...prevPlans,
             LTD: newLTDPlan,
           }));
-          recalculatePremium('LTD', newLTDPlan);
         }
       }
       
       if (zipDebug && (name === 'zipCode' || name === 'state')) {
-        updateZipDebugInfo(newInfo.zipCode, newInfo.state);
+        updateZipDebugInfo();
       }
   
       return newInfo;
     });
-  }, [zipDebug, updateZipDebugInfo, productPlans.LTD, recalculatePremium]);
+  }, [updateZipDebugInfo, productPlans.LTD]);
 
   useEffect(() => {
+    console.log('Recalculating premiums');
     const newPremiums = calculateAllPremiums();
     setPremiums(newPremiums);
   }, [calculateAllPremiums]);
+
+  
 
   const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const rawValue = e.target.value;
@@ -182,6 +191,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       >
         Register My Company
       </a>
+      <p className="text-sm text-gray-500 mt-2 italic">It only takes a minute to register!</p>
+
     </div>
   );
 
@@ -266,14 +277,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
           </div>
         </div>
       )}
-      {zipDebug && (
-        <ZipDebugPanel
-          zipInput={individualInfo.zipCode}
-          matchingPrefix={individualInfo.zipCode.substring(0, 3)}
-          matchingRegionRate={getZipCodeRegion(individualInfo.zipCode)?.toString() || 'Not found'}
-          matchingState={getStateFromZip(individualInfo.zipCode) || individualInfo.state || 'Not found'}
-        />
-      )}
+      {zipDebug && <ZipDebugPanel {...zipDebugProps} />}
+
     </div>
   );
 };

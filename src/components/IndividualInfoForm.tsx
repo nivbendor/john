@@ -129,7 +129,10 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
         id="zipCode"
         name="zipCode"
         value={individualInfo.zipCode}
-        onChange={handleIndividualInfoChange}
+        onChange={(e) => {
+          console.log(`Zip Code input change: ${e.target.value}`); // Add this log
+          handleIndividualInfoChange(e);
+        }}
         className="w-full h-10 bg-white-100 rounded-lg border border-gray-300 text-center px-2"
       />
     </div>

@@ -207,15 +207,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   const renderBulletPoint = (point: string): React.ReactNode => {
-    // First, handle the existing special cases
     if (point.includes('{calculateLTDBenefit}')) {
-      const monthlyBenefit = calculateLTDBenefit(annualSalary);
-      const formattedBenefit = formatCurrency(Number(monthlyBenefit));
+      const currentPlan = plans[selectedProduct] as 'Basic' | 'Premium';
+      const monthlyBenefit = calculateLTDBenefit(individualInfo.annualSalary, currentPlan);
+      const formattedBenefit = formatCurrency(monthlyBenefit);
       point = point.replace('{calculateLTDBenefit}', formattedBenefit);
-    }
-    if (point.includes('{weeklySTDBenefit}')) {
-      const monthlyBenefit = calculateSTDBenefit(annualSalary);
-      const formattedBenefit = formatCurrency(Number(monthlyBenefit));
+    } else if (point.includes('{weeklySTDBenefit}')) {
+      const weeklyBenefit = calculateSTDBenefit(individualInfo.annualSalary);
+      const formattedBenefit = formatCurrency(weeklyBenefit);
       point = point.replace('{weeklySTDBenefit}', formattedBenefit);
     }
 
