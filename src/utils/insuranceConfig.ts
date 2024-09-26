@@ -49,6 +49,28 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
   'Critical Illness/Cancer': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
 };
 
+
+export const VISION_PREMIUMS: Record<string, Record<Plan, Record<EligibilityOption, number>>> = {
+  AK: {
+    Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
+    Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
+  },
+  'CA,CT,HI,NJ,NV,WA': {
+    Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
+    Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
+  },
+  Other: {
+    Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
+    Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
+  }
+};
+
+export const STATE_CATEGORIES: Record<string, USState[]> = {
+  AK: ['AK'],
+  'CA,CT,HI,NJ,NV,WA': ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'],
+  Other: US_STATES.filter(state => !['AK', 'CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state))
+};
+
 export const AGE_BANDED_RATES = [
   { minAge: 0, maxAge: 29, rate: 0.25 },
   { minAge: 30, maxAge: 34, rate: 0.25 },
@@ -79,20 +101,7 @@ export const ACCIDENT_PREMIUMS: Record<Plan, Record<EligibilityOption, number>> 
   Premium: { Individual: 11.74, 'Individual + Spouse': 23.05, 'Individual + Children': 27.68, Family: 32.67 }
 };
 
-export const VISION_PREMIUMS: Record<string, Record<Plan, Record<EligibilityOption, number>>> = {
-  AK: {
-    Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-    Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
-  },
-  'CA,CT,HI,NJ,NV,WA': {
-    Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
-    Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
-  },
-  Other: {
-    Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-    Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
-  }
-};
+
 
 export const DENTAL_PREMIUMS: Record<Plan, Record<number, Record<EligibilityOption, number>>> = {
   Basic: {
@@ -154,10 +163,64 @@ export const ZIP_CODE_REGIONS: ZIPCodeRegions = {
 };
 
 
-export const STATE_CATEGORIES: Record<string, USState[]> = {
-  AK: ['AK'],
-  'CA,CT,HI,NJ,NV,WA': ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'],
-  Other: US_STATES.filter(state => !['AK', 'CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state))
+export const STD_CONFIG = {
+  benefitAmountKey: 0.6,
+  unitsKey: 10,
+  maxCoverageAmount: 1200,
+  maxUnits: 120,
+  weeks: 52,
+  ageBandRates: [
+    { minAge: 0, maxAge: 29, rate: 0.25 },
+    { minAge: 30, maxAge: 34, rate: 0.25 },
+    { minAge: 35, maxAge: 39, rate: 0.25 },
+    { minAge: 40, maxAge: 44, rate: 0.25 },
+    { minAge: 45, maxAge: 49, rate: 0.30 },
+    { minAge: 50, maxAge: 54, rate: 0.38 },
+    { minAge: 55, maxAge: 59, rate: 0.46 },
+    { minAge: 60, maxAge: 64, rate: 0.55 },
+    { minAge: 65, maxAge: Infinity, rate: 0.66 }
+  ],
+  plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
+};
+
+export const LTD_CONFIG = {
+  unitKey: 100,
+  costPerHundred: {
+    Basic: 0.209,
+    Premium: 0.305
+  },
+  maxBenefitAmount: {
+    Basic: 8333.33,
+    Premium: 15000
+  },
+  maxUnits: {
+    Basic: 83.33,
+    Premium: 250
+  },
+  weeks: 52
+};
+
+export const LIFE_ADD_CONFIG = {
+  max_coverage_amount_individual: 150000,
+  max_coverage_amount_spouse: 20000,
+  max_coverage_amount_spouse_conditional: 0.5, // 50% of individual coverage
+  max_number_of_children: 4,
+  units: 1000,
+  units_max_individual: 150,
+  units_max_spouse: 20,
+  children_rate: 2.50,
+  ageBandRates: [
+    { minAge: 0, maxAge: 29, rate: 0.11 },
+    { minAge: 30, maxAge: 34, rate: 0.13 },
+    { minAge: 35, maxAge: 39, rate: 0.15 },
+    { minAge: 40, maxAge: 44, rate: 0.18 },
+    { minAge: 45, maxAge: 49, rate: 0.26 },
+    { minAge: 50, maxAge: 54, rate: 0.40 },
+    { minAge: 55, maxAge: 59, rate: 0.59 },
+    { minAge: 60, maxAge: 64, rate: 0.89 },
+    { minAge: 65, maxAge: 69, rate: 1.68 },
+    { minAge: 70, maxAge: Infinity, rate: 2.71 }
+  ]
 };
 
 
@@ -330,65 +393,4 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       ]
     }
   }
-};
-
-
-export const STD_CONFIG = {
-  benefitAmountKey: 0.6,
-  unitsKey: 10,
-  maxCoverageAmount: 1200,
-  maxUnits: 120,
-  weeks: 52,
-  ageBandRates: [
-    { minAge: 0, maxAge: 29, rate: 0.25 },
-    { minAge: 30, maxAge: 34, rate: 0.25 },
-    { minAge: 35, maxAge: 39, rate: 0.25 },
-    { minAge: 40, maxAge: 44, rate: 0.25 },
-    { minAge: 45, maxAge: 49, rate: 0.30 },
-    { minAge: 50, maxAge: 54, rate: 0.38 },
-    { minAge: 55, maxAge: 59, rate: 0.46 },
-    { minAge: 60, maxAge: 64, rate: 0.55 },
-    { minAge: 65, maxAge: Infinity, rate: 0.66 }
-  ],
-  plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
-};
-
-export const LTD_CONFIG = {
-  unitKey: 100,
-  costPerHundred: {
-    Basic: 0.209,
-    Premium: 0.305
-  },
-  maxBenefitAmount: {
-    Basic: 8333.33,
-    Premium: 15000
-  },
-  maxUnits: {
-    Basic: 83.33,
-    Premium: 250
-  },
-  weeks: 52
-};
-
-export const LIFE_ADD_CONFIG = {
-  max_coverage_amount_individual: 150000,
-  max_coverage_amount_spouse: 20000,
-  max_coverage_amount_spouse_conditional: 0.5, // 50% of individual coverage
-  max_number_of_children: 4,
-  units: 1000,
-  units_max_individual: 150,
-  units_max_spouse: 20,
-  children_rate: 2.50,
-  ageBandRates: [
-    { minAge: 0, maxAge: 29, rate: 0.11 },
-    { minAge: 30, maxAge: 34, rate: 0.13 },
-    { minAge: 35, maxAge: 39, rate: 0.15 },
-    { minAge: 40, maxAge: 44, rate: 0.18 },
-    { minAge: 45, maxAge: 49, rate: 0.26 },
-    { minAge: 50, maxAge: 54, rate: 0.40 },
-    { minAge: 55, maxAge: 59, rate: 0.59 },
-    { minAge: 60, maxAge: 64, rate: 0.89 },
-    { minAge: 65, maxAge: 69, rate: 1.68 },
-    { minAge: 70, maxAge: Infinity, rate: 2.71 }
-  ]
 };

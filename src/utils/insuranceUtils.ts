@@ -46,46 +46,7 @@ const getStateFromZip = (zipCode: string): USState | null => {
   return findStateByZipCode(zipCode); // Use the existing mapping function
 };
 
-export const memoizedVisionPremium = (() => {
-  let lastInputs: { zipCode: string; plan: Plan; eligibility: EligibilityOption } | null = null;
-  let lastResult: number | null = null;
 
-  return (individualInfo: IndividualInfo, plan: Plan) => {
-    const currentInputs = {
-      zipCode: individualInfo.zipCode,
-      plan,
-      eligibility: individualInfo.eligibility
-    };
-
-    if (
-      lastInputs &&
-      lastResult !== null &&
-      lastInputs.zipCode === currentInputs.zipCode &&
-      lastInputs.plan === currentInputs.plan &&
-      lastInputs.eligibility === currentInputs.eligibility
-    ) {
-      return lastResult;
-    }
-
-    const stateCategory = getStateCategory(individualInfo.zipCode);
-    console.log(`ZIP Code: ${individualInfo.zipCode}, State Category: ${stateCategory}`);
-
-    const premium = VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
-
-    console.log('Vision Premium Calculation:', {
-      zipCode: individualInfo.zipCode,
-      stateCategory: stateCategory,
-      plan: plan,
-      eligibility: individualInfo.eligibility,
-      premium: premium
-    });
-
-    lastInputs = currentInputs;
-    lastResult = premium;
-
-    return premium;
-  };
-})();
 
 const getZipCodeRegion = (zipCode: string): number | null => {
   const zipPrefix = zipCode.substring(0, 3);
@@ -253,22 +214,31 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   },
   
   Vision: (individualInfo, plan) => {
-    // Return 0 if age is 0
     if (individualInfo.age === 0) {
       return 0;
     }
     
+    const stateCategory = getStateCategory(individualInfo.zipCode);
     
-    const stateCategory = getStateCategory(individualInfo.state);
-    console.log('Vision Premium Calculation:', {
-      state: individualInfo.state,
-      stateCategory: stateCategory,
-      plan: plan,
-      eligibility: individualInfo.eligibility,
-      premium: VISION_PREMIUMS
-    });
     return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
   },
+  // Vision: (individualInfo, plan) => {
+  //   // Return 0 if age is 0
+  //   if (individualInfo.age === 0) {
+  //     return 0;
+  //   }
+    
+    
+  //   const stateCategory = getStateCategory(individualInfo.state);
+  //   console.log('Vision Premium Calculation:', {
+  //     state: individualInfo.state,
+  //     stateCategory: stateCategory,
+  //     plan: plan,
+  //     eligibility: individualInfo.eligibility,
+  //     premium: VISION_PREMIUMS
+  //   });
+  //   return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
+  // },
 
 
   'Critical Illness/Cancer': (individualInfo, plan) => {
