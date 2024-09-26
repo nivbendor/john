@@ -14,8 +14,8 @@ module.exports = {
   cakewalk: '#C71DFF',
   default: '#2D5FF1',
   color1: '#C71DFF',
-  color2: '#C71DFF',
-  color3: '#C71DFF',
+  color2: '#B0B1B3',
+  color3: '#E1F5FE',
 
   // Add any other colors you want to use globally
 };
