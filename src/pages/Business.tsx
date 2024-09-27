@@ -73,7 +73,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
 
   const { cpValue } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
-
+  
+  // Register button - Hide - "?cp=amf"
+  const showQuoteSection = useMemo(() => cpValue !== 'amf', [cpValue]);
 
 
   
@@ -280,7 +282,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   }}
                 />
               </div>
-              <QuoteSection registrationUrl={registrationUrl} />
+              {showQuoteSection && (
+                <QuoteSection registrationUrl={registrationUrl} />
+              )}              
               <InsuranceResources />
             </div>
           </div>
