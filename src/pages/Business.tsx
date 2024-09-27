@@ -13,6 +13,9 @@ import { parseUrlParams, zipDebug} from 'utils/parseUrlParams';
 import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
 import ZipDebugPanel from '../components/ZipDebugPopup';
+import { getRegistrationUrl } from '../utils/registrationUrls';
+
+
 
 
 // Define all necessary types and constants
@@ -67,6 +70,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     };
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
+
+  const { cpValue } = useMemo(() => parseUrlParams(), []);
+  const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
+
+
+
   
   const zipDebugProps = useMemo(() => ({
     zipInput: individualInfo.zipCode,
@@ -180,19 +189,19 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     handleInputChange({ name: 'annualSalary', value });
   };
 
-  const QuoteSection = () => (
+  const QuoteSection: React.FC<{ registrationUrl: string }> = ({ registrationUrl }) => (
     <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center">
       <h3 className="text-lg font-semibold mb-3">Get My Company Benefits</h3>
       <a 
-        href="https://www.jotform.com/form/241625750442150/?utm_source=John" 
+        href={registrationUrl}
         target="_blank" 
         rel="noopener noreferrer"
         className="inline-block px-4 py-2 bg-[#2df1ac] text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
+        id="register-button"
       >
         Register My Company
       </a>
       <p className="text-sm text-gray-500 mt-2 italic">It only takes a minute to register!</p>
-
     </div>
   );
 
@@ -271,7 +280,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   }}
                 />
               </div>
-              <QuoteSection />
+              <QuoteSection registrationUrl={registrationUrl} />
               <InsuranceResources />
             </div>
           </div>

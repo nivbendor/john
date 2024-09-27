@@ -1,3 +1,6 @@
+//src\utils\parseUrlParams.tsx
+
+
 import { IndividualInfo, EligibilityOption } from '../utils/insuranceTypes';
 import { urlParamDefinitions } from './urlParam-def';
 
@@ -8,12 +11,13 @@ const eligibilityMapping: Record<number, EligibilityOption> = {
   4: 'Family',
 };
 
-type ParsedUrlParams = Partial<IndividualInfo> & {
+export type ParsedUrlParams = Partial<IndividualInfo> & {
   showCostPerHour: boolean;
   showQuoteSection: boolean;
   showFunnel: boolean;
   showSplash: boolean;
   zipDebug: boolean;
+  cpValue?: string;
 };
 
 export function parseUrlParams(): ParsedUrlParams {
@@ -45,6 +49,8 @@ export function parseUrlParams(): ParsedUrlParams {
   if (zipDebugParam === '1') {
     result.zipDebug = true;
   }
+
+  
 
   const userParam = params.get('user');
   const userParams = userParam ? urlParamDefinitions[userParam as keyof typeof urlParamDefinitions] : null;
@@ -91,6 +97,10 @@ export function parseUrlParams(): ParsedUrlParams {
     if (cvParam === '1') {
       result.showCostPerHour = true;
     }
+  }
+  const cpParam = params.get('cp');
+  if (cpParam) {
+    result.cpValue = cpParam;
   }
 
   return result;
