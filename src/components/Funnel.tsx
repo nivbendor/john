@@ -28,24 +28,24 @@ const Funnel: React.FC<FunnelProps> = ({ onComplete }) => {
 
   const steps = [
     // Step 1: Zip Code
-    <motion.div key="step0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <h1 className="text-2xl font-semibold text-center mb-4">Let's start with the hardest question</h1>
-      <p className="text-center mb-6">What's your Zip?</p>
+    <motion.div key="step0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm mx-auto text-center">
+      <h1 className="text-2xl font-semibold mb-4 text-[#0067ED]">Let's start with the hardest question</h1>
+      <p className="mb-6 text-xl text-[#70AD47]">What's your Zip?</p>
       <input
         type="text"
         name="zipCode"
         value={formData.zipCode}
         onChange={handleInputChange}
         maxLength={5}
-        className="w-full max-w-sm py-2 px-3 border border-gray-300 rounded-lg mb-8"
+        className="w-full py-2 px-3 border border-gray-300 rounded-lg mb-8"
         placeholder="Enter 5 digit zip code"
       />
     </motion.div>,
 
-    // Step 2: Age
-    <motion.div key="step1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <h1 className="text-2xl font-semibold text-center mb-4">It already feels a little bit more personal, let me ask you this</h1>
-      <p className="text-center mb-6">How old are you?</p>
+    // Step 2: Age (Updated for centralized alignment)
+    <motion.div key="step1" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm mx-auto text-center">
+      <h1 className="text-2xl font-semibold mb-4 text-[#0067ED]">It already feels a little bit more personal, let me ask you this</h1>
+      <p className="mb-6 text-xl text-[#70AD47]">How old are you?</p>
       <input
         type="number"
         name="age"
@@ -53,15 +53,18 @@ const Funnel: React.FC<FunnelProps> = ({ onComplete }) => {
         onChange={handleInputChange}
         min="18"
         max="99"
-        className="w-full max-w-sm py-2 px-3 border border-gray-300 rounded-lg mb-8"
+        className="w-full py-2 px-3 border border-gray-300 rounded-lg mb-2"
         placeholder="Enter your age"
       />
+      {formData.age && (parseInt(formData.age) < 18 || parseInt(formData.age) > 99) && (
+        <p className="text-red-500 text-sm">Please enter an age between 18 and 99.</p>
+      )}
     </motion.div>,
 
-    // Step 3: Coverage
-    <motion.div key="step2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <h1 className="text-2xl font-semibold text-center mb-4">Last question</h1>
-      <p className="text-center mb-6">Who do you have in mind to include in the coverage?</p>
+    // Step 3: Coverage (Updated for centralized alignment)
+    <motion.div key="step2" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="w-full max-w-sm mx-auto text-center">
+      <h1 className="text-2xl font-semibold mb-4 text-[#0067ED]">Last question</h1>
+      <p className="mb-6">Who do you have in mind to include in the coverage?</p>
       <div className="grid grid-cols-2 gap-4 mb-8">
         {['Me', '+Spouse', '+Children', 'Family'].map((option) => (
           <button
@@ -85,7 +88,7 @@ const Funnel: React.FC<FunnelProps> = ({ onComplete }) => {
         <button
           className={`w-full max-w-sm py-3 rounded-lg text-white font-semibold transition-colors ${
             (step === 0 && formData.zipCode.length === 5) ||
-            (step === 1 && formData.age) ||
+            (step === 1 && formData.age && parseInt(formData.age) >= 18 && parseInt(formData.age) <= 99) ||
             (step === 2 && formData.coverage)
               ? 'bg-blue-500 hover:bg-blue-600'
               : 'bg-gray-300 cursor-not-allowed'
@@ -93,7 +96,7 @@ const Funnel: React.FC<FunnelProps> = ({ onComplete }) => {
           onClick={handleNext}
           disabled={
             (step === 0 && formData.zipCode.length !== 5) ||
-            (step === 1 && !formData.age) ||
+            (step === 1 && (!formData.age || parseInt(formData.age) < 18 || parseInt(formData.age) > 99)) ||
             (step === 2 && !formData.coverage)
           }
         >
