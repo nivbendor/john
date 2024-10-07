@@ -10,7 +10,9 @@ export type CostView = 'Monthly' | 'Semi-Monthly' | 'Weekly' | 'Bi-Weekly';
 
 export type PremiumResult = Record<Product, number>;
 
-export type Plan = 'Basic' | 'Premium';
+export type Plan = LTDPlan | 'Basic' | 'Premium';
+export type LTDPlan = 'Basic' | 'Premium' | 'Ultra';
+export type PlanRecord<T> = Record<LTDPlan, T> | Record<Exclude<Plan, 'Ultra'>, T>;
 
 export type USState =
   | 'AL' | 'AK' | 'AZ' | 'AR' | 'CA' | 'CO' | 'CT' | 'DE' | 'DC' | 'FL' | 'GA'
@@ -29,6 +31,7 @@ export interface IndividualInfo {
   age: number;
   annualSalary: number;
   eligibility: EligibilityOption;
+  ltdPlan: LTDPlan; // Add this line
   employeeCoverage: number;
   spouseCoverage: number;
   numberOfChildren: number;

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, ChangeEvent, useMemo } from 'react';
-import { Product, IndividualInfo, Plan, USState, CostView, EligibilityOption, EligibilityPerProduct } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, USState, CostView, EligibilityOption, EligibilityPerProduct, LTDPlan } from '../utils/insuranceTypes';
 import { calculatePremiums, getStateFromZip, getZipCodeRegion, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
 import ActiveProductsToggle from '../components/checkout';
@@ -29,6 +29,7 @@ const initialIndividualInfo: IndividualInfo = {
   age: 0,
   annualSalary: 0,
   eligibility: 'Individual',
+  ltdPlan: 'Basic' as LTDPlan, // Add this line
   employeeCoverage: 20000,
   spouseCoverage: 10000,
   numberOfChildren: 2,
@@ -140,8 +141,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   }, [individualInfo, costView, productPlans]);
 
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
-    setProductPlans(prev => ({ ...prev, [product]: plan }));
-    recalculatePremium(product, plan);
+    if (product === 'LTD') {
+      const ltdPlan = plan as LTDPlan;
+      setProductPlans(prev => ({ ...prev, [product]: ltdPlan }));
+      recalculatePremium(product, ltdPlan);
+    } else {
+      setProductPlans(prev => ({ ...prev, [product]: plan }));
+      recalculatePremium(product, plan);
+    }
   }, [recalculatePremium]);
 
   const handleInputChange = useCallback((
@@ -159,7 +166,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       const newInfo = { ...prev, [name]: value };
 
       if (name === 'annualSalary') {
-        const newLTDPlan = newInfo.annualSalary >= 100000 ? 'Premium' : 'Basic';
+        let newLTDPlan: LTDPlan = 'Basic';
+        if (newInfo.annualSalary > 200000) {
+          newLTDPlan = 'Ultra';
+        } else if (newInfo.annualSalary >= 100000) {
+          newLTDPlan = 'Premium';
+        }
+        
         if (newLTDPlan !== productPlans.LTD) {
           setProductPlans(prevPlans => ({
             ...prevPlans,
@@ -175,6 +188,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       return newInfo;
     });
   }, [updateZipDebugInfo, productPlans.LTD]);
+
 
   useEffect(() => {
     console.log('Recalculating premiums');

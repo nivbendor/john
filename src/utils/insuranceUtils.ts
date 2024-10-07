@@ -15,7 +15,8 @@ import {
   US_STATES,
   CostView,
   calculatePremiumByCostView,
-  ToggleState
+  ToggleState,
+  LTDPlan
 } from './insuranceTypes';
 
 import {
@@ -60,7 +61,9 @@ const getZipCodeRegion = (zipCode: string): number | null => {
 
 
 
-
+export function hasUltraPlan(product: Product): boolean {
+  return product === 'LTD';
+}
 
 
 const getSTDRate = (age: number): number => {
@@ -88,7 +91,7 @@ const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other'
 };
 
 // Dynamic content
-export function calculateLTDBenefit(annualSalary: number, plan: 'Basic' | 'Premium'): number {
+export function calculateLTDBenefit(annualSalary: number, plan: Plan): number {
   if (annualSalary <= 0) {
     return 0;
   }
@@ -124,11 +127,17 @@ export function hasMultiplePlans(product: Product): boolean {
 
 
 
-function getLTDPlan(annualSalary: number): Plan {
-  return annualSalary >= 100000 ? 'Premium' : 'Basic';
+function getLTDPlan(annualSalary: number): LTDPlan {
+  if (annualSalary > 200000) {
+    return 'Ultra';
+  } else if (annualSalary >= 100000) {
+    return 'Premium';
+  } else {
+    return 'Basic';
+  }
 }
 
-export function calculateLTDPremium(individualInfo: IndividualInfo, plan: Plan): number {
+export function calculateLTDPremium(individualInfo: IndividualInfo, plan: LTDPlan): number {
   const { annualSalary } = individualInfo;
   const actualPlan = getLTDPlan(annualSalary);
 

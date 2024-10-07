@@ -1,9 +1,9 @@
 // src\components\ProductDetails.tsx
 
 import React, { useEffect, useState } from 'react';
-import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate } from '../utils/insuranceUtils';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -88,7 +88,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     'Individual + Children': 0,
     Family: 0,
   });
-  const [planPremiums, setPlanPremiums] = useState<Record<Plan, number>>({ Basic: 0, Premium: 0 });
+  const [planPremiums, setPlanPremiums] = useState<PlanRecord<number>>({ Basic: 0, Premium: 0 });
 
   useEffect(() => {
     const options = PRODUCT_ELIGIBILITY_OPTIONS[selectedProduct] || ['Individual'];
@@ -103,12 +103,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     setEligibilityPremiums(eligibilityPremiums);
 
     if (hasMultiplePlans(selectedProduct)) {
-      const planPremiums: Record<Plan, number> = { Basic: 0, Premium: 0 };
-      (['Basic', 'Premium'] as Plan[]).forEach(plan => {
+      const planPremiums: PlanRecord<number> = hasUltraPlan(selectedProduct)
+        ? { Basic: 0, Premium: 0, Ultra: 0 }
+        : { Basic: 0, Premium: 0 };
+    
+      const plansToCalculate = hasUltraPlan(selectedProduct)
+        ? ['Basic', 'Premium', 'Ultra'] as const
+        : ['Basic', 'Premium'] as const;
+    
+      plansToCalculate.forEach(plan => {
         const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](individualInfo, plan);
         planPremiums[plan] = calculatePremiumByCostView(calculatedPremium, costView);
       });
-      setPlanPremiums(planPremiums);
+    
+      setPlanPremiums(planPremiums as PlanRecord<number>);
     }
 
     recalculatePremium(selectedProduct, currentPlan);

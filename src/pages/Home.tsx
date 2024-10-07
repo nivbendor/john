@@ -23,7 +23,8 @@ const initialIndividualInfo: IndividualInfo = {
   employeeCoverage: 150000,
   spouseCoverage: 20000,
   numberOfChildren: 2,
-  isExpanded: undefined
+  isExpanded: undefined,
+  ltdPlan: 'Basic'
 };
 
 const initialProducts: Record<Product, boolean> = {

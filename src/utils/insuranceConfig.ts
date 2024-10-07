@@ -1,6 +1,6 @@
 // utils/insuranceConfig.ts
 
-import { Product, EligibilityOption, USState, Plan } from './insuranceTypes';
+import { Product, EligibilityOption, USState, PlanRecord, Plan, LTDPlan } from './insuranceTypes';
 import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
 
 
@@ -50,7 +50,7 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
 };
 
 
-export const VISION_PREMIUMS: Record<string, Record<Plan, Record<EligibilityOption, number>>> = {
+export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = {
   AK: {
     Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
     Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
@@ -96,14 +96,14 @@ export const AGE_BANDED_RATES_LIFE = [
   { minAge: 70, maxAge: Infinity, rate: 2.71 },
 ];
 
-export const ACCIDENT_PREMIUMS: Record<Plan, Record<EligibilityOption, number>> = {
+export const ACCIDENT_PREMIUMS: PlanRecord<Record<EligibilityOption, number>> = {
   Basic: { Individual: 7.94, 'Individual + Spouse': 15.07, 'Individual + Children': 18.89, Family: 22.27 },
   Premium: { Individual: 11.74, 'Individual + Spouse': 23.05, 'Individual + Children': 27.68, Family: 32.67 }
 };
 
 
 
-export const DENTAL_PREMIUMS: Record<Plan, Record<number, Record<EligibilityOption, number>>> = {
+export const DENTAL_PREMIUMS: PlanRecord<Record<number, Record<EligibilityOption, number>>> = {
   Basic: {
     1: { Individual: 20.53, 'Individual + Spouse': 40.82, 'Individual + Children': 45.42, Family: 70.37 },
     2: { Individual: 22.29, 'Individual + Spouse': 44.32, 'Individual + Children': 49.2, Family: 76.29 },
@@ -187,17 +187,25 @@ export const LTD_CONFIG = {
   unitKey: 100,
   costPerHundred: {
     Basic: 0.209,
-    Premium: 0.305
+    Premium: 0.305,
+    Ultra: 0.34
   },
   maxBenefitAmount: {
     Basic: 8333.33,
-    Premium: 15000
+    Premium: 10000,
+    Ultra: 15000
   },
   maxUnits: {
     Basic: 83.33,
-    Premium: 250
+    Premium: 166.66,
+    Ultra: 250
   },
-  weeks: 52
+  weeks: 52,
+  incomeBrackets: {
+    Basic: { min: 0, max: 100000 },
+    Premium: { min: 100001, max: 200000 },
+    Ultra: { min: 200001, max: 300000 }
+  }
 };
 
 export const LIFE_ADD_CONFIG = {
@@ -224,7 +232,7 @@ export const LIFE_ADD_CONFIG = {
 };
 
 
-export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
+export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   paragraph: string;
   bulletPoints: string[];
 }>> = {
@@ -233,7 +241,7 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "LTD Insurance protects your ability to earn an income",
-        "Up to $15,000 of monthly benefit",
+        "Up to $8,333 of monthly benefit",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
@@ -244,11 +252,23 @@ export const PRODUCT_CONTENT: Record<Product, Record<Plan, {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "LTD Insurance protects your ability to earn an income",
-        "Up to $15,000 of monthly benefit",
+        "Up to $10,000 of monthly benefit",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
         "Guaranteed Issue - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only"
+      ]
+    },
+    'Ultra': {
+      paragraph: "How would you pay your expenses if you cannot work because of injury or illness? Our Ultra plan provides enhanced coverage for high-income earners.",
+      bulletPoints: [
+        "LTD Insurance protects your ability to earn an income",
+        "Up to $15,000 of monthly benefit",
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
+        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "Benefit can be paid up to your normal retirement age",
+        "Available for employees only",
+        "Ideal for salaries above $200,000"
       ]
     }
   },
