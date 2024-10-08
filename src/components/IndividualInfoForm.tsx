@@ -70,7 +70,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
             {/* First row: Age, Zip Code */}
             <div className="flex justify-between items-end mb-2">
               {/* Age Field */}
-              <div className="flex flex-col items-center w-1/2 pt-2">
+              <div className="flex flex-col items-center w-1/2 pt-2 px-6">
                 <Label htmlFor="age" className="font-normal text-gray-600 mb-3">
                   Age
                 </Label>
@@ -98,7 +98,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>
               
               {/* Zip Code Field */}
-              <div className="flex flex-col items-center w-1/2 px-2">
+              <div className="flex flex-col items-center w-1/2 px-8">
                 <Label htmlFor="zipCode" className="font-normal text-gray-600 mb-1">
                   Zip Code
                 </Label>

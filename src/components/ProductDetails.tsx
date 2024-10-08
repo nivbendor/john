@@ -257,10 +257,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   const renderBulletPoint = (point: string): React.ReactNode => {
     if (point.includes('{calculateLTDBenefit}')) {
-      const currentPlan = plans[selectedProduct] as 'Basic' | 'Premium';
+      const currentPlan = plans[selectedProduct] as 'Basic' | 'Premium' | 'Ultra';
       const monthlyBenefit = calculateLTDBenefit(individualInfo.annualSalary, currentPlan);
       const formattedBenefit = formatCurrency(monthlyBenefit);
       point = point.replace('{calculateLTDBenefit}', formattedBenefit);
+
     } else if (point.includes('{weeklySTDBenefit}')) {
       const weeklyBenefit = calculateSTDBenefit(individualInfo.annualSalary);
       const formattedBenefit = formatCurrency(weeklyBenefit);
@@ -374,8 +375,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {/* Annual Income Field - Only show for LTD */}
           {selectedProduct === 'LTD' && (
           <>
-            <div className="w-full lg:w-32 mb-4 lg:mb-0 flex justify-center">
-              <div className="w-full lg:w-48">
+            <div className="w-full sm:w-32 lg:w-32 mb-4 lg:mb-0 flex justify-center">
+              <div className="w-full sm:w-30 lg:w-38">
                 <label htmlFor="annualSalary" className="block text-sm font-medium text-gray-700 mb-1 text-center">
                   Annual Income
                 </label>
@@ -392,7 +393,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </div>
             </div>
             {showPlanDropdown && individualInfo.annualSalary > 0 && (
-
               <Dropdown onSelect={handlePlanChange}>
                 <Dropdown.Toggle variant="primary" id="dropdown-plan">
                   {getLTDPlanDisplayName(currentPlan as LTDPlan)}
@@ -407,7 +407,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                       <div className="flex justify-between items-center w-full">
                         <span>{getLTDPlanDisplayName(plan)}</span>
                         <span className="ml-4">
-                          {formatCurrency(calculateLTDPremiumForDisplay(plan))} / {costView.toLowerCase()}
+                          {formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}
+                          <span className="ml-1 text-sm text-white-600">Lost Income / month</span>
+
                         </span>
                       </div>
                     </Dropdown.Item>
