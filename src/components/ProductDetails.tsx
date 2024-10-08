@@ -1,9 +1,9 @@
 // src\components\ProductDetails.tsx
 
 import React, { useEffect, useState } from 'react';
-import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan } from '../utils/insuranceUtils';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -38,6 +38,10 @@ const useColorFromUrl = () => {
 const label = getProductLabel('LTD');
 console.log(label); // Outputs: Long-Term Disability
 
+function isLTDPlan(plan: string): plan is LTDPlan {
+  return ['Basic', 'Premium', 'Ultra'].includes(plan);
+}
+
 interface ProductDetailsProps {
   plans: Record<Product, Plan>;
   selectedProduct: Product;
@@ -48,6 +52,7 @@ interface ProductDetailsProps {
   selectedEligibilityPerProduct: EligibilityPerProduct;
   setSelectedEligibilityPerProduct: React.Dispatch<React.SetStateAction<EligibilityPerProduct>>;
   handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: string | number }) => void;
+  handleSalaryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>
   recalculatePremium: (product: Product, plan: Plan) => void;
   activeProducts: Record<Product, boolean>;
@@ -59,6 +64,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   premium,
   costView,
   individualInfo,
+  handleSalaryChange,
   setProductPlan,
   selectedEligibilityPerProduct,
   setSelectedEligibilityPerProduct,
@@ -68,7 +74,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   activeProducts,
 }) => {
   const currentPlan = plans[selectedProduct];
-  const { annualSalary } = individualInfo;
   const dynamicColor = useColorFromUrl();
 
   const SVGCheckmark = () => (
@@ -79,6 +84,42 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     </svg>
   );
 
+  const [showPlanDropdown, setShowPlanDropdown] = useState(false);
+  const [availableLTDPlans, setAvailableLTDPlans] = useState<LTDPlan[]>([]);
+
+  useEffect(() => {
+    if (selectedProduct === 'LTD') {
+      const salary = individualInfo.annualSalary;
+      if (salary > 0) {
+        const recommendedPlan = getLTDPlan(salary);
+        setAvailableLTDPlans(recommendedPlan === 'Ultra' ? ['Premium', 'Ultra'] : [recommendedPlan]);
+        setShowPlanDropdown(true);
+      } else {
+        setShowPlanDropdown(false);
+      }
+    } else {
+      setShowPlanDropdown(false);
+    }
+  }, [individualInfo.annualSalary, selectedProduct]);
+
+  const getLTDPlanDisplayName = (plan: LTDPlan) => {
+    switch (plan) {
+      case 'Basic': return 'Associate';
+      case 'Premium': return 'LTD 1';
+      case 'Ultra': return 'LTD 2';
+      default: return plan;
+    }
+  };
+
+  const calculateLTDPremiumForDisplay = (plan: LTDPlan) => {
+    const monthlyPremium = calculateLTDPremium({ ...individualInfo, eligibility: 'Individual' }, plan);
+    return calculatePremiumByCostView(monthlyPremium, costView);
+  };
+ 
+  const [isFocused, setIsFocused] = useState(false); // Track if input is focused
+
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
 
 
   const [eligibilityOptions, setEligibilityOptions] = useState<EligibilityOption[]>([]);
@@ -123,9 +164,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   }, [individualInfo, currentPlan, selectedProduct, recalculatePremium, costView]);
 
   const handlePlanChange = (value: string | null) => {
-    if (value === 'Basic' || value === 'Premium') {
-      setProductPlan(selectedProduct, value as Plan);
-      recalculatePremium(selectedProduct, value as Plan);
+    if (value && (value === 'Basic' || value === 'Premium' || value === 'Ultra')) {
+      setProductPlan(selectedProduct, value as LTDPlan);
+      recalculatePremium(selectedProduct, value as LTDPlan);
     }
   };
 
@@ -158,11 +199,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     handleIndividualInfoChange({ name: 'spouseCoverage', value: constrainedSpouseCoverage });
   };
 
-  const formatCurrency = (value: number) => {
+  const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 0,
       maximumFractionDigits: 2
     }).format(value);
   };
@@ -252,8 +293,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       return null; // This is the URL part, we don't render it directly
     });
   };
-  
-
 
   const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
   const formattedContent = getFormattedContent(content);
@@ -319,7 +358,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         <div className="flex flex-col w-full lg:w-auto">
           {/* Product Title */}
           <h2 className="text-2xl font-bold" style={{ color: dynamicColor }}>{getProductLabel(selectedProduct)}</h2>
-
+  
           {/* New Row for the Hyperlink */}
           <a
             href={getPDFUrl(getProductLabel(selectedProduct))}
@@ -332,6 +371,54 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         </div>
   
         <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 w-full lg:w-auto">
+          {/* Annual Income Field - Only show for LTD */}
+          {selectedProduct === 'LTD' && (
+          <>
+            <div className="w-full lg:w-32 mb-4 lg:mb-0 flex justify-center">
+              <div className="w-full lg:w-48">
+                <label htmlFor="annualSalary" className="block text-sm font-medium text-gray-700 mb-1 text-center">
+                  Annual Income
+                </label>
+                <input
+                  id="annualSalary"
+                  name="annualSalary"
+                  type="text"
+                  value={isFocused ? individualInfo.annualSalary : formatCurrency(individualInfo.annualSalary)}
+                  onChange={handleSalaryChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  className="w-full text-center px-3 py-2 border rounded-md"
+                />
+              </div>
+            </div>
+            {showPlanDropdown && individualInfo.annualSalary > 0 && (
+
+              <Dropdown onSelect={handlePlanChange}>
+                <Dropdown.Toggle variant="primary" id="dropdown-plan">
+                  {getLTDPlanDisplayName(currentPlan as LTDPlan)}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {availableLTDPlans.map((plan) => (
+                    <Dropdown.Item 
+                      key={plan} 
+                      eventKey={plan} 
+                      active={currentPlan === plan}
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <span>{getLTDPlanDisplayName(plan)}</span>
+                        <span className="ml-4">
+                          {formatCurrency(calculateLTDPremiumForDisplay(plan))} / {costView.toLowerCase()}
+                        </span>
+                      </div>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+             )}
+             </>
+           )} 
+      
+  
           {selectedProduct === 'Life / AD&D' && (
             <div className="w-full lg:w-auto">
               <CoverageSlider
@@ -342,20 +429,30 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           )}
           {hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
-              <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                {currentPlan}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {['Basic', 'Premium'].map((plan) => (
-                  <Dropdown.Item key={plan} eventKey={plan} active={currentPlan === plan}>
-                    <div className="flex justify-between items-center w-full">
-                      <span>{plan}</span>
-                      <span className="ml-4">{formatCurrency(planPremiums[plan as Plan])} / {costView.toLowerCase()}</span>
-                    </div>
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+            <Dropdown.Toggle variant="primary" id="dropdown-plan">
+              {currentPlan}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
+                <Dropdown.Item 
+                  key={plan} 
+                  eventKey={plan} 
+                  active={currentPlan === plan}
+                  disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary)}
+                >
+                  <div className="flex justify-between items-center w-full">
+                    <span>{plan}</span>
+                    <span className="ml-4">
+                      {selectedProduct === 'LTD' && isLTDPlan(plan)
+                        ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`
+                        : `${formatCurrency(planPremiums[plan as Plan])} / ${costView.toLowerCase()}`
+                      }
+                    </span>
+                  </div>
+                </Dropdown.Item>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
           )}
           {eligibilityOptions.length > 1 && (
             <Dropdown onSelect={handleEligibilityChange}>
@@ -388,7 +485,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           ))}
         </ul>
       </div>
-
+  
+      {/* {selectedProduct === 'LTD' && (
+        <div className="flex items-center space-x-2">
+          <span>LTD Plan:</span>
+          <strong>{currentPlan}</strong>
+        </div>
+      )} */}
   
       {selectedProduct === 'Life / AD&D' && (errors.employeeCoverage || errors.spouseCoverage) && (
         <Alert variant="destructive">
@@ -399,14 +502,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         </Alert>
       )}
   
-  <div className="bg-gray-100 p-3 rounded-md shadow-md">
+      <div className="bg-gray-100 p-3 rounded-md shadow-md">
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>
           <p className="price">{formatCurrency(premium)}</p>
           <span className="text-base text-gray-500"> /{getCostViewDisplayText(costView)}</span>
         </div>
         {renderCostBreakdown()}
-
       </div>
     </div>
   );

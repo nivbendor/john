@@ -91,7 +91,8 @@ const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other'
 };
 
 // Dynamic content
-export function calculateLTDBenefit(annualSalary: number, plan: Plan): number {
+export function calculateLTDBenefit(annualSalary: number, plan: LTDPlan): number {
+
   if (annualSalary <= 0) {
     return 0;
   }
@@ -127,7 +128,7 @@ export function hasMultiplePlans(product: Product): boolean {
 
 
 
-function getLTDPlan(annualSalary: number): LTDPlan {
+export function getLTDPlan(annualSalary: number): LTDPlan {
   if (annualSalary > 200000) {
     return 'Ultra';
   } else if (annualSalary >= 100000) {
@@ -137,9 +138,17 @@ function getLTDPlan(annualSalary: number): LTDPlan {
   }
 }
 
-export function calculateLTDPremium(individualInfo: IndividualInfo, plan: LTDPlan): number {
+export function isLTDPlanAvailable(plan: LTDPlan, annualSalary: number): boolean {
+  const recommendedPlan = getLTDPlan(annualSalary);
+  return plan === recommendedPlan;
+}
+
+export function calculateLTDPremium(individualInfo: IndividualInfo, selectedPlan: LTDPlan): number {
   const { annualSalary } = individualInfo;
-  const actualPlan = getLTDPlan(annualSalary);
+  const recommendedPlan = getLTDPlan(annualSalary);
+
+  // Use the selected plan, but ensure it's not higher than the recommended plan
+  const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary) ? selectedPlan : recommendedPlan;
 
   const maxUnits = LTD_CONFIG.maxUnits[actualPlan];
   const costPerHundred = LTD_CONFIG.costPerHundred[actualPlan];
@@ -149,6 +158,7 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, plan: LTDPla
 
   return finalUnits * costPerHundred;
 }
+
 
 const getAgeBandRate = (age: number, ageBandRates: { minAge: number; maxAge: number; rate: number }[]): number => {
   const ageBand = ageBandRates.find(band => age >= band.minAge && age <= band.maxAge);

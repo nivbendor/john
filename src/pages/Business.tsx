@@ -156,15 +156,10 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    console.log(`Input changed: ${name} = ${value}`);
-
+    
     setIndividualInfo((prev) => {
-      if (prev[name as keyof IndividualInfo] === value) {
-        return prev; // Return previous state if value hasn't changed
-      }
-
       const newInfo = { ...prev, [name]: value };
-
+  
       if (name === 'annualSalary') {
         let newLTDPlan: LTDPlan = 'Basic';
         if (newInfo.annualSalary > 200000) {
@@ -244,14 +239,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
           <div className="flex flex-col lg:flex-row gap-7">
             <div className="w-full lg:w-2/3 space-y-6">
               <div className="bg-white rounded-xl shadow-md p-2">
-                <IndividualInfoForm
-                  individualInfo={individualInfo}
-                  handleIndividualInfoChange={handleInputChange}
-                  handleSalaryChange={handleSalaryChange}
-                  errors={{}}
-                  costView={costView}
-                  setCostView={setCostView}
-                />
+              <IndividualInfoForm
+                individualInfo={individualInfo}
+                handleIndividualInfoChange={handleInputChange}
+                errors={{}}
+                costView={costView}
+                setCostView={setCostView}
+              />
               </div>
               <div className="bg-white rounded-xl shadow-md p-2 lg:pl-2">
                 <ProductSelector
@@ -261,7 +255,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                 />
               </div>
               <div className="bg-white rounded-xl shadow-md p-3">
-                <ProductDetails
+              <ProductDetails
                   plans={productPlans}
                   selectedProduct={selectedProduct}
                   premium={premiums[selectedProduct]}
@@ -271,10 +265,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   setSelectedEligibilityPerProduct={setSelectedEligibilityPerProduct}
                   handleIndividualInfoChange={handleInputChange}
+                  handleSalaryChange={handleSalaryChange}
                   errors={{}}
                   recalculatePremium={recalculatePremium}
                   activeProducts={localProducts}
-                />
+                  />
               </div>
               {showCostPerHour && <div>Cost per hour component would go here</div>}
             </div>
