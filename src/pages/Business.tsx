@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, ChangeEvent, useMemo } from 'react';
 import { Product, IndividualInfo, Plan, USState, CostView, EligibilityOption, EligibilityPerProduct, LTDPlan } from '../utils/insuranceTypes';
-import { calculatePremiums, getStateFromZip, getZipCodeRegion, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceUtils';
+import { calculatePremiums, getLTDPlan, getStateFromZip, getZipCodeRegion, PRODUCT_ELIGIBILITY_OPTIONS } from '../utils/insuranceUtils';
 import ProductDetails from '../components/ProductDetails';
 import ActiveProductsToggle from '../components/checkout';
 // import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../components/ui/select';
@@ -72,7 +72,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
 
-  const { cpValue } = useMemo(() => parseUrlParams(), []);
+  const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
   
   // Register button - Hide - "?cp=amf"
@@ -143,10 +143,10 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
     if (product === 'LTD') {
       const ltdPlan = plan as LTDPlan;
-      setProductPlans(prev => ({ ...prev, [product]: ltdPlan }));
+      setProductPlans((prev) => ({ ...prev, [product]: ltdPlan }));
       recalculatePremium(product, ltdPlan);
     } else {
-      setProductPlans(prev => ({ ...prev, [product]: plan }));
+      setProductPlans((prev) => ({ ...prev, [product]: plan }));
       recalculatePremium(product, plan);
     }
   }, [recalculatePremium]);
@@ -160,13 +160,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     setIndividualInfo((prev) => {
       const newInfo = { ...prev, [name]: value };
   
-      if (name === 'annualSalary') {
-        let newLTDPlan: LTDPlan = 'Basic';
-        if (newInfo.annualSalary > 200000) {
-          newLTDPlan = 'Ultra';
-        } else if (newInfo.annualSalary >= 100000) {
-          newLTDPlan = 'Premium';
-        }
+      if (name === 'annualSalary' && isKen) {
+        const newLTDPlan = getLTDPlan(newInfo.annualSalary, isKen); // Use the revised function
+
         
         if (newLTDPlan !== productPlans.LTD) {
           setProductPlans(prevPlans => ({
@@ -182,7 +178,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   
       return newInfo;
     });
-  }, [updateZipDebugInfo, productPlans.LTD]);
+  }, [updateZipDebugInfo, productPlans.LTD, isKen]);
 
 
   useEffect(() => {

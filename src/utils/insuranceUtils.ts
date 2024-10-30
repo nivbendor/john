@@ -1,4 +1,5 @@
 // utils/insuranceUtils.ts
+
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { useMemo } from 'react';
@@ -35,6 +36,7 @@ import {
   defaultPlans,
   PRODUCTS,
 } from './insuranceConfig';
+import { parseUrlParams } from "./parseUrlParams";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -47,7 +49,10 @@ const getStateFromZip = (zipCode: string): USState | null => {
   return findStateByZipCode(zipCode); // Use the existing mapping function
 };
 
-
+export function calculateLTDPremiumWrapper(individualInfo: IndividualInfo, plan: Plan): number {
+  const isKen = parseUrlParams().isKen || false; // Get 'isKen' from URL parameters
+  return calculateLTDPremium(individualInfo, plan as LTDPlan, isKen);
+}
 
 const getZipCodeRegion = (zipCode: string): number | null => {
   const zipPrefix = zipCode.substring(0, 3);
@@ -128,27 +133,39 @@ export function hasMultiplePlans(product: Product): boolean {
 
 
 
-export function getLTDPlan(annualSalary: number): LTDPlan {
-  if (annualSalary > 200000) {
-    return 'Ultra';
-  } else if (annualSalary >= 100000) {
-    return 'Premium';
+export function getLTDPlan(annualSalary: number, isKen: boolean): LTDPlan {
+  if (isKen) {
+    // Logic when cp=ken: Premium plan is unavailable, Ultra starts at 100,000
+    if (annualSalary >= 100000) {
+      return 'Ultra';
+    } else {
+      return 'Basic';
+    }
   } else {
-    return 'Basic';
+    // Original logic for other cases
+    if (annualSalary > 200000) {
+      return 'Ultra';
+    } else if (annualSalary >= 100000) {
+      return 'Premium';
+    } else {
+      return 'Basic';
+    }
   }
 }
 
-export function isLTDPlanAvailable(plan: LTDPlan, annualSalary: number): boolean {
-  const recommendedPlan = getLTDPlan(annualSalary);
+export function isLTDPlanAvailable(plan: LTDPlan, annualSalary: number, isKen: boolean): boolean {
+  const recommendedPlan = getLTDPlan(annualSalary, isKen);
   return plan === recommendedPlan;
 }
 
-export function calculateLTDPremium(individualInfo: IndividualInfo, selectedPlan: LTDPlan): number {
+
+export function calculateLTDPremium(individualInfo: IndividualInfo, selectedPlan: LTDPlan, isKen: boolean): number {
+
   const { annualSalary } = individualInfo;
-  const recommendedPlan = getLTDPlan(annualSalary);
+  const recommendedPlan = getLTDPlan(annualSalary, isKen);
 
   // Use the selected plan, but ensure it's not higher than the recommended plan
-  const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary) ? selectedPlan : recommendedPlan;
+  const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary, isKen) ? selectedPlan : recommendedPlan;
 
   const maxUnits = LTD_CONFIG.maxUnits[actualPlan];
   const costPerHundred = LTD_CONFIG.costPerHundred[actualPlan];
@@ -174,22 +191,28 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   STD: (individualInfo, plan) => {
     const { age, annualSalary } = individualInfo;
     const rate = getSTDRate(age);
-    
+
     const grossWeeklyIncome = annualSalary / STD_CONFIG.weeks;
     const weeklyBenefitAmount = grossWeeklyIncome * STD_CONFIG.benefitAmountKey;
     const cappedWeeklyBenefit = Math.min(weeklyBenefitAmount, STD_CONFIG.maxCoverageAmount);
     const units = cappedWeeklyBenefit / STD_CONFIG.unitsKey;
     const finalUnits = Math.min(units, STD_CONFIG.maxUnits);
-    
+
     return finalUnits * rate;
   },
 
-  LTD: calculateLTDPremium,
+
+  LTD: calculateLTDPremiumWrapper, // Use the revised wrapper
+
+
   'Life / AD&D': (individualInfo, plan) => {
     const { age, employeeCoverage = 0, spouseCoverage = 0, eligibility } = individualInfo;
     if (age === 0) {
       return 0;
     }
+
+
+
     const rate = getLifeADDRate(age);
     
     // Calculate individual premium

@@ -18,6 +18,7 @@ export type ParsedUrlParams = Partial<IndividualInfo> & {
   showSplash: boolean;
   zipDebug: boolean;
   cpValue?: string;
+  isKen?: boolean; // New flag
 };
 
 export function parseUrlParams(): ParsedUrlParams {
@@ -101,6 +102,7 @@ export function parseUrlParams(): ParsedUrlParams {
   const cpParam = params.get('cp');
   if (cpParam) {
     result.cpValue = cpParam;
+    result.isKen = cpParam === 'ken'; // Set the flag if cp=ken
   }
 
   return result;

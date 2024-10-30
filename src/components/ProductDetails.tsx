@@ -1,9 +1,9 @@
 // src\components\ProductDetails.tsx
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium } from '../utils/insuranceUtils';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -11,6 +11,7 @@ import '../styles/premiumview.css'; // Import the CSS file
 import Tooltip from './ui/tooltip';
 import { insuranceResources, getProductLabel } from './Resource';
 import colors from '../styles/colors';
+import { parseUrlParams } from '../utils/parseUrlParams';
 
 // Add the useColorFromUrl hook
 const useColorFromUrl = () => {
@@ -84,23 +85,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     </svg>
   );
 
+  const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [availableLTDPlans, setAvailableLTDPlans] = useState<LTDPlan[]>([]);
 
   useEffect(() => {
-    if (selectedProduct === 'LTD') {
-      const salary = individualInfo.annualSalary;
-      if (salary > 0) {
-        const recommendedPlan = getLTDPlan(salary);
-        setAvailableLTDPlans(recommendedPlan === 'Ultra' ? ['Premium', 'Ultra'] : [recommendedPlan]);
-        setShowPlanDropdown(true);
-      } else {
-        setShowPlanDropdown(false);
-      }
+    if (selectedProduct === 'LTD' && isKen) {
+      const recommendedPlan = getLTDPlan(individualInfo.annualSalary, isKen); // Use revised function
+  
+      // Set available plans based on getLTDPlan output
+      setAvailableLTDPlans(recommendedPlan === 'Ultra' ? ['Ultra'] : ['Basic']);
+      setShowPlanDropdown(true);
     } else {
       setShowPlanDropdown(false);
     }
-  }, [individualInfo.annualSalary, selectedProduct]);
+  }, [individualInfo.annualSalary, selectedProduct, isKen]);
+  
 
   const getLTDPlanDisplayName = (plan: LTDPlan) => {
     switch (plan) {
@@ -112,9 +112,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
   const calculateLTDPremiumForDisplay = (plan: LTDPlan) => {
-    const monthlyPremium = calculateLTDPremium({ ...individualInfo, eligibility: 'Individual' }, plan);
+    const monthlyPremium = calculateLTDPremium(
+      { ...individualInfo, eligibility: 'Individual' },
+      plan,
+      isKen || false // Ensure isKen is a boolean
+    );
     return calculatePremiumByCostView(monthlyPremium, costView);
   };
+  
  
   const [isFocused, setIsFocused] = useState(false); // Track if input is focused
 
@@ -164,7 +169,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   }, [individualInfo, currentPlan, selectedProduct, recalculatePremium, costView]);
 
   const handlePlanChange = (value: string | null) => {
-    if (value && (value === 'Basic' || value === 'Premium' || value === 'Ultra')) {
+    if (value && isLTDPlan(value) && isKen) { // Apply logic only when isKen is true
       setProductPlan(selectedProduct, value as LTDPlan);
       recalculatePremium(selectedProduct, value as LTDPlan);
     }
@@ -440,7 +445,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   key={plan} 
                   eventKey={plan} 
                   active={currentPlan === plan}
-                  disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary)}
+                  disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
+
                 >
                   <div className="flex justify-between items-center w-full">
                     <span>{plan}</span>

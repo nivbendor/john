@@ -1,7 +1,7 @@
 // src/utils/registrationUrls.ts
 
 export const registrationUrls: Record<string, string> = {
-    ken: 'https://form.jotform.com/241625750442150',
+    ken: 'https://form.jotform.com/243035049611146',
     amf: 'https://form.jotform.com/242686908801162',
     default: 'https://form.jotform.com/242687072734160',
   };
