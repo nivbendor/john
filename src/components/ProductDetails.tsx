@@ -434,33 +434,32 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </div>
           )}
           {hasMultiplePlans(selectedProduct) && (
-            <Dropdown onSelect={handlePlanChange}>
-              <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                {currentPlan}
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
-                  <Dropdown.Item
-                    key={plan}
-                    eventKey={plan}
-                    active={currentPlan === plan}
-                    disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
+              <Dropdown onSelect={handlePlanChange}>
+                <Dropdown.Toggle variant="primary" id="dropdown-plan">
+                  {currentPlan || 'Select a Plan'} {/* Fallback for initial state */}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
+                    <Dropdown.Item
+                      key={plan}
+                      eventKey={plan} // Ensure eventKey matches the selected plan value
+                      active={currentPlan === plan}
+                      disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
+                    >
+                      <div className="flex justify-between items-center w-full">
+                        <span>{plan}</span>
+                        <span className="ml-4">
+                          {selectedProduct === 'LTD' && isLTDPlan(plan)
+                            ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`
+                            : `${formatCurrency(planPremiums[plan as Plan])} / ${costView.toLowerCase()}`}
+                        </span>
+                      </div>
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
 
-                  >
-                    <div className="flex justify-between items-center w-full">
-                      <span>{plan}</span>
-                      <span className="ml-4">
-                        {selectedProduct === 'LTD' && isLTDPlan(plan)
-                          ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`
-                          : `${formatCurrency(planPremiums[plan as Plan])} / ${costView.toLowerCase()}`
-                        }
-                      </span>
-                    </div>
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
-          )}
           {eligibilityOptions.length > 1 && (
             <Dropdown onSelect={handleEligibilityChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-eligibility">
