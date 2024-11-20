@@ -9,7 +9,7 @@ import { defaultPlans, PRODUCTS } from '../utils/insuranceConfig';
 import { useCostView } from '../components/CostView';
 import IndividualInfoForm from '../components/IndividualInfoForm';
 import '../styles/iconSettings.css';
-import { parseUrlParams, zipDebug} from 'utils/parseUrlParams';
+import { parseUrlParams, zipDebug } from 'utils/parseUrlParams';
 import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
 import ZipDebugPanel from '../components/ZipDebugPopup';
@@ -74,12 +74,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
 
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
-  
-  // Register button - Hide - "?cp=amf"
-  const showQuoteSection = useMemo(() => cpValue !== 'amf', [cpValue]);
+
+  // Register button - Hide - "?cp=amf" or "?cp=newParam"
+  const showQuoteSection = useMemo(() => cpValue !== undefined && !['amf', 'ken'].includes(cpValue), [cpValue]);
 
 
-  
+
+
   const zipDebugProps = useMemo(() => ({
     zipInput: individualInfo.zipCode,
     matchingPrefix: individualInfo.zipCode.substring(0, 3),
@@ -120,7 +121,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       [product]: defaultPlans[product],
     }), {} as Record<Product, Plan>)
   );
-  
+
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     const newPremium = calculatePremiums(individualInfo, product, costView, plan);
@@ -156,14 +157,14 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   ) => {
     const name = 'target' in e ? e.target.name : e.name;
     let value = 'target' in e ? e.target.value : e.value;
-    
+
     setIndividualInfo((prev) => {
       const newInfo = { ...prev, [name]: value };
-  
+
       if (name === 'annualSalary' && isKen) {
         const newLTDPlan = getLTDPlan(newInfo.annualSalary, isKen); // Use the revised function
 
-        
+
         if (newLTDPlan !== productPlans.LTD) {
           setProductPlans(prevPlans => ({
             ...prevPlans,
@@ -171,11 +172,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
           }));
         }
       }
-      
+
       if (zipDebug && (name === 'zipCode' || name === 'state')) {
         updateZipDebugInfo();
       }
-  
+
       return newInfo;
     });
   }, [updateZipDebugInfo, productPlans.LTD, isKen]);
@@ -187,7 +188,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     setPremiums(newPremiums);
   }, [calculateAllPremiums]);
 
-  
+
 
   const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const rawValue = e.target.value;
@@ -199,9 +200,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   const QuoteSection: React.FC<{ registrationUrl: string }> = ({ registrationUrl }) => (
     <div className="bg-white rounded-xl shadow-md p-6 flex flex-col items-center justify-center">
       <h3 className="text-lg font-semibold mb-3">Get My Company Benefits</h3>
-      <a 
+      <a
         href={registrationUrl}
-        target="_blank" 
+        target="_blank"
         rel="noopener noreferrer"
         className="inline-block px-4 py-2 bg-[#2df1ac] text-white rounded-md hover:bg-blue-700 transition-colors duration-300"
         id="register-button"
@@ -225,7 +226,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     setShowFunnel(false);
   };
 
-  
+
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
       {showFunnel ? (
@@ -235,13 +236,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
           <div className="flex flex-col lg:flex-row gap-7">
             <div className="w-full lg:w-2/3 space-y-6">
               <div className="bg-white rounded-xl shadow-md p-2">
-              <IndividualInfoForm
-                individualInfo={individualInfo}
-                handleIndividualInfoChange={handleInputChange}
-                errors={{}}
-                costView={costView}
-                setCostView={setCostView}
-              />
+                <IndividualInfoForm
+                  individualInfo={individualInfo}
+                  handleIndividualInfoChange={handleInputChange}
+                  errors={{}}
+                  costView={costView}
+                  setCostView={setCostView}
+                />
               </div>
               <div className="bg-white rounded-xl shadow-md p-2 lg:pl-2">
                 <ProductSelector
@@ -251,7 +252,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                 />
               </div>
               <div className="bg-white rounded-xl shadow-md p-3">
-              <ProductDetails
+                <ProductDetails
                   plans={productPlans}
                   selectedProduct={selectedProduct}
                   premium={premiums[selectedProduct]}
@@ -265,7 +266,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   errors={{}}
                   recalculatePremium={recalculatePremium}
                   activeProducts={localProducts}
-                  />
+                />
               </div>
               {showCostPerHour && <div>Cost per hour component would go here</div>}
             </div>
@@ -289,7 +290,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
               </div>
               {showQuoteSection && (
                 <QuoteSection registrationUrl={registrationUrl} />
-              )}              
+              )}
               <InsuranceResources />
             </div>
           </div>
