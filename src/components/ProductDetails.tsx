@@ -401,25 +401,28 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               {showPlanDropdown && individualInfo.annualSalary > 0 && (
                 <Dropdown onSelect={handlePlanChange}>
                   <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                    {getLTDPlanDisplayName(currentPlan as LTDPlan)}
+                    {currentPlan ? getLTDPlanDisplayName(currentPlan as LTDPlan) : 'Select a Plan'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
-                    <Dropdown.Item
-                      key={availableLTDPlan}
-                      eventKey={availableLTDPlan}
-                      active={currentPlan === availableLTDPlan}
-                    >
-                      <div className="flex justify-between items-center w-full">
-                        <span>{getLTDPlanDisplayName(availableLTDPlan)}</span>
-                        <span className="ml-4">
-                          {formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, availableLTDPlan))}
-                          <span className="ml-1 text-sm text-white-600">Lost Income / month</span>
-                        </span>
-                      </div>
-                    </Dropdown.Item>
+                    {(Array.isArray(availableLTDPlan) ? availableLTDPlan : [availableLTDPlan]).map((plan) => (
+                      <Dropdown.Item
+                        key={plan}
+                        eventKey={plan}
+                        active={currentPlan === plan}
+                      >
+                        <div className="flex justify-between items-center w-full">
+                          <span>{getLTDPlanDisplayName(plan)}</span>
+                          <span className="ml-4">
+                            {formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}
+                            <span className="ml-1 text-sm text-white-600">Lost Income / month</span>
+                          </span>
+                        </div>
+                      </Dropdown.Item>
+                    ))}
                   </Dropdown.Menu>
                 </Dropdown>
               )}
+
             </>
           )}
 
@@ -434,31 +437,31 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </div>
           )}
           {hasMultiplePlans(selectedProduct) && (
-              <Dropdown onSelect={handlePlanChange}>
-                <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                  {currentPlan || 'Select a Plan'} {/* Fallback for initial state */}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
-                    <Dropdown.Item
-                      key={plan}
-                      eventKey={plan} // Ensure eventKey matches the selected plan value
-                      active={currentPlan === plan}
-                      disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
-                    >
-                      <div className="flex justify-between items-center w-full">
-                        <span>{plan}</span>
-                        <span className="ml-4">
-                          {selectedProduct === 'LTD' && isLTDPlan(plan)
-                            ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`
-                            : `${formatCurrency(planPremiums[plan as Plan])} / ${costView.toLowerCase()}`}
-                        </span>
-                      </div>
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
+            <Dropdown onSelect={handlePlanChange}>
+              <Dropdown.Toggle variant="primary" id="dropdown-plan">
+                {currentPlan || 'Select a Plan'} {/* Fallback for initial state */}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
+                  <Dropdown.Item
+                    key={plan}
+                    eventKey={plan} // Ensure eventKey matches the selected plan value
+                    active={currentPlan === plan}
+                    disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
+                  >
+                    <div className="flex justify-between items-center w-full">
+                      <span>{plan}</span>
+                      <span className="ml-4">
+                        {selectedProduct === 'LTD' && isLTDPlan(plan)
+                          ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`
+                          : `${formatCurrency(planPremiums[plan as Plan])} / ${costView.toLowerCase()}`}
+                      </span>
+                    </div>
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
 
           {eligibilityOptions.length > 1 && (
             <Dropdown onSelect={handleEligibilityChange}>
