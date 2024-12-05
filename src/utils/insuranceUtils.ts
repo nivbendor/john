@@ -105,7 +105,7 @@ export function calculateLTDBenefit(annualSalary: number, plan: LTDPlan): number
   const monthlyBenefit = (annualSalary / 12) * 0.6;
   const maxBenefit = LTD_CONFIG.maxBenefitAmount[plan];
   const cappedBenefit = Math.min(monthlyBenefit, maxBenefit);
-  
+
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
 
@@ -117,7 +117,7 @@ export function calculateSTDBenefit(annualSalary: number): number {
 
   const weeklyBenefit = (annualSalary / STD_CONFIG.weeks) * STD_CONFIG.benefitAmountKey;
   const cappedBenefit = Math.min(weeklyBenefit, STD_CONFIG.maxCoverageAmount);
-  
+
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
 
@@ -214,7 +214,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
 
 
     const rate = getLifeADDRate(age);
-    
+
     // Calculate individual premium
     const units_individual = Math.min(employeeCoverage / LIFE_ADD_CONFIG.units, LIFE_ADD_CONFIG.units_max_individual);
     const monthly_premium_individual = units_individual * rate;
@@ -254,14 +254,14 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     const region = getZipCodeRegion(individualInfo.zipCode);
     return region !== null ? (DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo.eligibility] || 0) : 0;
   },
-  
+
   Vision: (individualInfo, plan) => {
     if (individualInfo.age === 0) {
       return 0;
     }
-    
+
     const stateCategory = getStateCategory(individualInfo.zipCode);
-    
+
     return VISION_PREMIUMS[stateCategory][plan][individualInfo.eligibility];
   },
   // Vision: (individualInfo, plan) => {
@@ -269,8 +269,8 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   //   if (individualInfo.age === 0) {
   //     return 0;
   //   }
-    
-    
+
+
   //   const stateCategory = getStateCategory(individualInfo.state);
   //   console.log('Vision Premium Calculation:', {
   //     state: individualInfo.state,
@@ -319,6 +319,18 @@ export const calculateTotalPremium = (
   }, 0);
 };
 
+export function getLTDPlanByAnnualSalaryCpValue(availableLTDPlan, cpValue: string = 'default', annualSalary: number): LTDPlan {
+  const plans = (cpValue && availableLTDPlan[cpValue]) || availableLTDPlan.default;
+
+  for (const [key, range] of Object.entries(plans) as [LTDPlan, [number, number]][]) {
+    if (annualSalary >= range[0] && annualSalary <= range[1]) {
+      return key;
+    }
+  }
+
+  return 'Basic'; // Basic is default plantype
+}
+
 export type {
   Product,
   EligibilityOption,
@@ -327,22 +339,22 @@ export type {
   IndividualInfo
 };
 
-  export {
-    PRODUCTS,
-    ELIGIBILITY_OPTIONS,
-    US_STATES,
-    DENTAL_PREMIUMS,
-    VISION_PREMIUMS,
-    AGE_BANDED_RATES,
-    ZIP_CODE_REGIONS,
-    STATE_CATEGORIES,
-    STD_CONFIG,
-    LTD_CONFIG,
-    LIFE_ADD_CONFIG,
-    ACCIDENT_PREMIUMS,
-    PRODUCT_ELIGIBILITY_OPTIONS,
-    calculatePremiumByCostView,
+export {
+  PRODUCTS,
+  ELIGIBILITY_OPTIONS,
+  US_STATES,
+  DENTAL_PREMIUMS,
+  VISION_PREMIUMS,
+  AGE_BANDED_RATES,
+  ZIP_CODE_REGIONS,
+  STATE_CATEGORIES,
+  STD_CONFIG,
+  LTD_CONFIG,
+  LIFE_ADD_CONFIG,
+  ACCIDENT_PREMIUMS,
+  PRODUCT_ELIGIBILITY_OPTIONS,
+  calculatePremiumByCostView,
   getLifeADDRate,
   getZipCodeRegion,
   getStateFromZip,
-  };
+};

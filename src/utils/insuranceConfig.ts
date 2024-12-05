@@ -20,6 +20,21 @@ export const defaultPlans: Record<Product, Plan> = {
   'Critical Illness/Cancer': 'Basic',
 };
 
+export const availableLTDPlanBySalaryCpValue = {
+  ken: {
+    Basic: [0, 100000],
+    Ultra: [100001, Infinity]
+  },
+  amf: {
+    Basic: [0, 100000],
+    Premium: [100001, Infinity],
+  },
+  default: {
+    Basic: [0, 100000],
+    Premium: [100001, Infinity],
+  }
+}
+
 export const ELIGIBILITY_OPTIONS: EligibilityOption[] = ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'];
 
 export const US_STATES: USState[] = [

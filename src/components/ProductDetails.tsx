@@ -2,8 +2,8 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan } from '../utils/insuranceTypes';
-import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT } from '../utils/insuranceConfig';
-import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper } from '../utils/insuranceUtils';
+import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
+import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper, getLTDPlanByAnnualSalaryCpValue } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
@@ -72,9 +72,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   handleIndividualInfoChange,
   errors,
   recalculatePremium,
-  activeProducts,
+  activeProducts
 }) => {
-  const currentPlan = plans[selectedProduct];
+
   const dynamicColor = useColorFromUrl();
 
   const SVGCheckmark = () => (
@@ -88,6 +88,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [availableLTDPlan, setAvailableLTDPlans] = useState<LTDPlan>('Basic');
+
+  const currentPlan = getLTDPlanByAnnualSalaryCpValue(availableLTDPlanBySalaryCpValue, cpValue, individualInfo.annualSalary)
 
   useEffect(() => {
     if (selectedProduct === 'LTD') {
