@@ -1,5 +1,7 @@
 import { isDev } from './isDev';
 
+export const BABRM = 'babrm';
+
 export const config = {
     splash: {
       headline: "Benefits in a box",

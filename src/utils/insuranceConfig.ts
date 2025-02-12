@@ -1,7 +1,9 @@
 // utils/insuranceConfig.ts
 
+import { BABRM } from './config';
 import { Product, EligibilityOption, USState, PlanRecord, Plan, LTDPlan } from './insuranceTypes';
 import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
+import { isDistributor } from './isDistributor';
 
 
 
@@ -65,20 +67,43 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
 };
 
 
-export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = {
-  AK: {
-    Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-    Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
-  },
-  'CA,CT,HI,NJ,NV,WA': {
-    Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
-    Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
-  },
-  Other: {
-    Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-    Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
+export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = (() => {
+
+  if (isDistributor(BABRM)) {
+    return {
+      AK: {
+        // Basic plan remains the same 
+        Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
+        Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
+      },
+      // this part hasn't been updated...
+      'CA,CT,HI,NJ,NV,WA': {
+        Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
+        Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 },
+      },
+      Other: {
+        // Basic plan remains the same 
+        Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
+        Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
+      },
+    };
   }
-};
+
+  return {
+    AK: {
+      Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
+      Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
+    },
+    'CA,CT,HI,NJ,NV,WA': {
+      Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
+      Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
+    },
+    Other: {
+      Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
+      Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
+    }
+  }
+})();  
 
 export const STATE_CATEGORIES: Record<string, USState[]> = {
   AK: ['AK'],
@@ -178,50 +203,108 @@ export const ZIP_CODE_REGIONS: ZIPCodeRegions = {
 };
 
 
-export const STD_CONFIG = {
-  benefitAmountKey: 0.6,
-  unitsKey: 10,
-  maxCoverageAmount: 1200,
-  maxUnits: 120,
-  weeks: 52,
-  ageBandRates: [
-    { minAge: 0, maxAge: 29, rate: 0.25 },
-    { minAge: 30, maxAge: 34, rate: 0.25 },
-    { minAge: 35, maxAge: 39, rate: 0.25 },
-    { minAge: 40, maxAge: 44, rate: 0.25 },
-    { minAge: 45, maxAge: 49, rate: 0.30 },
-    { minAge: 50, maxAge: 54, rate: 0.38 },
-    { minAge: 55, maxAge: 59, rate: 0.46 },
-    { minAge: 60, maxAge: 64, rate: 0.55 },
-    { minAge: 65, maxAge: Infinity, rate: 0.66 }
-  ],
-  plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
-};
+export const STD_CONFIG = (() => {
 
-export const LTD_CONFIG = {
-  unitKey: 100,
-  costPerHundred: {
-    Basic: 0.209,
-    Premium: 0.305,
-    Ultra: 0.34
-  },
-  maxBenefitAmount: {
-    Basic: 8333.33,
-    Premium: 10000,
-    Ultra: 15000
-  },
-  maxUnits: {
-    Basic: 83.33,
-    Premium: 166.66,
-    Ultra: 250
-  },
-  weeks: 52,
-  incomeBrackets: {
-    Basic: { min: 0, max: 100000 },
-    Premium: { min: 100001, max: 200000 },
-    Ultra: { min: 200001, max: 300000 }
+  if (isDistributor(BABRM)) {
+    return {
+      benefitAmountKey: 0.6,
+      unitsKey: 10,
+      maxCoverageAmount: 1200,
+      maxUnits: 120,
+      weeks: 52,
+      ageBandRates: [
+        { minAge: 0, maxAge: 29, rate: 0.28 },
+        { minAge: 30, maxAge: 34, rate: 0.28 },
+        { minAge: 35, maxAge: 39, rate: 0.28 },
+        { minAge: 40, maxAge: 44, rate: 0.28 },
+        { minAge: 45, maxAge: 49, rate: 0.35 },
+        { minAge: 50, maxAge: 54, rate: 0.43 },
+        { minAge: 55, maxAge: 59, rate: 0.53 },
+        { minAge: 60, maxAge: 64, rate: 0.63 },
+        { minAge: 65, maxAge: Infinity, rate: 0.75 }
+      ],
+      plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
+    }
   }
-};
+  // else
+
+  return {
+    benefitAmountKey: 0.6,
+    unitsKey: 10,
+    maxCoverageAmount: 1200,
+    maxUnits: 120,
+    weeks: 52,
+    ageBandRates: [
+      { minAge: 0, maxAge: 29, rate: 0.25 },
+      { minAge: 30, maxAge: 34, rate: 0.25 },
+      { minAge: 35, maxAge: 39, rate: 0.25 },
+      { minAge: 40, maxAge: 44, rate: 0.25 },
+      { minAge: 45, maxAge: 49, rate: 0.30 },
+      { minAge: 50, maxAge: 54, rate: 0.38 },
+      { minAge: 55, maxAge: 59, rate: 0.46 },
+      { minAge: 60, maxAge: 64, rate: 0.55 },
+      { minAge: 65, maxAge: Infinity, rate: 0.66 }
+    ],
+    plan: 'Basic' as Plan // Add this line to explicitly set the plan for STD
+  }
+})();
+
+export const LTD_CONFIG = (() => {
+
+  if (isDistributor(BABRM)) {
+    return {
+      unitKey: 100,
+      costPerHundred: {
+        Basic: 0.24,
+        Premium: 0.35,
+        Ultra: 0.38, // What's the number in ultra???
+      },
+      maxBenefitAmount: {
+        Basic: 8333.33,
+        Premium: 10000,
+        Ultra: 15000
+      },
+      maxUnits: {
+        Basic: 83.33,
+        Premium: 166.66,
+        Ultra: 250
+      },
+      weeks: 52,
+      incomeBrackets: {
+        Basic: { min: 0, max: 100000 },
+        Premium: { min: 100001, max: 200000 },
+        Ultra: { min: 200001, max: 300000 }
+      }
+    };
+  }
+  // else
+
+
+  return {
+    unitKey: 100,
+    costPerHundred: {
+      Basic: 0.209,
+      Premium: 0.305,
+      Ultra: 0.34
+    },
+    maxBenefitAmount: {
+      Basic: 8333.33,
+      Premium: 10000,
+      Ultra: 15000
+    },
+    maxUnits: {
+      Basic: 83.33,
+      Premium: 166.66,
+      Ultra: 250
+    },
+    weeks: 52,
+    incomeBrackets: {
+      Basic: { min: 0, max: 100000 },
+      Premium: { min: 100001, max: 200000 },
+      Ultra: { min: 200001, max: 300000 }
+    }
+  };
+})();
 
 export const LIFE_ADD_CONFIG = {
   max_coverage_amount_individual: 150000,
