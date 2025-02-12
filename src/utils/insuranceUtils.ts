@@ -92,7 +92,7 @@ const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other'
 
   // Existing state category logic
   if (state === 'AK') return 'AK';
-  if (!isDistributor(BABRM) && ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
+  if (['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
   return 'Other';
 };
 
