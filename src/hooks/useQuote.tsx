@@ -110,12 +110,12 @@ export function useQuotes(individualInfo: IndividualInfo) {
 
   // The effect that checks what changed
   useEffect(() => {
-    const changedAge = age !== prevAgeRef.current;
-    const changedSalary = salary !== prevSalaryRef.current;
-    const changedZip = zipCode !== prevZipRef.current;
+    const changedAge = individualInfo.age !== prevAgeRef.current;
+    const changedSalary = individualInfo.annualSalary !== prevSalaryRef.current;
+    const changedZip = individualInfo.zipCode !== prevZipRef.current;
 
     // Collect which products we need to fetch
-    const productsToFetch = [];
+    const productsToFetch = [] as string[];
 
     // For each product, check if any triggers changed
     for (const product of Object.keys(productConfig)) {
@@ -137,19 +137,19 @@ export function useQuotes(individualInfo: IndividualInfo) {
     }
 
     if (productsToFetch.length > 0) {
-      debouncedFetchProducts(productsToFetch, { age, salary, zipCode });
+      debouncedFetchProducts(productsToFetch, { age: individualInfo.age, salary: individualInfo.annualSalary, zipCode: individualInfo.zipCode });
     }
 
     // Update refs
-    prevAgeRef.current = age;
-    prevSalaryRef.current = salary;
-    prevZipRef.current = zipCode;
+    prevAgeRef.current = individualInfo.age;
+    prevSalaryRef.current = individualInfo.annualSalary;
+    prevZipRef.current = individualInfo.zipCode;
 
     // Cleanup to avoid memory leaks
     return () => {
       debouncedFetchProducts.cancel();
     };
-  }, [age, salary, zipCode, debouncedFetchProducts]);
+  }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, debouncedFetchProducts]);
 
   return {
     quotes,   // { ltd, std, critical, vision, dental }
