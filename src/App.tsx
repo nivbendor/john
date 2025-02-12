@@ -16,9 +16,7 @@ import Funnel from './components/Funnel';
 import './styles/funnel.css';
 import { parseUrlParams } from './utils/parseUrlParams';
 import SplashScreen from './components/SplashScreen';
-import ZipDebugPopup from './components/ZipDebugPopup';
 import ZipDebugPanel from './components/ZipDebugPopup';
-
 
 
 const App: React.FC = () => {

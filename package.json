@@ -10,6 +10,7 @@
     "test": "react-scripts test",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
+    "gh-deploy": "git push origin :gh-pages && git subtree push --prefix dist build gh-pages",
     "eject": "react-scripts eject",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "build:css": "tailwindcss build src/index.css -o src/tailwind.output.css"

@@ -14,9 +14,10 @@ import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
 import ZipDebugPanel from '../components/ZipDebugPopup';
 import { getRegistrationUrl } from '../utils/registrationUrls';
-
-
-
+// import { debounce } from '../utils/debounce';
+// import { URI_SETTINGS } from '../utils/config';
+// import { useLocalStorage } from '../hooks/useLocalStorage';
+// import { useProductUpdate } from '../hooks/useProductUpdate';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -78,9 +79,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   // Register button - Hide - "?cp=amf" or "?cp=newParam"
   const showQuoteSection = useMemo(() => cpValue !== undefined && !['amf', 'ken'].includes(cpValue), [cpValue]);
 
-
-
-
   const zipDebugProps = useMemo(() => ({
     zipInput: individualInfo.zipCode,
     matchingPrefix: individualInfo.zipCode.substring(0, 3),
@@ -94,14 +92,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     }
   }, [onZipDebug, zipDebugProps]);
 
-
   useEffect(() => {
     updateZipDebugInfo();
-    console.log('individualInfo changed:', individualInfo);
+    // console.log('individualInfo changed:', individualInfo);
     console.log('costView changed:', costView);
   }, [individualInfo, costView, updateZipDebugInfo]);
-
-
 
   const [showCostPerHour] = useState(() => {
     const { showCostPerHour } = parseUrlParams();
@@ -121,7 +116,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       [product]: defaultPlans[product],
     }), {} as Record<Product, Plan>)
   );
-
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     const newPremium = calculatePremiums(individualInfo, product, costView, plan);
@@ -164,7 +158,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       if (name === 'annualSalary' && isKen) {
         const newLTDPlan = getLTDPlan(newInfo.annualSalary, isKen); // Use the revised function
 
-
         if (newLTDPlan !== productPlans.LTD) {
           setProductPlans(prevPlans => ({
             ...prevPlans,
@@ -177,9 +170,16 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
         updateZipDebugInfo();
       }
 
+      // console.log('newInfo', JSON.stringify(newInfo, null, 2));
+
       return newInfo;
     });
   }, [updateZipDebugInfo, productPlans.LTD, isKen]);
+
+
+  // const [calculations] = useProductUpdate(individualInfo);
+
+  // console.log('CALCULATIONS', calculations);
 
 
   useEffect(() => {
@@ -187,8 +187,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     const newPremiums = calculateAllPremiums();
     setPremiums(newPremiums);
   }, [calculateAllPremiums]);
-
-
 
   const handleSalaryChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const rawValue = e.target.value;
@@ -225,7 +223,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     }));
     setShowFunnel(false);
   };
-
 
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">

@@ -1,3 +1,5 @@
+import { isDev } from './isDev';
+
 export const config = {
     splash: {
       headline: "Benefits in a box",
@@ -16,3 +18,19 @@ export const config = {
       subheadline: "Who would like to cover?",
     },
   };
+
+export const URI_SETTINGS = {
+  auth() {
+    if (isDev()) {
+      return 'https://ltfuhej4l0.execute-api.us-east-1.amazonaws.com/dev/auth';
+    }
+    return '';
+  },
+  quote() {
+    if (isDev()) {
+      return 'https://5kfkw0uyea.execute-api.us-east-1.amazonaws.com/dev/quote/';
+    }
+
+    return ''
+  }
+}
