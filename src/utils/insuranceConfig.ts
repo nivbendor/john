@@ -72,21 +72,14 @@ export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption
   if (isDistributor(BABRM)) {
     return {
       AK: {
-        // Basic plan remains the same 
         Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
         Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
       },
-      // this part hasn't been updated...
-      'CA,CT,HI,NJ,NV,WA': {
-        Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
-        Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 },
-      },
       Other: {
-        // Basic plan remains the same 
         Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
         Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
       },
-    };
+    } as Record<string, PlanRecord<Record<EligibilityOption, number>>>;
   }
 
   return {
@@ -257,23 +250,19 @@ export const LTD_CONFIG = (() => {
       costPerHundred: {
         Basic: 0.24,
         Premium: 0.35,
-        Ultra: 0.38, // What's the number in ultra???
       },
       maxBenefitAmount: {
         Basic: 8333.33,
         Premium: 10000,
-        Ultra: 15000
       },
       maxUnits: {
         Basic: 83.33,
         Premium: 166.66,
-        Ultra: 250
       },
       weeks: 52,
       incomeBrackets: {
         Basic: { min: 0, max: 100000 },
-        Premium: { min: 100001, max: 200000 },
-        Ultra: { min: 200001, max: 300000 }
+        Premium: { min: 100001, max: 300000 },
       }
     };
   }

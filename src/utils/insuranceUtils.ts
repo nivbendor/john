@@ -2,7 +2,6 @@
 
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { useMemo } from 'react';
 import { findStateByZipCode } from './loadStateFromZip';
 
 
@@ -37,6 +36,8 @@ import {
   PRODUCTS,
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
+import { isDistributor } from "./isDistributor";
+import { BABRM } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -91,7 +92,7 @@ const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other'
 
   // Existing state category logic
   if (state === 'AK') return 'AK';
-  if (['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
+  if (!isDistributor(BABRM) && ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
   return 'Other';
 };
 
@@ -104,7 +105,7 @@ export function calculateLTDBenefit(annualSalary: number, plan: LTDPlan): number
 
   const monthlyBenefit = (annualSalary / 12) * 0.6;
   const maxBenefit = LTD_CONFIG.maxBenefitAmount[plan];
-  const cappedBenefit = Math.min(monthlyBenefit, maxBenefit);
+  const cappedBenefit = Math.min(monthlyBenefit, maxBenefit as number);
 
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
@@ -171,9 +172,9 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, selectedPlan
   const costPerHundred = LTD_CONFIG.costPerHundred[actualPlan];
   const monthlySalary = annualSalary / 12;
   const units = monthlySalary / 100;
-  const finalUnits = Math.min(units, maxUnits);
+  const finalUnits = Math.min(units, maxUnits as number);
 
-  return finalUnits * costPerHundred;
+  return finalUnits * (costPerHundred as number);
 }
 
 
