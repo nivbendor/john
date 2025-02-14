@@ -1,5 +1,5 @@
 // services/authService.js
-import { URI_SETTINGS } from '@/utils/config';
+import { URI_SETTINGS } from '../utils/config';
 import axios, { AxiosError } from 'axios';
 
 const TOKEN_KEY = 'auth_token';
@@ -25,7 +25,7 @@ export async function fetchToken() {
 
 // Generic function to make an authenticated request
 // If we get a 401 with "The incoming token has expired", refresh & retry
-export async function fetchWithToken(url, config = { headers: {}}) {
+export async function fetchWithToken(url: string, config = { headers: {}}) {
   let token = getToken();
 
   // Insert token into request headers

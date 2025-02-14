@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult, EligibilityPerProduct } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult, EligibilityPerProduct, Quotes } from '../utils/insuranceTypes';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 import { parseUrlParams } from 'utils/parseUrlParams';
-import { handleQuoteRequest } from '../utils/quoteUtils';
 import colors from '../styles/colors';
 
 
@@ -12,6 +11,7 @@ interface ActiveProductsToggleProps {
   premiums: PremiumResult;
   costView: CostView;
   individualInfo: IndividualInfo;
+  quotes: Quotes;
   selectedEligibilityPerProduct: EligibilityPerProduct;
   handleToggleChange: (product: Product, isActive: boolean) => void;
 }
@@ -45,6 +45,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   premiums,
   costView,
   individualInfo,
+  quotes,
   selectedEligibilityPerProduct,
   handleToggleChange,
 }) => {
@@ -73,7 +74,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plan[product]);
     return calculatePremiumByCostView(premium, costView);
   }, [individualInfo, selectedEligibilityPerProduct, plan, costView]);
 
@@ -83,7 +84,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plan[product]);
     return calculatePremiumByCostView(premium, 'Monthly');
   }, [individualInfo, plan]);
 

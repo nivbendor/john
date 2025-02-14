@@ -1,14 +1,12 @@
-// src\components\ProductDetails.tsx
-
 import React, { useEffect, useMemo, useState } from 'react';
-import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan, Quotes } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper, getLTDPlanByAnnualSalaryCpValue } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
 import CoverageSlider from './ui/CoverageSlider';
 import '../styles/premiumview.css'; // Import the CSS file
-import Tooltip from './ui/tooltip';
+// import Tooltip from './ui/tooltip';
 import { insuranceResources, getProductLabel } from './Resource';
 import colors from '../styles/colors';
 import { parseUrlParams } from '../utils/parseUrlParams';
@@ -49,6 +47,7 @@ interface ProductDetailsProps {
   premium: number;
   costView: CostView;
   individualInfo: IndividualInfo;
+  quotes: Quotes;
   setProductPlan: (product: Product, plan: Plan) => void;
   selectedEligibilityPerProduct: EligibilityPerProduct;
   setSelectedEligibilityPerProduct: React.Dispatch<React.SetStateAction<EligibilityPerProduct>>;
@@ -65,6 +64,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   premium,
   costView,
   individualInfo,
+  quotes,
   handleSalaryChange,
   setProductPlan,
   selectedEligibilityPerProduct,
@@ -115,6 +115,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   const calculateLTDPremiumForDisplay = (plan: LTDPlan) => {
     const monthlyPremium = calculateLTDPremium(
       { ...individualInfo, eligibility: 'Individual' },
+      quotes,
       plan,
       isKen || false // Ensure isKen is a boolean
     );
@@ -144,7 +145,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     const eligibilityPremiums = { Individual: 0, 'Individual + Spouse': 0, 'Individual + Children': 0, Family: 0 };
     options.forEach(option => {
       const tempInfo = { ...individualInfo, eligibility: option };
-      const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, currentPlan);
+      const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, quotes, currentPlan);
       eligibilityPremiums[option] = calculatePremiumByCostView(calculatedPremium, costView);
     });
     setEligibilityPremiums(eligibilityPremiums);
@@ -159,7 +160,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         : ['Basic', 'Premium'] as const;
 
       plansToCalculate.forEach(plan => {
-        const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](individualInfo, plan);
+        const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](individualInfo, quotes, plan);
         planPremiums[plan] = calculatePremiumByCostView(calculatedPremium, costView);
       });
 

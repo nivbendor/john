@@ -30,7 +30,7 @@ export const URI_SETTINGS = {
   },
   quote() {
     if (isDev()) {
-      return 'https://5kfkw0uyea.execute-api.us-east-1.amazonaws.com/dev/quote/';
+      return 'https://5kfkw0uyea.execute-api.us-east-1.amazonaws.com/dev/quote';
     }
 
     return ''

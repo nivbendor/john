@@ -14,10 +14,8 @@ import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
 import ZipDebugPanel from '../components/ZipDebugPopup';
 import { getRegistrationUrl } from '../utils/registrationUrls';
-// import { debounce } from '../utils/debounce';
-// import { URI_SETTINGS } from '../utils/config';
-// import { useLocalStorage } from '../hooks/useLocalStorage';
-// import { useProductUpdate } from '../hooks/useProductUpdate';
+import { useQuotes } from '../hooks/useQuotes';
+import SplashScreen from '../components/SplashScreen';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -73,6 +71,16 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
 
+  // const { quotes, loading, error } = useQuotes(individualInfo);
+
+  // useEffect(() => {
+  //   console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
+  // }, [quotes]);
+
+  // useEffect(() => {
+  //   console.log('An error occurred during an API call', error);
+  // }, [error]);
+
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
 
@@ -117,23 +125,25 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     }), {} as Record<Product, Plan>)
   );
 
+  // TODO: remove the dependencies if not needed anymore
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
-    const newPremium = calculatePremiums(individualInfo, product, costView, plan);
+    const newPremium = calculatePremiums(individualInfo, quotes, product, costView, plan);
     setPremiums(prev => ({
       ...prev,
       [product]: newPremium,
     }));
-  }, [individualInfo, costView]);
+  }, [individualInfo, quotes, costView]);
 
+  // TODO: remove the dependencies if not needed anymore
   const calculateAllPremiums = useMemo(() => {
     return () => {
       const allPremiums: PremiumResult = { ...initialPremiums };
       PRODUCTS.forEach(product => {
-        allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]);
+        allPremiums[product] = calculatePremiums(individualInfo, quotes, product, costView, productPlans[product]);
       });
       return allPremiums;
     };
-  }, [individualInfo, costView, productPlans]);
+  }, [individualInfo, quotes, costView, productPlans]);
 
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
     if (product === 'LTD') {
@@ -224,6 +234,11 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     setShowFunnel(false);
   };
 
+  if (loading) {
+    return <SplashScreen onFinish={() => {}} />;
+  }
+  // else
+
   return (
     <div className="min-h-screen bg-gray-100 lg:px-6">
       {showFunnel ? (
@@ -255,6 +270,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   premium={premiums[selectedProduct]}
                   costView={costView}
                   individualInfo={individualInfo}
+                  quotes={quotes}
                   setProductPlan={setProductPlan}
                   selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   setSelectedEligibilityPerProduct={setSelectedEligibilityPerProduct}
@@ -276,6 +292,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   premiums={premiums}
                   costView={costView}
                   individualInfo={individualInfo}
+                  quotes={quotes}
                   selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   handleToggleChange={(product, isActive) => {
                     setLocalProducts(prev => ({

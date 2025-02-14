@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, ChangeEvent } from 'react';
-import { Product, IndividualInfo, Plan, USState, CostView, ToggleState } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, USState, CostView, ToggleState, Quotes } from '../utils/insuranceTypes';
 import { calculatePremiums } from '../utils/insuranceUtils';
 import CostEstimate from '../components/CostEstimate';
 import ProductDetails from '../components/ProductDetails';
@@ -9,6 +9,7 @@ import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '.
 import Tabs from '../components/ui/tabs';
 import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
+import { useQuotes } from '../hooks/useQuotes';
 
 
 type PremiumResult = Record<Product, number>;
@@ -44,6 +45,7 @@ const initialPremiums: PremiumResult = {
 
 function Home() {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(initialIndividualInfo);
+  const { quotes, loading, error } = useQuotes(individualInfo);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);
@@ -101,13 +103,13 @@ function Home() {
 
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
     if (product === 'LTD') {
-      const newPremium = calculatePremiums(individualInfo, product, costView, plan); // Corrected order
+      const newPremium = calculatePremiums(individualInfo, quotes, product, costView, plan); // Corrected order
       setPremiums(prev => ({
         ...prev,
         [product]: newPremium
       }));
     } else {
-      const newPremium = calculatePremiums(individualInfo, product, costView, plan); // Corrected order
+      const newPremium = calculatePremiums(individualInfo, quotes, product, costView, plan); // Corrected order
       setPremiums(prev => ({
         ...prev,
         [product]: newPremium
@@ -134,7 +136,7 @@ function Home() {
   const calculateAllPremiums = useCallback(() => {
     const allPremiums: PremiumResult = { ...initialPremiums };
     PRODUCTS.forEach(product => {
-      allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]); // Corrected order
+      allPremiums[product] = calculatePremiums(individualInfo, quotes, product, costView, productPlans[product]); // Corrected order
     });
     return allPremiums;
   }, [individualInfo, productPlans, costView]);
@@ -155,6 +157,7 @@ function Home() {
     Object.keys(productPlans).forEach((product) => {
       newPremiums[product as Product] = calculatePremiums(
         individualInfo,
+        quotes,
         product as Product, // Corrected order
         costView,
         productPlans[product as Product] // Corrected order

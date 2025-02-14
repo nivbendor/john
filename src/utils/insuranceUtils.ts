@@ -16,7 +16,9 @@ import {
   CostView,
   calculatePremiumByCostView,
   ToggleState,
-  LTDPlan
+  LTDPlan,
+  Quotes,
+  ProductShortName
 } from './insuranceTypes';
 
 import {
@@ -36,8 +38,7 @@ import {
   PRODUCTS,
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
-import { isDistributor } from "./isDistributor";
-import { BABRM } from "./config";
+import { isServerCalculations } from "./isServerCalculations";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -50,9 +51,9 @@ const getStateFromZip = (zipCode: string): USState | null => {
   return findStateByZipCode(zipCode); // Use the existing mapping function
 };
 
-export function calculateLTDPremiumWrapper(individualInfo: IndividualInfo, plan: Plan): number {
+export function calculateLTDPremiumWrapper(individualInfo: IndividualInfo, quotes: Quotes, plan: Plan): number {
   const isKen = parseUrlParams().isKen || false; // Get 'isKen' from URL parameters
-  return calculateLTDPremium(individualInfo, plan as LTDPlan, isKen);
+  return calculateLTDPremium(individualInfo, quotes, plan as LTDPlan, isKen);
 }
 
 const getZipCodeRegion = (zipCode: string): number | null => {
@@ -117,6 +118,11 @@ export function calculateSTDBenefit(annualSalary: number): number {
   }
 
   const weeklyBenefit = (annualSalary / STD_CONFIG.weeks) * STD_CONFIG.benefitAmountKey;
+  // TODO: the formula is not correct
+  /**
+   *   =(Gross income / 52)*.6 = Benefit amount
+   *   =(Benefit amount/10)*Age banded rate = monthly premium
+   */
   const cappedBenefit = Math.min(weeklyBenefit, STD_CONFIG.maxCoverageAmount);
 
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
@@ -160,13 +166,17 @@ export function isLTDPlanAvailable(plan: LTDPlan, annualSalary: number, isKen: b
 }
 
 
-export function calculateLTDPremium(individualInfo: IndividualInfo, selectedPlan: LTDPlan, isKen: boolean): number {
-
+export function calculateLTDPremium(individualInfo: IndividualInfo, quotes: Quotes, selectedPlan: LTDPlan, isKen: boolean): number {
   const { annualSalary } = individualInfo;
   const recommendedPlan = getLTDPlan(annualSalary, isKen);
 
   // Use the selected plan, but ensure it's not higher than the recommended plan
   const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary, isKen) ? selectedPlan : recommendedPlan;
+
+  if (isServerCalculations()) {
+    return quotes['ltd']?.[actualPlan.toLowerCase()]['individual'] || 0;
+  }
+  // else
 
   const maxUnits = LTD_CONFIG.maxUnits[actualPlan];
   const costPerHundred = LTD_CONFIG.costPerHundred[actualPlan];
@@ -188,8 +198,13 @@ export function getCriticalIllnessRate(age: number, eligibility: EligibilityOpti
   return ageBandRate * (eligibility === 'Individual' ? 1 : 2);
 }
 
-export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualInfo, plan: Plan) => number> = {
-  STD: (individualInfo, plan) => {
+export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualInfo, quotes: Quotes, plan: Plan) => number> = {
+  STD: (individualInfo, quotes, plan) => {
+    if (isServerCalculations()) {
+      return quotes['std']?.[plan.toLocaleLowerCase()]['individual'] || 0;
+    }
+    // else
+
     const { age, annualSalary } = individualInfo;
     const rate = getSTDRate(age);
 
@@ -206,13 +221,16 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   LTD: calculateLTDPremiumWrapper, // Use the revised wrapper
 
 
-  'Life / AD&D': (individualInfo, plan) => {
+  'Life / AD&D': (individualInfo, quotes, plan) => {
     const { age, employeeCoverage = 0, spouseCoverage = 0, eligibility } = individualInfo;
     if (age === 0) {
       return 0;
     }
 
-
+    if (isServerCalculations()) {
+      return quotes['life']?.[plan.toLowerCase()][eligibility.toLowerCase()] || 0;
+    }
+    // else
 
     const rate = getLifeADDRate(age);
 
@@ -243,22 +261,35 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     return monthly_premium_individual + monthly_premium_spouse + monthly_premium_children;
   },
 
-  Accident: (individualInfo, plan) => {
+  Accident: (individualInfo, quotes, plan) => {
     // Return 0 if age is 0
     if (individualInfo.age === 0) {
       return 0;
     }
+
+    if (isServerCalculations()) {
+      return quotes['accident']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+    }
+
     return ACCIDENT_PREMIUMS[plan][individualInfo.eligibility];
   },
 
-  Dental: (individualInfo, plan) => {
+  Dental: (individualInfo, quotes, plan) => {
+    if (isServerCalculations()) {
+      return quotes['dental']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+    }
+
     const region = getZipCodeRegion(individualInfo.zipCode);
     return region !== null ? (DENTAL_PREMIUMS[plan]?.[region]?.[individualInfo.eligibility] || 0) : 0;
   },
 
-  Vision: (individualInfo, plan) => {
+  Vision: (individualInfo, quotes, plan) => {
     if (individualInfo.age === 0) {
       return 0;
+    }
+
+    if (isServerCalculations()) {
+      return quotes['vision']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
     }
 
     const stateCategory = getStateCategory(individualInfo.zipCode);
@@ -284,17 +315,23 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
   // },
 
 
-  'Critical Illness/Cancer': (individualInfo, plan) => {
+  'Critical Illness/Cancer': (individualInfo, quotes, plan) => {
     // Return 0 if age is 0
     if (individualInfo.age === 0) {
       return 0;
     }
+
+    if (isServerCalculations()) {
+      return quotes['critical']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+    }
+
     return getCriticalIllnessRate(individualInfo.age, individualInfo.eligibility);
   }
 };
 
 export const calculatePremiums = (
   individualInfo: IndividualInfo,
+  quotes: Quotes,
   selectedProduct: Product,
   costView: CostView,
   plan: Plan = defaultPlans[selectedProduct] // Use the default plan from defaultPlans
@@ -303,7 +340,7 @@ export const calculatePremiums = (
 
   if (!calculatePremium) return 0;
 
-  const premium = calculatePremium(individualInfo, plan);
+  const premium = calculatePremium(individualInfo, quotes, plan);
   return calculatePremiumByCostView(premium, costView);
 };
 
