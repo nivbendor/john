@@ -169,7 +169,7 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, quotes: Quot
   const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary, isKen) ? selectedPlan : recommendedPlan;
 
   if (isServerCalculations()) {
-    return quotes['ltd']?.[actualPlan.toLowerCase()]['individual'] || 0;
+    return quotes['ltd']?.[actualPlan.toLowerCase()]?.['individual'] || 0;
   }
   // else
 
@@ -196,7 +196,7 @@ export function getCriticalIllnessRate(age: number, eligibility: EligibilityOpti
 export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualInfo, quotes: Quotes, plan: Plan) => number> = {
   STD: (individualInfo, quotes, plan) => {
     if (isServerCalculations()) {
-      return quotes['std']?.[plan.toLocaleLowerCase()]['individual'] || 0;
+      return quotes['std']?.[plan.toLowerCase()]?.['individual'] || 0;
     }
     // else
 
@@ -211,11 +211,11 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
 
     const grossWeeklyIncome = annualSalary / STD_CONFIG.weeks;
     const weeklyBenefitAmount = grossWeeklyIncome * STD_CONFIG.benefitAmountKey;
-    // const cappedWeeklyBenefit = Math.min(weeklyBenefitAmount, STD_CONFIG.maxCoverageAmount);
-    const units = weeklyBenefitAmount / STD_CONFIG.unitsKey;
-    // const finalUnits = Math.min(units, STD_CONFIG.maxUnits);
+    const cappedWeeklyBenefit = Math.min(weeklyBenefitAmount, STD_CONFIG.maxCoverageAmount);
+    const units = cappedWeeklyBenefit / STD_CONFIG.unitsKey;
+    const finalUnits = Math.min(units, STD_CONFIG.maxUnits);
 
-    return units * rate;
+    return finalUnits * rate;
   },
 
 
@@ -229,7 +229,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
 
     if (isServerCalculations()) {
-      return quotes['life']?.[plan.toLowerCase()][eligibility.toLowerCase()] || 0;
+      return quotes['life']?.[plan.toLowerCase()]?.[eligibility.toLowerCase()] || 0;
     }
     // else
 
@@ -269,7 +269,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
 
     if (isServerCalculations()) {
-      return quotes['accident']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+      return quotes['accident']?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
     }
 
     return ACCIDENT_PREMIUMS[plan][individualInfo.eligibility];
@@ -277,7 +277,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
 
   Dental: (individualInfo, quotes, plan) => {
     if (isServerCalculations()) {
-      return quotes['dental']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+      return quotes['dental']?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
     }
 
     const region = getZipCodeRegion(individualInfo.zipCode);
@@ -290,7 +290,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
 
     if (isServerCalculations()) {
-      return quotes['vision']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+      return quotes['vision']?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
     }
 
     const stateCategory = getStateCategory(individualInfo.zipCode);
@@ -322,8 +322,9 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
       return 0;
     }
 
+    // TODO: should be basic instead of premium and need to change in DB as well
     if (isServerCalculations()) {
-      return quotes['critical']?.[plan.toLowerCase()][individualInfo.eligibility] || 0;
+      return quotes['critical']?.['premium']?.[individualInfo.eligibility.toLowerCase()] || 0;
     }
 
     return getCriticalIllnessRate(individualInfo.age, individualInfo.eligibility);

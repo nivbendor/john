@@ -42,13 +42,11 @@ export async function fetchWithToken(url: string, config = { headers: {}}) {
     const resp = await axios(url, finalConfig);
     return resp;
   } catch (error) {
-    // Check if we got 401 and a specific error message
-    if (
-      error instanceof AxiosError &&
-      error.response &&
-      error.response.status === 401 &&
-      error.response.data.message === 'The incoming token has expired'
-    ) {
+    if (error instanceof AxiosError && error.code === 'ERR_BAD_REQUEST' && error.status === 400) {
+      console.log('error', error.toJSON());
+      throw error;
+    } else {
+      console.log('error', (error as any).toJSON());
       console.log('Token expired, refreshing...');
       // Refresh the token
       token = await fetchToken();
@@ -56,7 +54,5 @@ export async function fetchWithToken(url: string, config = { headers: {}}) {
       finalConfig.headers.Authorization = `Bearer ${token}`;
       return axios(url, finalConfig);
     }
-    // Otherwise, rethrow the error
-    throw error;
   }
 }

@@ -4,7 +4,7 @@ import { debounce } from '../utils/debounce';
 import { IndividualInfo } from '../utils/insuranceTypes';
 import { URI_SETTINGS } from '../utils/config';
 
-const DEBOUNCE_DELAY = 500;
+const DEBOUNCE_DELAY = 1000;
 
 const productConfig = {
   ltd: {
