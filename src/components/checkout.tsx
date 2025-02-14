@@ -6,7 +6,7 @@ import colors from '../styles/colors';
 
 
 interface ActiveProductsToggleProps {
-  plan: Record<Product, Plan>;
+  plans: Record<Product, Plan>;
   products: Record<Product, boolean>;
   premiums: PremiumResult;
   costView: CostView;
@@ -40,7 +40,7 @@ const useColorFromUrl = () => {
 };
 
 const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
-  plan,
+  plans,
   products,
   premiums,
   costView,
@@ -74,9 +74,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, quotes, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, costView);
-  }, [individualInfo, selectedEligibilityPerProduct, plan, costView]);
+  }, [individualInfo, selectedEligibilityPerProduct, plans, costView]);
 
   const getMonthlyPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
@@ -84,9 +84,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, quotes, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, 'Monthly');
-  }, [individualInfo, plan]);
+  }, [individualInfo, plans]);
 
   const totalPremium = Object.entries(activeProducts)
     .filter(([product, isActive]) => isActive)

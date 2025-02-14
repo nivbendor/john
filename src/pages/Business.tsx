@@ -71,7 +71,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
 
-  // const { quotes, loading, error } = useQuotes(individualInfo);
+  const { quotes, loading, error } = useQuotes(individualInfo);
 
   // useEffect(() => {
   //   console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
@@ -268,6 +268,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   plans={productPlans}
                   selectedProduct={selectedProduct}
                   premium={premiums[selectedProduct]}
+                  premiums={premiums}
                   costView={costView}
                   individualInfo={individualInfo}
                   quotes={quotes}
@@ -287,7 +288,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
             <div className="w-full lg:w-1/3 space-y-4">
               <div className="bg-white rounded-xl shadow-md p-6">
                 <ActiveProductsToggle
-                  plan={productPlans}
+                  plans={productPlans}
                   products={localProducts}
                   premiums={premiums}
                   costView={costView}

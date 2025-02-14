@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan, Quotes } from '../utils/insuranceTypes';
+import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan, Quotes, PremiumResult } from '../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper, getLTDPlanByAnnualSalaryCpValue } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
@@ -45,6 +45,7 @@ interface ProductDetailsProps {
   plans: Record<Product, Plan>;
   selectedProduct: Product;
   premium: number;
+  premiums: PremiumResult;
   costView: CostView;
   individualInfo: IndividualInfo;
   quotes: Quotes;
@@ -145,7 +146,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     const eligibilityPremiums = { Individual: 0, 'Individual + Spouse': 0, 'Individual + Children': 0, Family: 0 };
     options.forEach(option => {
       const tempInfo = { ...individualInfo, eligibility: option };
-      const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, quotes, currentPlan);
+      const calculatedPremium = PREMIUM_CALCULATIONS[selectedProduct](tempInfo, quotes, plans[selectedProduct]);
       eligibilityPremiums[option] = calculatePremiumByCostView(calculatedPremium, costView);
     });
     setEligibilityPremiums(eligibilityPremiums);
@@ -476,7 +477,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   <Dropdown.Item key={option} eventKey={option} active={option === selectedEligibilityPerProduct[selectedProduct]}>
                     <div className="flex justify-between items-center w-full">
                       <span>{option}</span>
-                      <span className="ml-4">{formatCurrency(eligibilityPremiums[option])} / {costView.toLowerCase()}</span>
+                      <span className="ml-4">{formatCurrency(eligibilityPremiums[option])}</span>
                     </div>
                   </Dropdown.Item>
                 ))}
@@ -517,7 +518,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       <div className="bg-gray-100 p-3 rounded-md shadow-md">
         <div className="flex items-baseline space-x-2">
           <p className="text-lg font-semibold text-gray-700">Cost:</p>
-          <p className="price">{formatCurrency(premium)}</p>
+          <p className="price">{formatCurrency(eligibilityPremiums[selectedEligibilityPerProduct[selectedProduct]])}</p>
           <span className="text-base text-gray-500"> /{getCostViewDisplayText(costView)}</span>
         </div>
         {renderCostBreakdown()}

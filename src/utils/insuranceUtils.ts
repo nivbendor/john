@@ -118,11 +118,6 @@ export function calculateSTDBenefit(annualSalary: number): number {
   }
 
   const weeklyBenefit = (annualSalary / STD_CONFIG.weeks) * STD_CONFIG.benefitAmountKey;
-  // TODO: the formula is not correct
-  /**
-   *   =(Gross income / 52)*.6 = Benefit amount
-   *   =(Benefit amount/10)*Age banded rate = monthly premium
-   */
   const cappedBenefit = Math.min(weeklyBenefit, STD_CONFIG.maxCoverageAmount);
 
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
@@ -205,16 +200,22 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
     // else
 
+      // TODO: the formula is not correct
+  /**
+   *   =(Gross income / 52)*.6 = Benefit amount
+   *   =(Benefit amount/10)*Age banded rate = monthly premium
+   */
+
     const { age, annualSalary } = individualInfo;
     const rate = getSTDRate(age);
 
     const grossWeeklyIncome = annualSalary / STD_CONFIG.weeks;
     const weeklyBenefitAmount = grossWeeklyIncome * STD_CONFIG.benefitAmountKey;
-    const cappedWeeklyBenefit = Math.min(weeklyBenefitAmount, STD_CONFIG.maxCoverageAmount);
-    const units = cappedWeeklyBenefit / STD_CONFIG.unitsKey;
-    const finalUnits = Math.min(units, STD_CONFIG.maxUnits);
+    // const cappedWeeklyBenefit = Math.min(weeklyBenefitAmount, STD_CONFIG.maxCoverageAmount);
+    const units = weeklyBenefitAmount / STD_CONFIG.unitsKey;
+    // const finalUnits = Math.min(units, STD_CONFIG.maxUnits);
 
-    return finalUnits * rate;
+    return units * rate;
   },
 
 
