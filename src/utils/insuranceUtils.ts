@@ -36,9 +36,13 @@ import {
   insuranceConfig,
   defaultPlans,
   PRODUCTS,
+  BABRMCriticalIllnessRates,
+  DefaultCriticalIllnessRates,
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
 import { isServerCalculations } from "./isServerCalculations";
+import { isDistributor } from "./isDistributor";
+import { BABRM } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -189,7 +193,14 @@ const getAgeBandRate = (age: number, ageBandRates: { minAge: number; maxAge: num
 };
 
 export function getCriticalIllnessRate(age: number, eligibility: EligibilityOption): number {
-  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES);
+
+  if (isDistributor(BABRM)) {
+    const ageBand = (CRITICAL_ILLNESS_RATES as BABRMCriticalIllnessRates[]).find(band => age >= band.minAge && age <= band.maxAge);
+    return ageBand?.rates[eligibility] as number;
+  }
+  // else
+
+  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES as DefaultCriticalIllnessRates[]);
   return ageBandRate * (eligibility === 'Individual' ? 1 : 2);
 }
 

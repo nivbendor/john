@@ -71,7 +71,19 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
 
-  const { quotes, loading, error } = useQuotes(individualInfo);
+  const quotes = {
+    ltd: null,
+    std: null,
+    life: null,
+    accident: null,
+    dental: null,
+    vision: null,
+    critical: null,
+  };
+
+  const loading = false;
+
+  // const { quotes, loading, error } = useQuotes(individualInfo);
 
   // useEffect(() => {
   //   console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
