@@ -36,8 +36,7 @@ import {
   insuranceConfig,
   defaultPlans,
   PRODUCTS,
-  BABRMCriticalIllnessRates,
-  DefaultCriticalIllnessRates,
+  CriticalIllnessRates,
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
 import { isServerCalculations } from "./isServerCalculations";
@@ -187,21 +186,16 @@ export function calculateLTDPremium(individualInfo: IndividualInfo, quotes: Quot
 }
 
 
-const getAgeBandRate = (age: number, ageBandRates: { minAge: number; maxAge: number; rate: number }[]): number => {
+const getAgeBandRate = (age: number, ageBandRates: CriticalIllnessRates[]): Record<EligibilityOption, number> => {
   const ageBand = ageBandRates.find(band => age >= band.minAge && age <= band.maxAge);
-  return ageBand ? ageBand.rate : ageBandRates[ageBandRates.length - 1].rate;
+  return ageBand ? ageBand.rates : ageBandRates[ageBandRates.length - 1].rates;
 };
 
 export function getCriticalIllnessRate(age: number, eligibility: EligibilityOption): number {
-
-  if (isDistributor(BABRM)) {
-    const ageBand = (CRITICAL_ILLNESS_RATES as BABRMCriticalIllnessRates[]).find(band => age >= band.minAge && age <= band.maxAge);
-    return ageBand?.rates[eligibility] as number;
-  }
-  // else
-
-  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES as DefaultCriticalIllnessRates[]);
-  return ageBandRate * (eligibility === 'Individual' ? 1 : 2);
+  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES);
+  return ageBandRate[eligibility];
+  // const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES as DefaultCriticalIllnessRates[]);
+  // return ageBandRate * (eligibility === 'Individual' ? 1 : 2);
 }
 
 export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualInfo, quotes: Quotes, plan: Plan) => number> = {
