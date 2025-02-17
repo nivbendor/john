@@ -30,7 +30,7 @@ const initialIndividualInfo: IndividualInfo = {
   eligibility: 'Individual',
   ltdPlan: 'Basic' as LTDPlan, // Add this line
   employeeCoverage: 20000,
-  spouseCoverage: 10000,
+  spouseCoverage: 5000,
   numberOfChildren: 2,
   isExpanded: undefined
 };
