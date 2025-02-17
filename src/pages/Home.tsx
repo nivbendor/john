@@ -45,7 +45,8 @@ const initialPremiums: PremiumResult = {
 
 function Home() {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(initialIndividualInfo);
-  const { quotes, loading, error } = useQuotes(individualInfo);
+    const [inputError, setInputError] = useState('');
+  const { quotes, loading, error } = useQuotes(individualInfo, inputError);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);

@@ -40,8 +40,6 @@ import {
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
 import { isServerCalculations } from "./isServerCalculations";
-import { isDistributor } from "./isDistributor";
-import { BABRM } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -204,13 +202,6 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
       return quotes['std']?.[plan.toLowerCase()]?.['individual'] || 0;
     }
     // else
-
-      // TODO: the formula is not correct
-  /**
-   *   =(Gross income / 52)*.6 = Benefit amount
-   *   =(Benefit amount/10)*Age banded rate = monthly premium
-   */
-
     const { age, annualSalary } = individualInfo;
     const rate = getSTDRate(age);
 
@@ -327,9 +318,8 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
       return 0;
     }
 
-    // TODO: should be basic instead of premium and need to change in DB as well
     if (isServerCalculations()) {
-      return quotes['critical']?.['premium']?.[individualInfo.eligibility.toLowerCase()] || 0;
+      return quotes['critical']?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
     }
 
     return getCriticalIllnessRate(individualInfo.age, individualInfo.eligibility);

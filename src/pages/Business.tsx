@@ -71,27 +71,17 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
 
-  const [quotes] = useState({
-    ltd: null,
-    std: null,
-    life: null,
-    accident: null,
-    dental: null,
-    vision: null,
-    critical: null,
-  });
+  const [inputError, setInputError] = useState('');
 
-  const [loading] = useState(false);
+  const { quotes, loading, error } = useQuotes(individualInfo, inputError);
 
-  // const { quotes, loading, error } = useQuotes(individualInfo);
+  useEffect(() => {
+    console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
+  }, [quotes]);
 
-  // useEffect(() => {
-  //   console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
-  // }, [quotes]);
-
-  // useEffect(() => {
-  //   console.log('An error occurred during an API call', error);
-  // }, [error]);
+  useEffect(() => {
+    console.log('An error occurred during an API call', error);
+  }, [error]);
 
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
@@ -198,7 +188,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     });
   }, [updateZipDebugInfo, productPlans.LTD, isKen]);
 
-
+  const handleInputErrorChange = useCallback((error: string) => {
+    setInputError(error);
+  }, []);
   // const [calculations] = useProductUpdate(individualInfo);
 
   // console.log('CALCULATIONS', calculations);
@@ -263,7 +255,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                 <IndividualInfoForm
                   individualInfo={individualInfo}
                   handleIndividualInfoChange={handleInputChange}
-                  errors={{}}
+                  handleInputErrorChange={handleInputErrorChange}
+                  error={inputError}
                   costView={costView}
                   setCostView={setCostView}
                 />

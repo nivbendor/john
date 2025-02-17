@@ -3,19 +3,19 @@ import { fetchWithToken, getToken, fetchToken } from '../services/authService';
 import { debounce } from '../utils/debounce';
 import { IndividualInfo } from '../utils/insuranceTypes';
 import { URI_SETTINGS } from '../utils/config';
-import { isDev } from '@/utils/isDev';
-import { isServerCalculations } from '@/utils/isServerCalculations';
+import { isServerCalculations } from '../utils/isServerCalculations';
+import { isDev } from '../utils/isDev';
 
 const DEBOUNCE_DELAY = 1000;
 
 const productConfig = {
   ltd: {
-    triggers: { salary: true },
-    buildUrl: ({ salary }) => `/ltd/?salary=${salary}`
+    triggers: { annualSalary: true },
+    buildUrl: ({ annualSalary }) => `/ltd/?salary=${annualSalary}`
   },
   std: {
-    triggers: { salary: true, age: true },
-    buildUrl: ({ salary, age }) => `/std/?salary=${salary}&age=${age}`
+    triggers: { annualSalary: true, age: true },
+    buildUrl: ({ annualSalary, age }) => `/std/?salary=${annualSalary}&age=${age}`
   },
   life: {
     triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
@@ -23,7 +23,7 @@ const productConfig = {
       `/life/?age=${age}&employeeCoverage=${employeeCoverage}&spouseCoverage=${spouseCoverage}`
   },
   accident: { // accident should be invoked only once, since the rest of the data is static
-    triggers: { salary: true, age: true, zipCode: true, employeeCoverage: true, spouseCoverage: true },
+    triggers: { annualSalary: true, age: true, zipCode: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/accident`
   },
   dental: {
@@ -42,10 +42,8 @@ const productConfig = {
 
 /**
  * 
- * @param {object} userData 
- * Example: { age: number, salary: number, zipCode: string }
  */
-export function useQuotes(individualInfo: IndividualInfo) {
+export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
 
   // We'll store results for each product in an object:
   const [quotes, setQuotes] = useState({
@@ -71,6 +69,10 @@ export function useQuotes(individualInfo: IndividualInfo) {
 
   // On mount, ensure we have a token
   useEffect(() => {
+    if (!isServerCalculations() || !isDev()) {
+      return;
+    }
+    // else
     if (!getToken()) {
       fetchToken().catch(err => {
         console.error('Error fetching initial token:', err);
@@ -79,14 +81,18 @@ export function useQuotes(individualInfo: IndividualInfo) {
   }, []);
 
   // The main function to fetch quotes for a set of products
-  const fetchProducts = useCallback(async (productsToFetch, { age, salary, zipCode, employeeCoverage, spouseCoverage }) => {
+  const fetchProducts = useCallback(async (productsToFetch, individualInfo: Partial<IndividualInfo>) => {
+    if (inputError) {
+      return;
+    }
+    // else
     setLoading(true);
     setError(null);
     try {
       // We’ll do all requests in parallel
       const requests = productsToFetch.map(async (product) => {
         const { buildUrl } = productConfig[product];
-        const pathname = buildUrl({ age, salary, zipCode, employeeCoverage, spouseCoverage });
+        const pathname = buildUrl(individualInfo);
         const url = URI_SETTINGS.quote() + pathname;
         const response = await fetchWithToken(url);
         if (response.status === 200 || response.status === 201) {
@@ -115,7 +121,7 @@ export function useQuotes(individualInfo: IndividualInfo) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [inputError]);
 
   // Debounced version of fetchProducts
   const debouncedFetchProducts = useCallback(
@@ -127,6 +133,9 @@ export function useQuotes(individualInfo: IndividualInfo) {
 
   // The effect that checks what changed
   useEffect(() => {
+    if (!isServerCalculations() || !isDev()) {
+      return;
+    }
     const changedAge = individualInfo.age !== prevAgeRef.current;
     const changedSalary = individualInfo.annualSalary !== prevSalaryRef.current;
     const changedZip = individualInfo.zipCode !== prevZipRef.current;
@@ -145,7 +154,7 @@ export function useQuotes(individualInfo: IndividualInfo) {
 
       let needsFetch = false;
       if (triggers.age && changedAge) needsFetch = true;
-      if (triggers.salary && changedSalary) needsFetch = true;
+      if (triggers.annualSalary && changedSalary) needsFetch = true;
       if (triggers.zipCode && changedZip) needsFetch = true;
       if (triggers.employeeCoverage && changedEmployeeCoverage) needsFetch = true;
       if (triggers.spouseCoverage && changedSpouseCoverage) needsFetch = true;
@@ -168,8 +177,8 @@ export function useQuotes(individualInfo: IndividualInfo) {
 
     if (productsToFetch.length > 0) {
       debouncedFetchProducts(productsToFetch, {
-        age: individualInfo.age, 
-        salary: individualInfo.annualSalary, 
+        age: individualInfo.age,
+        annualSalary: individualInfo.annualSalary,
         zipCode: individualInfo.zipCode,
         employeeCoverage: individualInfo.employeeCoverage,
         spouseCoverage: individualInfo.spouseCoverage,
@@ -186,7 +195,8 @@ export function useQuotes(individualInfo: IndividualInfo) {
     return () => {
       // debouncedFetchProducts.cancel();
     };
-  }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, individualInfo.employeeCoverage, individualInfo.spouseCoverage, debouncedFetchProducts]);
+  }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, 
+    individualInfo.employeeCoverage, individualInfo.spouseCoverage, debouncedFetchProducts]);
 
   return {
     quotes,
