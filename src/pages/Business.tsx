@@ -16,6 +16,7 @@ import ZipDebugPanel from '../components/ZipDebugPopup';
 import { getRegistrationUrl } from '../utils/registrationUrls';
 import { useQuotes } from '../hooks/useQuotes';
 import SplashScreen from '../components/SplashScreen';
+import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -239,7 +240,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   };
 
   if (loading) {
-    return <SplashScreen onFinish={() => {}} />;
+    return <LoadingSpinner />;
   }
   // else
 
