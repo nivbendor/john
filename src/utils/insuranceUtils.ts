@@ -131,7 +131,7 @@ export const getDefaultIndividualData = () => {
 
 // Display / Hide plan dropdown
 export function hasMultiplePlans(product: Product): boolean {
-  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD', 'Accident', 'Dental', 'Vision'].includes(product);
+  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD', 'Accident', 'Vision'].includes(product);
 }
 
 

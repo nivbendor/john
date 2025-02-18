@@ -176,6 +176,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       setProductPlan(selectedProduct, value as LTDPlan);
       recalculatePremium(selectedProduct, value as LTDPlan);
     }
+
+    // TODO: add the logic for plan change only for Dental for now, it looks disgusting
+    if (selectedProduct === 'Dental') {
+      setProductPlan(selectedProduct, value as LTDPlan);
+    }
   };
 
   const handleEligibilityChange = (eventKey: string | null) => {
@@ -443,14 +448,14 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                {currentPlan || 'Select a Plan'} {/* Fallback for initial state */}
+                {plans[selectedProduct] || 'Select a Plan'} {/* Fallback for initial state */}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
                   <Dropdown.Item
                     key={plan}
                     eventKey={plan} // Ensure eventKey matches the selected plan value
-                    active={currentPlan === plan}
+                    active={plans[selectedProduct] === plan}
                     disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
                   >
                     <div className="flex justify-between items-center w-full">
