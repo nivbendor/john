@@ -26,13 +26,13 @@ export const URI_SETTINGS = {
     if (isDev()) {
       return 'https://ltfuhej4l0.execute-api.us-east-1.amazonaws.com/dev/auth';
     }
-    return '';
+    return 'https://9t1c2qgm8j.execute-api.us-east-1.amazonaws.com/prod/auth';
   },
   quote() {
     if (isDev()) {
       return 'https://5kfkw0uyea.execute-api.us-east-1.amazonaws.com/dev/quote';
     }
 
-    return ''
+    return 'https://ubucgvtxog.execute-api.us-east-1.amazonaws.com/prod/quote'
   }
 }
