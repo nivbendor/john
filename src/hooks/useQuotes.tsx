@@ -69,7 +69,7 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
 
   // On mount, ensure we have a token
   useEffect(() => {
-    if (!isServerCalculations() || !isDev()) {
+    if (!isServerCalculations()) {
       return;
     }
     // else
@@ -133,7 +133,7 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
 
   // The effect that checks what changed
   useEffect(() => {
-    if (!isServerCalculations() || !isDev()) {
+    if (!isServerCalculations()) {
       return;
     }
     const changedAge = individualInfo.age !== prevAgeRef.current;
