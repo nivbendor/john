@@ -96,9 +96,9 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     if (selectedProduct === 'LTD') {
       const availablePlans = getLTDPlan(individualInfo.annualSalary, isKen || false);
       setAvailableLTDPlans(availablePlans);
-      setShowPlanDropdown(true); // Always show the dropdown for LTD if salary > 0
+      // setShowPlanDropdown(true); // Always show the dropdown for LTD if salary > 0
     } else {
-      setShowPlanDropdown(false); // Hide the dropdown if not LTD
+      // setShowPlanDropdown(false); // Hide the dropdown if not LTD
     }
   }, [individualInfo.annualSalary, selectedProduct, isKen]);
 
