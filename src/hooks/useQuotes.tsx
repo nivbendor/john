@@ -104,12 +104,16 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
         }
       });
 
-      const results = await Promise.all(requests);
+      const results = await Promise.allSettled(requests);
 
       setQuotes(prev => {
         const updated = { ...prev };
-        for (const { product, data } of results) {
-          updated[product] = data;
+        for (const productResult of results) {
+          if (productResult.status === 'rejected') {
+            updated[productResult.reason.product] = productResult.reason.data;
+          } else {
+            updated[productResult.value.product] = productResult.value.data;
+          }
         }
         return updated;
       });
