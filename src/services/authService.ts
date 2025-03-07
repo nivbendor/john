@@ -42,7 +42,10 @@ export async function fetchWithToken(url: string, config = { headers: {}}) {
     const resp = await axios(url, finalConfig);
     return resp;
   } catch (error) {
-    if (error instanceof AxiosError && error.code === 'ERR_BAD_REQUEST' && (error.status === 400 || error.status === 500)) {
+    if (error instanceof AxiosError && (
+        (error.code === 'ERR_BAD_REQUEST' && error.status === 400) || 
+        (error.code === 'ERR_BAD_RESPONSE' && error.status === 500))
+      ) {
       console.log('error', error.toJSON());
       throw error;
     } else {
