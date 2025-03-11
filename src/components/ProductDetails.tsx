@@ -169,7 +169,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
 
     recalculatePremium(selectedProduct, currentPlan);
-  }, [individualInfo, currentPlan, selectedProduct, recalculatePremium, costView]);
+  }, [individualInfo, currentPlan, quotes, plans, selectedProduct, recalculatePremium, costView]);
 
   const handlePlanChange = (value: string | null) => {
     if (value && isLTDPlan(value) && isKen) { // Apply logic only when isKen is true
@@ -180,6 +180,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     // TODO: add the logic for plan change only for Dental for now, it looks disgusting
     if (selectedProduct === 'Dental') {
       setProductPlan(selectedProduct, value as LTDPlan);
+      // recalculatePremium(selectedProduct, value as LTDPlan);
     }
   };
 
@@ -386,7 +387,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
         <div className="flex flex-col lg:flex-row items-center space-x-0 lg:space-x-4 w-full lg:w-auto">
           {/* Annual Income Field - Only show for LTD */}
-          {selectedProduct === 'LTD' && (
+          {(selectedProduct === 'LTD' || selectedProduct === 'STD') && (
             <>
               <div className="w-full sm:w-32 lg:w-32 mb-4 lg:mb-0 flex justify-center">
                 <div className="w-full sm:w-30 lg:w-38">

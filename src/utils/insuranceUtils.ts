@@ -163,16 +163,16 @@ export function isLTDPlanAvailable(plan: LTDPlan, annualSalary: number, isKen: b
 
 
 export function calculateLTDPremium(individualInfo: IndividualInfo, quotes: Quotes, selectedPlan: LTDPlan, isKen: boolean): number {
+  if (isServerCalculations()) {
+    return quotes['ltd']?.[selectedPlan.toLowerCase()]?.['individual'] || 0;
+  }
+  // else
+  
   const { annualSalary } = individualInfo;
   const recommendedPlan = getLTDPlan(annualSalary, isKen);
 
   // Use the selected plan, but ensure it's not higher than the recommended plan
   const actualPlan = isLTDPlanAvailable(selectedPlan, annualSalary, isKen) ? selectedPlan : recommendedPlan;
-
-  if (isServerCalculations()) {
-    return quotes['ltd']?.[actualPlan.toLowerCase()]?.['individual'] || 0;
-  }
-  // else
 
   const maxUnits = LTD_CONFIG.maxUnits[actualPlan];
   const costPerHundred = LTD_CONFIG.costPerHundred[actualPlan];

@@ -94,12 +94,14 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
         const { buildUrl } = productConfig[product];
         const pathname = buildUrl(individualInfo);
         const url = URI_SETTINGS.quote() + pathname;
-        const response = await fetchWithToken(url);
-        if (response.status === 200 || response.status === 201) {
+        
+        let response;
+        try {
+          response = await fetchWithToken(url);
+          console.log('response', response, 'product', product);
           return { product, data: response.data };
-        } else {
-          // If the API is consistent with 201 on success, handle or log other statuses
-          console.warn(`Unexpected status for ${product}:`, response.status);
+        } catch {
+          console.warn(`Unexpected status for ${product}:`, response?.status);
           return { product, data: null };
         }
       });

@@ -76,7 +76,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     };
     const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, costView);
-  }, [individualInfo, selectedEligibilityPerProduct, plans, costView]);
+  }, [individualInfo, quotes, selectedEligibilityPerProduct, plans, costView]);
 
   const getMonthlyPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
@@ -86,7 +86,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     };
     const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, 'Monthly');
-  }, [individualInfo, plans]);
+  }, [individualInfo, quotes, selectedEligibilityPerProduct, plans]);
 
   const totalPremium = Object.entries(activeProducts)
     .filter(([product, isActive]) => isActive)
