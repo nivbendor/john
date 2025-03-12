@@ -17,6 +17,7 @@ import { getRegistrationUrl } from '../utils/registrationUrls';
 import { useQuotes } from '../hooks/useQuotes';
 import SplashScreen from '../components/SplashScreen';
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
+import { prohibitScrolling } from '@/utils/prohibitScrolling';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -79,6 +80,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   useEffect(() => {
     console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
   }, [quotes]);
+
+  useEffect(() => {
+    if (prohibitScrolling()) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, []);
 
   useEffect(() => {
     console.log('An error occurred during an API call', error);
