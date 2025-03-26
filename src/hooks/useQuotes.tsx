@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchWithToken, getToken, fetchToken } from '../services/authService';
 import { debounce } from '../utils/debounce';
 import { IndividualInfo } from '../utils/insuranceTypes';
-import { URI_SETTINGS } from '../utils/config';
+import { BABRM, URI_SETTINGS } from '../utils/config';
 import { isServerCalculations } from '../utils/isServerCalculations';
-import { isDev } from '../utils/isDev';
+import { isDistributor } from '../utils/isDistributor';
 
 const DEBOUNCE_DELAY = 1000;
 
@@ -93,8 +93,12 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
       const requests = productsToFetch.map(async (product) => {
         const { buildUrl } = productConfig[product];
         const pathname = buildUrl(individualInfo);
-        const url = URI_SETTINGS.quote() + pathname;
+        let url = URI_SETTINGS.quote() + pathname;
         
+        if (isDistributor(BABRM)) {
+          url += ((url.includes('?') ? '&' : '?') + 'a=babrm');
+        }
+
         let response;
         try {
           response = await fetchWithToken(url);

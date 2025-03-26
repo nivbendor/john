@@ -17,7 +17,7 @@ import { getRegistrationUrl } from '../utils/registrationUrls';
 import { useQuotes } from '../hooks/useQuotes';
 import SplashScreen from '../components/SplashScreen';
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
-import { prohibitScrolling } from '@/utils/prohibitScrolling';
+import { prohibitScrolling } from '../utils/prohibitScrolling';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -68,7 +68,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     const urlParams = parseUrlParams();
     const normalizedFunnelData = {
       ...funnelData,
-      age: funnelData?.age ? parseInt(funnelData.age, 10) : initialIndividualInfo.age,
+      age: funnelData?.age ? parseInt(funnelData.age, 10) : (urlParams?.age ? urlParams.age : initialIndividualInfo.age),
     };
     return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
   });
@@ -252,7 +252,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   // else
 
   return (
-    <div className="min-h-screen bg-gray-100 lg:px-6">
+    <div className="min-h-screen lg:px-6">
       {showFunnel ? (
         <Funnel onComplete={handleFunnelComplete} />
       ) : (
