@@ -10,6 +10,7 @@ import Tabs from '../components/ui/tabs';
 import ProductSelector from '../components/ProductSelector';
 import { PRODUCTS } from '../utils/insuranceConfig';
 import { useQuotes } from '../hooks/useQuotes';
+import { parseUrlParams } from '../utils/parseUrlParams';
 
 
 type PremiumResult = Record<Product, number>;
@@ -45,8 +46,9 @@ const initialPremiums: PremiumResult = {
 
 function Home() {
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(initialIndividualInfo);
-    const [inputError, setInputError] = useState('');
-  const { quotes, loading, error } = useQuotes(individualInfo, inputError);
+  const [inputError, setInputError] = useState('');
+  const urlParams = parseUrlParams();
+  const { quotes, loading, error } = useQuotes(individualInfo, urlParams, inputError);
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
   const [costView, setCostView] = useState<CostView>('Monthly');
   const [products, setProducts] = useState<Record<Product, boolean>>(initialProducts);

@@ -5,6 +5,7 @@ import { IndividualInfo } from '../utils/insuranceTypes';
 import { BABRM, URI_SETTINGS } from '../utils/config';
 import { isServerCalculations } from '../utils/isServerCalculations';
 import { isDistributor } from '../utils/isDistributor';
+import { ParsedUrlParams } from '../utils/parseUrlParams';
 
 const DEBOUNCE_DELAY = 1000;
 
@@ -43,7 +44,7 @@ const productConfig = {
 /**
  * 
  */
-export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
+export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlParams, inputError: string) {
 
   // We'll store results for each product in an object:
   const [quotes, setQuotes] = useState({
@@ -67,6 +68,38 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
   const prevEmployeeCoverageRef = useRef(individualInfo.employeeCoverage);
   const prevSpouseCoverageRef = useRef(individualInfo.spouseCoverage);
 
+  function init() {
+    const productsToFetch = [] as string[];
+  
+    // For each product, check if any triggers changed
+    for (const product of Object.keys(productConfig)) {
+      const triggers = productConfig[product].triggers;
+  
+      let needsFetch = false;
+      if (triggers.age && urlParams.age && urlParams.age >= 0) needsFetch = true;
+      if (triggers.annualSalary && urlParams.annualSalary && urlParams.annualSalary > 0) needsFetch = true;
+      if (triggers.zipCode && urlParams.zipCode) needsFetch = true;
+  
+      if (!needsFetch) {
+        return;
+      }
+  
+      productsToFetch.push(product);
+    }
+  
+    if (productsToFetch.length <= 0) { 
+      return;
+    }
+
+    debouncedFetchProducts(productsToFetch, {
+      age: individualInfo.age,
+      annualSalary: individualInfo.annualSalary,
+      zipCode: individualInfo.zipCode,
+      employeeCoverage: individualInfo.employeeCoverage,
+      spouseCoverage: individualInfo.spouseCoverage,
+    });
+  }
+
   // On mount, ensure we have a token
   useEffect(() => {
     if (!isServerCalculations()) {
@@ -74,9 +107,11 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
     }
     // else
     if (!getToken()) {
-      fetchToken().catch(err => {
+      fetchToken().then(init).catch(err => {
         console.error('Error fetching initial token:', err);
       });
+    } else {
+      return init();
     }
   }, []);
 
@@ -148,7 +183,7 @@ export function useQuotes(individualInfo: IndividualInfo, inputError: string) {
     }
     const changedAge = individualInfo.age !== prevAgeRef.current;
     const changedSalary = individualInfo.annualSalary !== prevSalaryRef.current;
-    const changedZip = individualInfo.zipCode !== prevZipRef.current;
+    const changedZip = individualInfo.zipCode.slice(0,3) !== prevZipRef.current.slice(0,3);
     const changedEmployeeCoverage = individualInfo.employeeCoverage !== prevEmployeeCoverageRef.current;
     const changedSpouseCoverage = individualInfo.spouseCoverage !== prevSpouseCoverageRef.current;
 

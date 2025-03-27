@@ -62,10 +62,10 @@ type BusinessProps = {
 };
 
 const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelData, onZipDebug }) => {
+  const urlParams = parseUrlParams();
   const { costView, setCostView } = useCostView();
 
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
-    const urlParams = parseUrlParams();
     const normalizedFunnelData = {
       ...funnelData,
       age: funnelData?.age ? parseInt(funnelData.age, 10) : (urlParams?.age ? urlParams.age : initialIndividualInfo.age),
@@ -75,7 +75,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
 
   const [inputError, setInputError] = useState('');
 
-  const { quotes, loading, error } = useQuotes(individualInfo, inputError);
+  const { quotes, loading, error } = useQuotes(individualInfo, urlParams, inputError);
 
   useEffect(() => {
     console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
