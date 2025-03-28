@@ -10,6 +10,8 @@ import '../styles/premiumview.css'; // Import the CSS file
 import { insuranceResources, getProductLabel } from './Resource';
 import colors from '../styles/colors';
 import { parseUrlParams } from '../utils/parseUrlParams';
+import { isDistributor } from '../utils/isDistributor';
+import { BABRM } from '../utils/config';
 
 // Add the useColorFromUrl hook
 const useColorFromUrl = () => {
@@ -87,7 +89,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   );
 
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
-  const [showPlanDropdown, setShowPlanDropdown] = useState(false);
+  const [showPlanDropdown, setShowPlanDropdown] = useState(true);
   const [availableLTDPlan, setAvailableLTDPlans] = useState<LTDPlan>('Basic');
 
   const currentPlan = getLTDPlanByAnnualSalaryCpValue(availableLTDPlanBySalaryCpValue, cpValue, individualInfo.annualSalary)
@@ -102,7 +104,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   }, [individualInfo.annualSalary, selectedProduct, isKen]);
 
-
+  useEffect(() => {
+    if (selectedProduct === 'Dental' && isDistributor(BABRM)) {
+      setShowPlanDropdown(false);
+    } else {
+      setShowPlanDropdown(true);
+    }
+  }, [selectedProduct]);
 
   const getLTDPlanDisplayName = (plan: LTDPlan) => {
     switch (plan) {
@@ -446,7 +454,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               />
             </div>
           )}
-          {hasMultiplePlans(selectedProduct) && (
+          {showPlanDropdown && hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">
                 {plans[selectedProduct] || 'Select a Plan'} {/* Fallback for initial state */}
