@@ -444,10 +444,9 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Basic': {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $8,333 of monthly benefit",
+        "The answer is LTD Insurance.  This coverage would keep income flowing each month",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only"
       ]
@@ -455,10 +454,9 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Premium': {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $10,000 of monthly benefit",
+        "The answer is LTD Insurance.  This coverage would keep income flowing each month",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only"
       ]
@@ -466,10 +464,9 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Ultra': {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness? Our Ultra plan provides enhanced coverage for high-income earners.",
       bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $15,000 of monthly benefit",
+        "The answer is LTD Insurance.  This coverage would keep income flowing each month",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
+        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
         "Available for employees only",
         "Ideal for salaries above $200,000"
@@ -480,21 +477,23 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Basic': {
       paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
       bulletPoints: [
-        "Up to $1,200 of weekly benefit",
+        "STD will pay up to $1,200 of weekly benefit depending on your earnings",
         "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Available for employees only"
+        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "Available for employees only",
+        "STD can be paid up to 11-weeks post-incident"
       ]
     },
     'Premium': {
       paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
       bulletPoints: [
-        "Up to $1,200 of weekly benefit",
+        "STD will pay up to $1,200 of weekly benefit depending on your earnings",
         "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Available for employees only"
+        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "Available for employees only",
+        "STD can be paid up to 11-weeks post-incident"
       ]
     }
   },
@@ -503,11 +502,11 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
       bulletPoints: [
         "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of coverage.",
-        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
+        "Up to $150,000 of guaranteed issue coverage.",
+        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount.",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled.",
         "Spouse is eligible for up to $20,000 of coverage.",
-        "$2.50 provides $10,000 of coverage for all your children.",
+        // "$2.50 provides $10,000 of coverage for all your children.",
         "Available for employees and dependents"
       ]
     },
@@ -515,11 +514,11 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
       bulletPoints: [
         "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of coverage.",
-        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
+        "Up to $150,000 of guaranteed issue coverage.",
+        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount.",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled.",
         "Spouse is eligible for up to $20,000 of coverage.",
-        "$2.50 provides $10,000 of coverage for all your children.",
+        // "$2.50 provides $10,000 of coverage for all your children.",
         "Available for employees and dependents"
       ]
     }
@@ -532,6 +531,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "Benefit is paid directly to you",
         "Pays for on and off the job accidents",
         "An extra 25% is paid for accidents that occur playing organized sports",
+        "Guaranteed Issue – meaning just sign-up and you’re enrolled",
         "Available for employees and dependents"
       ]
     },
@@ -542,6 +542,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "Benefit is paid directly to you",
         "Pays for on and off the job accidents",
         "An extra 25% is paid for accidents that occur playing organized sports",
+        "Guaranteed Issue – meaning just sign-up and you’re enrolled",
         "Available for employees and dependents"
       ]
     }
@@ -550,21 +551,28 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Basic': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        "Great benefit if your dentist is in network.",
-        "Check for an in-network dentist [HERE](https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife).",
-        "$1000 annual maximum per person.",
+        // "Great benefit if your dentist is in network.",
+        "This benefit pays the same percentages out-of-network as it does in-network.",
+        "In-network dentists make your benefit dollars go further.",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}.",
+        "$1500 annual maximum per person.",
+        "$1,000 orthodontia lifetime maximum per person, up to age 19.",
         "Root canals covered in basic at 80% (typically root canals are major coverage).",
+        "No waiting period to use your benefits",
         "Available for employees and dependents"
       ]
     },
     'Premium': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        "Pays the same if your dentist is in-network or out-of-network.",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} for bigger savings.",
-        "$1,500 annual maximum per person.",
-        "Root canals are covered in the basic level at 80% (typically root canals are major coverage at 50% or less).",
-        "$1,000 child ortho (lifetime max).",
+        // "Great benefit if your dentist is in network.",
+        "This benefit pays the same percentages out-of-network as it does in-network.",
+        "In-network dentists make your benefit dollars go further.",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}.",
+        "$1500 annual maximum per person.",
+        "$1,000 orthodontia lifetime maximum per person, up to age 19.",
+        "Root canals covered in basic at 80% (typically root canals are major coverage).",
+        "No waiting period to use your benefits",
         "Available for employees and dependents"
       ]
     }
@@ -577,7 +585,8 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "You can get frames and lenses every year.",
         "VSP Network.",
         "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "Available for employee and dependents"
+        "No waiting period to use your benefits.",
+        "Available for employee and dependents."
       ]
     },
     'Premium': {
@@ -587,7 +596,8 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "You can get frames and lenses every year.",
         "VSP Network.",
         "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "Available for employee and dependents"
+        "No waiting period to use your benefits.",
+        "Available for employee and dependents."
       ]
     }
   },

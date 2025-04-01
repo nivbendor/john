@@ -4,8 +4,8 @@ import { parseUrlParams } from '../utils/parseUrlParams';
 
 export const getProductLabel = (product) => {
   switch (product) {
-    case 'LTD': return 'Long-Term Disability';
-    case 'STD': return 'Short-Term Disability';
+    case 'LTD': return 'Long-Term Disability (LTD)';
+    case 'STD': return 'Short-Term Disability (STD)';
     case 'Life / AD&D': return 'Life / AD&D';
     case 'Accident': return 'Accident';
     case 'Vision': return 'Vision';
