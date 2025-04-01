@@ -445,9 +445,9 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "The answer is LTD Insurance.  This coverage would keep income flowing each month",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Available for employees only"
       ]
     },
@@ -455,21 +455,20 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
         "The answer is LTD Insurance.  This coverage would keep income flowing each month",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Available for employees only"
       ]
     },
     'Ultra': {
-      paragraph: "How would you pay your expenses if you cannot work because of injury or illness? Our Ultra plan provides enhanced coverage for high-income earners.",
+      paragraph: "How would you pay your expenses if you cannot work because of injury or illness? Our Ultra plan provides enhanced coverage for high-income earners",
       bulletPoints: [
         "The answer is LTD Insurance.  This coverage would keep income flowing each month",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Benefit can be paid up to your normal retirement age",
-        "Available for employees only",
-        "Ideal for salaries above $200,000"
+        "Your benefit will be {calculateLTDBenefit} of lost income per month",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "Available for employees only"
       ]
     }
   },
@@ -480,7 +479,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "STD will pay up to $1,200 of weekly benefit depending on your earnings",
         "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
-        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Available for employees only",
         "STD can be paid up to 11-weeks post-incident"
       ]
@@ -491,7 +490,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "STD will pay up to $1,200 of weekly benefit depending on your earnings",
         "Your benefit will be {weeklySTDBenefit} of lost income per week",
         "Includes missing work due to pregnancy (women only)",
-        "One time guaranteed Issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
         "Available for employees only",
         "STD can be paid up to 11-weeks post-incident"
       ]
@@ -499,33 +498,31 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   },
   'Life / AD&D': {
     'Basic': {
-      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
+      paragraph: "Life insurance helps loved ones financially in the event of a premature death",
       bulletPoints: [
-        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of guaranteed issue coverage.",
-        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount.",
-        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled.",
-        "Spouse is eligible for up to $20,000 of coverage.",
-        // "$2.50 provides $10,000 of coverage for all your children.",
-        "Available for employees and dependents"
+        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund",
+        "Up to $150,000 of guaranteed issue coverage",
+        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "Spouse is eligible for up to $20,000 of coverage",
+        "All children under age 26 are eligible for $10,000 of coverage at one low premium for all children"
       ]
     },
     'Premium': {
-      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
+      paragraph: "Life insurance helps loved ones financially in the event of a premature death",
       bulletPoints: [
-        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of guaranteed issue coverage.",
-        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount.",
-        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled.",
-        "Spouse is eligible for up to $20,000 of coverage.",
-        // "$2.50 provides $10,000 of coverage for all your children.",
-        "Available for employees and dependents"
+        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund",
+        "Up to $150,000 of guaranteed issue coverage",
+        "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount",
+        "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+        "Spouse is eligible for up to $20,000 of coverage",
+        "All children under age 26 are eligible for $10,000 of coverage at one low premium for all children"
       ]
     }
   },
   'Accident': {
     'Basic': {
-      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
+      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances",
       bulletPoints: [
         "Pays large benefit amounts for accidents needing medical attention",
         "Benefit is paid directly to you",
@@ -536,7 +533,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       ]
     },
     'Premium': {
-      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
+      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances",
       bulletPoints: [
         "Pays large benefit amounts for accidents needing medical attention",
         "Benefit is paid directly to you",
@@ -551,13 +548,13 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Basic': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        // "Great benefit if your dentist is in network.",
-        "This benefit pays the same percentages out-of-network as it does in-network.",
-        "In-network dentists make your benefit dollars go further.",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}.",
-        "$1500 annual maximum per person.",
-        "$1,000 orthodontia lifetime maximum per person, up to age 19.",
-        "Root canals covered in basic at 80% (typically root canals are major coverage).",
+        // "Great benefit if your dentist is in network",
+        "This benefit pays the same percentages out-of-network as it does in-network",
+        "In-network dentists make your benefit dollars go further",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
+        "$1500 annual maximum per person",
+        "$1,000 orthodontia lifetime maximum per person, up to age 19",
+        "Root canals covered in basic at 80% (typically root canals are major coverage)",
         "No waiting period to use your benefits",
         "Available for employees and dependents"
       ]
@@ -565,13 +562,13 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Premium': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        // "Great benefit if your dentist is in network.",
-        "This benefit pays the same percentages out-of-network as it does in-network.",
-        "In-network dentists make your benefit dollars go further.",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}.",
-        "$1500 annual maximum per person.",
-        "$1,000 orthodontia lifetime maximum per person, up to age 19.",
-        "Root canals covered in basic at 80% (typically root canals are major coverage).",
+        // "Great benefit if your dentist is in network",
+        "This benefit pays the same percentages out-of-network as it does in-network",
+        "In-network dentists make your benefit dollars go further",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
+        "$1500 annual maximum per person",
+        "$1,000 orthodontia lifetime maximum per person, up to age 19",
+        "Root canals covered in basic at 80% (typically root canals are major coverage)",
         "No waiting period to use your benefits",
         "Available for employees and dependents"
       ]
@@ -579,50 +576,52 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   },
   'Vision': {
     'Basic': {
-      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
+      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages",
       bulletPoints: [
-        "$10 copay for an annual eye exam.",
-        "You can get frames and lenses every year.",
-        "VSP Network.",
-        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "No waiting period to use your benefits.",
-        "Available for employee and dependents."
+        "$10 copay for an annual eye exam",
+        "You can get frames and lenses every year",
+        "VSP Network",
+        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}",
+        "No waiting period to use your benefits",
+        "Available for employee and dependents"
       ]
     },
     'Premium': {
-      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
+      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages",
       bulletPoints: [
-        "$10 copay for an annual eye exam.",
-        "You can get frames and lenses every year.",
-        "VSP Network.",
-        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "No waiting period to use your benefits.",
-        "Available for employee and dependents."
+        "$10 copay for an annual eye exam",
+        "You can get frames and lenses every year",
+        "VSP Network",
+        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}",
+        "No waiting period to use your benefits",
+        "Available for employee and dependents"
       ]
     }
   },
   'Critical Illness/Cancer': {
     'Basic': {
-      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
+      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike",
       bulletPoints: [
         "Helps cover expenses that other insurance won't",
-        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
+        "Pays $15,000 lump sum for initial diagnosis for over 20 covered illnesses such as heart attack, stroke, coma, kidney failure",
         "Pays same lump sum for reoccurrence",
         "Pays $15,000 on the initial diagnosis of invasive cancer",
         "Benefit is paid directly to you",
         "Dozens of illnesses are covered by this policy",
+        "Guaranteed Issue – Sign-up and you’re enrolled",
         "Available for employees and dependents"
       ]
     },
     'Premium': {
-      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
+      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike",
       bulletPoints: [
         "Helps cover expenses that other insurance won't",
-        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
+        "Pays $15,000 lump sum for initial diagnosis for over 20 covered illnesses such as heart attack, stroke, coma, kidney failure",
         "Pays same lump sum for reoccurrence",
         "Pays $15,000 on the initial diagnosis of invasive cancer",
         "Benefit is paid directly to you",
         "Dozens of illnesses are covered by this policy",
+        "Guaranteed Issue – Sign-up and you’re enrolled",
         "Available for employees and dependents"
       ]
     }
