@@ -28,7 +28,7 @@ export const defaultPlans: Record<Product, Plan> = {
   Dental: isDistributor(BABRM) ? 'Premium' : 'Basic',
   Vision: 'Premium',
   'Critical Illness/Cancer': 'Basic',
-  'Hospital Indemnity': 'Basic',
+  'Hospital Indemnity': 'Premium',
 };
 
 export const availableLTDPlanBySalaryCpValue = {
@@ -86,15 +86,15 @@ export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption
         Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
       },
       // for BABRM HI looks ok, but everything CA,CT,NJ,NV,WA are not right. check the spreadsheet.
-      'CA,CT,HI,NJ,NV,WA': {
+      'CA,CT,NJ,NV,WA': {
         Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-        Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
+        Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 },
       },
       Other: {
         Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
         Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
       },
-    };
+    } as Record<string, PlanRecord<Record<EligibilityOption, number>>>;
   }
 
   return {
@@ -113,11 +113,6 @@ export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption
   }
 })();  
 
-export const STATE_CATEGORIES: Record<string, USState[]> = {
-  AK: ['AK'],
-  'CA,CT,HI,NJ,NV,WA': ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA', 'OR'],
-  Other: US_STATES.filter(state => !['AK', 'CA', 'CT', 'HI', 'NJ', 'NV', 'WA', 'OR'].includes(state))
-};
 
 export const AGE_BANDED_RATES = [
   { minAge: 0, maxAge: 29, rate: 0.25 },
