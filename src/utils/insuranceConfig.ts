@@ -4,12 +4,21 @@ import { BABRM } from './config';
 import { Product, EligibilityOption, USState, PlanRecord, Plan, LTDPlan } from './insuranceTypes';
 import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
 import { isDistributor } from './isDistributor';
+import { isServerCalculations } from './isServerCalculations';
 
 
 
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
-export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer', 'Hospital Indemnity'];
+export const PRODUCTS: Product[] = (() => {
+  const products = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer' ];
+  if (isServerCalculations()) {
+    return products as Product[];
+  }
+
+  products.push('Hospital Indemnity');
+  return products as Product[];
+})();
 
 export const defaultPlans: Record<Product, Plan> = {
   LTD: 'Premium',

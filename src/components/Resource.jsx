@@ -1,5 +1,6 @@
 import React from 'react';
 import { parseUrlParams } from '../utils/parseUrlParams';
+import { isServerCalculations } from '../utils/isServerCalculations';
 
 
 export const getProductLabel = (product) => {
@@ -17,17 +18,24 @@ export const getProductLabel = (product) => {
   }
 };
 
-export const insuranceResources = [
-  { name: 'Long-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1Is98ZpVnOvHLbXcCRFbQA_LdnQOcAXhs/view?usp=sharing' },
-  { name: 'Short-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1pp0b8hSu-v3vIwwIem-HO33oW419H7GJ/view?usp=sharing' },
-  { name: 'Life / AD&D', pdfUrl: 'https://drive.google.com/file/d/1OdPgrmhZXNJxPktuicfAhperYZfBtjFj/view?usp=sharing' },
-  { name: 'Accident', pdfUrl: 'https://drive.google.com/file/d/1WHltGto8P65qyX75mmSzbW5dT_A5oSHM/view?usp=sharing' },
-  { name: 'Vision', pdfUrl: 'https://drive.google.com/file/d/1UZaGtagPlO5yoSfhh6SiRAq18gJCS0Yo/view?usp=sharing' },
-  { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
-  { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
-  { name: 'Hospital Indemnity', pdfUrl: 'https://drive.google.com/file/d/1H48CuXQ32gHVkXeJ6oxbCvaSsabScrbw/view?usp=sharing' },
-  { name: 'Benefit Booklet', pdfUrl: 'https://drive.google.com/file/d/13aMjaInyR7KNKR0icao42NL2-O5Tl_Ft/view?usp=sharing' },
-];
+export const insuranceResources = (() => {
+  const products = [
+    { name: 'Long-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1Is98ZpVnOvHLbXcCRFbQA_LdnQOcAXhs/view?usp=sharing' },
+    { name: 'Short-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1pp0b8hSu-v3vIwwIem-HO33oW419H7GJ/view?usp=sharing' },
+    { name: 'Life / AD&D', pdfUrl: 'https://drive.google.com/file/d/1OdPgrmhZXNJxPktuicfAhperYZfBtjFj/view?usp=sharing' },
+    { name: 'Accident', pdfUrl: 'https://drive.google.com/file/d/1WHltGto8P65qyX75mmSzbW5dT_A5oSHM/view?usp=sharing' },
+    { name: 'Vision', pdfUrl: 'https://drive.google.com/file/d/1UZaGtagPlO5yoSfhh6SiRAq18gJCS0Yo/view?usp=sharing' },
+    { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
+    { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
+    { name: 'Benefit Booklet', pdfUrl: 'https://drive.google.com/file/d/13aMjaInyR7KNKR0icao42NL2-O5Tl_Ft/view?usp=sharing' },
+  ];
+
+  if (!isServerCalculations()) {
+    products.push({ name: 'Hospital Indemnity', pdfUrl: 'https://drive.google.com/file/d/1H48CuXQ32gHVkXeJ6oxbCvaSsabScrbw/view?usp=sharing' });
+  }
+
+  return products;
+})();
 
 
 const InsuranceResources: React.FC = () => {
