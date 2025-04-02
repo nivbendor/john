@@ -476,7 +476,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Premium': {
       paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
       bulletPoints: [
-        "The answer is LTD Insurance.  This coverage would keep income flowing each month",
+        "The answer is LTD Insurance. This coverage would keep income flowing each month",
         "Benefit can be paid up to your normal retirement age",
         "Your benefit will be {calculateLTDBenefit} of lost income per month",
         "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
@@ -551,7 +551,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "Pays for on and off the job accidents",
         "An extra 25% is paid for accidents that occur playing organized sports",
         "Guaranteed Issue – meaning just sign-up and you’re enrolled",
-        "Available for employees and dependents"
+        "Available for dependents"
       ]
     },
     'Premium': {
@@ -562,7 +562,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "Pays for on and off the job accidents",
         "An extra 25% is paid for accidents that occur playing organized sports",
         "Guaranteed Issue – meaning just sign-up and you’re enrolled",
-        "Available for employees and dependents"
+        "Available for dependents"
       ]
     }
   },
@@ -570,7 +570,6 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Basic': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        // "Great benefit if your dentist is in network",
         "This benefit pays the same percentages out-of-network as it does in-network",
         "In-network dentists make your benefit dollars go further",
         "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
@@ -584,7 +583,6 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
     'Premium': {
       paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
       bulletPoints: [
-        // "Great benefit if your dentist is in network",
         "This benefit pays the same percentages out-of-network as it does in-network",
         "In-network dentists make your benefit dollars go further",
         "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
@@ -605,7 +603,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "VSP Network",
         "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}",
         "No waiting period to use your benefits",
-        "Available for employee and dependents"
+        "Available for dependents"
       ]
     },
     'Premium': {
@@ -616,7 +614,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "VSP Network",
         "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}",
         "No waiting period to use your benefits",
-        "Available for employee and dependents"
+        "Available for dependents"
       ]
     }
   },
@@ -650,7 +648,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   },
   'Hospital Indemnity': {
     'Basic': {
-      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances—unless you're covered",
+      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances - unless you're covered",
       bulletPoints: [
         "Unlike traditional health insurance, which reimburses hospitals and doctors, this policy pays YOU",
         "$1,000 Hospital Admission Benefit",
@@ -662,7 +660,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       ]
     },
     'Premium': {
-      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances—unless you're covered",
+      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances - unless you're covered",
       bulletPoints: [
         "Unlike traditional health insurance, which reimburses hospitals and doctors, this policy pays YOU",
         "$1,000 Hospital Admission Benefit",
