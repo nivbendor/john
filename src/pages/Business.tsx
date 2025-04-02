@@ -38,11 +38,11 @@ const initialIndividualInfo: IndividualInfo = {
 };
 
 const initialProducts: Record<Product, boolean> = {
-  LTD: true, STD: true, 'Life / AD&D': true, Accident: true, Vision: true, Dental: true, 'Critical Illness/Cancer': true
+  LTD: true, STD: true, 'Life / AD&D': true, Accident: true, Vision: true, Dental: true, 'Critical Illness/Cancer': true, 'Hospital Indemnity': true,
 };
 
 const initialPremiums: PremiumResult = {
-  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 'Critical Illness/Cancer': 0
+  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 'Critical Illness/Cancer': 0, 'Hospital Indemnity': 0,
 };
 
 type BusinessProps = {

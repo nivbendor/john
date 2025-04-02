@@ -58,6 +58,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     initialState['Vision'] = false;
     initialState['Dental'] = true;
     initialState['Accident'] = false;
+    initialState['Hospital'] = false;
     
     //default: return product;//
 

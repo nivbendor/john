@@ -9,7 +9,7 @@ import { isDistributor } from './isDistributor';
 
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
-export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
+export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer', 'Hospital Indemnity'];
 
 export const defaultPlans: Record<Product, Plan> = {
   LTD: 'Premium',
@@ -19,6 +19,7 @@ export const defaultPlans: Record<Product, Plan> = {
   Dental: isDistributor(BABRM) ? 'Premium' : 'Basic',
   Vision: 'Premium',
   'Critical Illness/Cancer': 'Basic',
+  'Hospital Indemnity': 'Basic',
 };
 
 export const availableLTDPlanBySalaryCpValue = {
@@ -63,6 +64,7 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
   Dental: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   Vision: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   'Critical Illness/Cancer': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  'Hospital Indemnity': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family']
 };
 
 
@@ -74,6 +76,7 @@ export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption
         Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
         Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
       },
+      // for BABRM HI looks ok, but everything CA,CT,NJ,NV,WA are not right. check the spreadsheet.
       'CA,CT,HI,NJ,NV,WA': {
         Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
         Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
@@ -435,6 +438,21 @@ export const LIFE_ADD_CONFIG = {
   ]
 };
 
+export const HOSPITAL_INDEMNITY: PlanRecord<Record<EligibilityOption, number>> = {
+  Basic: {
+      "Individual": 11.15,
+      "Individual + Spouse": 23.58,
+      "Individual + Children": 18.09,
+      "Family": 30.53
+  },
+  Premium: {
+    "Individual": 19.96,
+    "Individual + Spouse": 42.48,
+    "Individual + Children": 32.18,
+    "Family": 54.70
+  }
+};
+
 
 export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   paragraph: string;
@@ -625,5 +643,31 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
         "Available for employees and dependents"
       ]
     }
-  }
+  },
+  'Hospital Indemnity': {
+    'Basic': {
+      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances—unless you're covered",
+      bulletPoints: [
+        "Unlike traditional health insurance, which reimburses hospitals and doctors, this policy pays YOU",
+        "$1,000 Hospital Admission Benefit",
+        "$200 confinement benefit per day – up to 15 days",
+        "ICU admission and confinement double the payout",
+        "$50 benefit for annual health",
+        "Ideal benefit to offset costs for pregnancy",
+        "Available for employees and dependents",
+      ]
+    },
+    'Premium': {
+      paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances—unless you're covered",
+      bulletPoints: [
+        "Unlike traditional health insurance, which reimburses hospitals and doctors, this policy pays YOU",
+        "$1,000 Hospital Admission Benefit",
+        "$200 confinement benefit per day – up to 15 days",
+        "ICU admission and confinement double the payout",
+        "$50 benefit for annual health",
+        "Ideal benefit to offset costs for pregnancy",
+        "Available for employees and dependents",
+      ]
+    }
+  },
 };

@@ -39,6 +39,10 @@ const productConfig = {
     triggers: { age: true },
     buildUrl: ({ age }) => `/critical/?age=${age}`
   },
+  // hospital: { // hospital indemnity should be invoked only once, since the rest of the data is static
+  //   triggers: { annualSalary: true, age: true, zipCode: true, employeeCoverage: true, spouseCoverage: true },
+  //   buildUrl: () => `/hospital`
+  // }
 };
 
 /**
@@ -55,6 +59,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     dental: null,
     vision: null,
     critical: null,
+    hospital: null,
   });
 
   // Track loading state—optional if you want partial loading per product
@@ -81,7 +86,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       if (triggers.zipCode && urlParams.zipCode) needsFetch = true;
   
       if (!needsFetch) {
-        return;
+        continue;
       }
   
       productsToFetch.push(product);

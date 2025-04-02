@@ -37,6 +37,7 @@ import {
   defaultPlans,
   PRODUCTS,
   CriticalIllnessRates,
+  HOSPITAL_INDEMNITY,
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
 import { isServerCalculations } from "./isServerCalculations";
@@ -131,7 +132,7 @@ export const getDefaultIndividualData = () => {
 
 // Display / Hide plan dropdown
 export function hasMultiplePlans(product: Product): boolean {
-  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD', 'Accident', 'Vision'].includes(product);
+  return !['STD', 'Life / AD&D', 'Critical Illness/Cancer', 'LTD', 'Accident', 'Vision', 'Hospital Indemnity'].includes(product);
 }
 
 
@@ -323,6 +324,18 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
 
     return getCriticalIllnessRate(individualInfo.age, individualInfo.eligibility);
+  },
+
+  'Hospital Indemnity': (individualInfo, quotes, plan) => {
+    if (individualInfo.age === 0) {
+      return 0;
+    }
+
+    if (isServerCalculations()) {
+      return quotes['hospital']?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
+    }
+
+    return HOSPITAL_INDEMNITY[plan][individualInfo.eligibility];
   }
 };
 
