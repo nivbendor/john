@@ -85,7 +85,7 @@ const getLifeADDRate = (age: number): number => {
 };
 
 
-const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'CA,CT,NJ,NV,WA' | 'Other' => {
+const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'Other' => {
   const state = getStateFromZip(zipCode); // Use the corrected function to get the state from the ZIP code
 
   if (!state) {
@@ -95,7 +95,6 @@ const getStateCategory = (zipCode: string): 'AK' | 'CA,CT,HI,NJ,NV,WA' | 'CA,CT,
   // Existing state category logic
   if (state === 'AK') return 'AK';
   if (['CA', 'CT', 'HI', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,HI,NJ,NV,WA';
-  if (['CA', 'CT', 'NJ', 'NV', 'WA'].includes(state)) return 'CA,CT,NJ,NV,WA';
   return 'Other';
 };
 

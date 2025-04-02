@@ -10,15 +10,7 @@ import { isServerCalculations } from './isServerCalculations';
 
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
-export const PRODUCTS: Product[] = (() => {
-  const products = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer' ];
-  if (isServerCalculations()) {
-    return products as Product[];
-  }
-
-  products.push('Hospital Indemnity');
-  return products as Product[];
-})();
+export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer', 'Hospital Indemnity' ];
 
 export const defaultPlans: Record<Product, Plan> = {
   LTD: 'Premium',
@@ -77,41 +69,20 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
 };
 
 
-export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = (() => {
-
-  if (isDistributor(BABRM)) {
-    return {
-      AK: {
-        Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-        Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
-      },
-      // for BABRM HI looks ok, but everything CA,CT,NJ,NV,WA are not right. check the spreadsheet.
-      'CA,CT,NJ,NV,WA': {
-        Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-        Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 },
-      },
-      Other: {
-        Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-        Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
-      },
-    } as Record<string, PlanRecord<Record<EligibilityOption, number>>>;
+export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = {
+  AK: {
+    Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
+    Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
+  },
+  'CA,CT,HI,NJ,NV,WA': {
+    Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
+    Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
+  },
+  Other: {
+    Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
+    Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
   }
-
-  return {
-    AK: {
-      Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-      Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
-    },
-    'CA,CT,HI,NJ,NV,WA': {
-      Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
-      Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
-    },
-    Other: {
-      Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-      Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
-    }
-  }
-})();  
+};  
 
 
 export const AGE_BANDED_RATES = [
@@ -456,7 +427,6 @@ export const HOSPITAL_INDEMNITY: PlanRecord<Record<EligibilityOption, number>> =
     "Family": 54.70
   }
 };
-
 
 export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
   paragraph: string;

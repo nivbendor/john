@@ -24,7 +24,7 @@ const productConfig = {
       `/life/?age=${age}&employeeCoverage=${employeeCoverage}&spouseCoverage=${spouseCoverage}`
   },
   accident: { // accident should be invoked only once, since the rest of the data is static
-    triggers: { annualSalary: true, age: true, zipCode: true, employeeCoverage: true, spouseCoverage: true },
+    triggers: null,
     buildUrl: () => `/accident`
   },
   dental: {
@@ -39,10 +39,10 @@ const productConfig = {
     triggers: { age: true },
     buildUrl: ({ age }) => `/critical/?age=${age}`
   },
-  // hospital: { // hospital indemnity should be invoked only once, since the rest of the data is static
-  //   triggers: { annualSalary: true, age: true, zipCode: true, employeeCoverage: true, spouseCoverage: true },
-  //   buildUrl: () => `/hospital`
-  // }
+  hospital: { // hospital indemnity should be invoked only once, since the rest of the data is static
+    triggers: null,
+    buildUrl: () => `/hospital`
+  }
 };
 
 /**
@@ -81,9 +81,13 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       const triggers = productConfig[product].triggers;
   
       let needsFetch = false;
-      if (triggers.age && urlParams.age && urlParams.age >= 0) needsFetch = true;
-      if (triggers.annualSalary && urlParams.annualSalary && urlParams.annualSalary > 0) needsFetch = true;
-      if (triggers.zipCode && urlParams.zipCode) needsFetch = true;
+      if (triggers && triggers.age && urlParams.age && urlParams.age > 0) needsFetch = true;
+      if (triggers && triggers.annualSalary && urlParams.annualSalary && urlParams.annualSalary > 0) needsFetch = true;
+      if (triggers && triggers.zipCode && urlParams.zipCode) needsFetch = true;
+
+      if (triggers === null && (urlParams.age || urlParams.annualSalary || urlParams.zipCode)) {
+        needsFetch = true;
+      }
   
       if (!needsFetch) {
         continue;
@@ -203,15 +207,19 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       // and etc...
 
       let needsFetch = false;
-      if (triggers.age && changedAge) needsFetch = true;
-      if (triggers.annualSalary && changedSalary) needsFetch = true;
-      if (triggers.zipCode && changedZip) needsFetch = true;
-      if (triggers.employeeCoverage && changedEmployeeCoverage) needsFetch = true;
-      if (triggers.spouseCoverage && changedSpouseCoverage) needsFetch = true;
+      if (triggers && triggers.age && changedAge) needsFetch = true;
+      if (triggers && triggers.annualSalary && changedSalary) needsFetch = true;
+      if (triggers && triggers.zipCode && changedZip) needsFetch = true;
+      if (triggers && triggers.employeeCoverage && changedEmployeeCoverage) needsFetch = true;
+      if (triggers && triggers.spouseCoverage && changedSpouseCoverage) needsFetch = true;
+
+      if (triggers === null) {
+        needsFetch = true;
+      }
 
       if (needsFetch) {
         // Skip 'accident' if we've already fetched it
-        if (product === 'accident' && quotes.accident !== null) {
+        if ((product === 'accident' && quotes.accident !== null) || (product === 'hospital' && quotes.hospital !== null)) {
           // Do nothing
           // accident should be fetched only once, because it doesn't have any dependencies
         }
