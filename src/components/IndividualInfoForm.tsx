@@ -99,6 +99,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       
       <div className="py-2 pl-0.5">
         <h3 className="text-lg font-semibold mb-1 text-left">Individual Information</h3>
+        <h5 className="text-sm mb-1 text-left">Enter your age, zip, pay period and income to see prices instantly</h5>
         
         {/* Form Fields */}
         <div className="flex flex-col space-y-4">
