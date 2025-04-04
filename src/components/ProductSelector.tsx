@@ -56,21 +56,21 @@ interface ProductSelectorProps {
 const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setSelectedProduct, products }) => {
   const sliderRef = useRef<Slider>(null);
   const [slidesToShow, setSlidesToShow] = useState(5);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(true);
+  // const [showLeftArrow, setShowLeftArrow] = useState(true);
+  // const [showRightArrow, setShowRightArrow] = useState(true);
   const dynamicColor = useColorFromUrl();
 
 
   useEffect(() => {
     const updateSlidesToShow = () => {
-      if (window.innerWidth >= 1024) {
-        setSlidesToShow(products.length);
-      } else if (window.innerWidth >= 768) {
-        setSlidesToShow(4);
-      } else if (window.innerWidth >= 640) {
+      if (window.innerWidth >= 1200) {
+        setSlidesToShow(7);
+      } else if (window.innerWidth >= 1024) {
+        setSlidesToShow(6);
+      } else if (window.innerWidth >= 480) {
         setSlidesToShow(5);
       } else {
-        setSlidesToShow(5);
+        setSlidesToShow(4);
       }
     };
 
@@ -79,76 +79,57 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
     return () => window.removeEventListener('resize', updateSlidesToShow);
   }, [products.length]);
 
+const ArrowButton = ({ direction, onClick }: { direction: 'left' | 'right', onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className={`absolute top-1/2 transform -translate-y-1/2 ${direction === 'left' ? 'left-0' : 'right-0'} 
+                bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-1 z-10 transition-opacity duration-300
+                opacity-100`}
+    aria-label={direction === 'left' ? 'Previous' : 'Next'}
+    style={direction === 'left' ? { left: '-25px' } : { right: '-25px' }}
+  >
+    <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {direction === 'left' ? (
+        <path d="M31.8839 8.36612C32.372 8.85427 32.372 9.64573 31.8839 10.1339L18.0178 24L31.8839 37.8661C32.372 38.3543 32.372 39.1457 31.8839 39.6339C31.3957 40.122 30.6043 40.122 30.1161 39.6339L15.3661 24.8839C14.878 24.3957 14.878 23.6043 15.3661 23.1161L30.1161 8.36612C30.6043 7.87796 31.3957 7.87796 31.8839 8.36612Z" fill="#2D5FF1"/>
+      ) : (
+        <path d="M16.1161 39.6339C15.628 39.1457 15.628 38.3543 16.1161 37.8661L29.9822 24L16.1161 10.1339C15.628 9.64573 15.628 8.85427 16.1161 8.36612C16.6043 7.87796 17.3957 7.87796 17.8839 8.36612L32.6339 23.1161C33.122 23.6043 33.122 24.3957 32.6339 24.8839L17.8839 39.6339C17.3957 40.122 16.6043 40.122 16.1161 39.6339Z" fill="#2D5FF1"/>
+      )}
+    </svg>
+  </button>
+);
+
+const handlePrev = () => {
+  if (sliderRef.current) {
+    sliderRef.current.slickPrev();
+  }
+};
+
+const handleNext = () => {
+  if (sliderRef.current) {
+    sliderRef.current.slickNext();
+  }
+};
+
   const settings = {
     dots: false,
-    infinite: false,
+    infinite: true,
     speed: 500,
-    slidesToShow: slidesToShow,
+    slidesToShow,
     slidesToScroll: 1,
     swipeToSlide: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 6,
-          slidesToScroll: 1,
-        }
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 5,
-          slidesToScroll: 1,
-        }
-      },
-      {
-        breakpoint: 640,
-        settings: {
-          slidesToShow: 5,
-          slidesToScroll: 1,
-        }
-      }
-    ],
-    beforeChange: (current: number, next: number) => {
-      setShowLeftArrow(next > 0);
-      setShowRightArrow(next < products.length - slidesToShow);
-    },
+    prevArrow: <ArrowButton direction='left' onClick={handlePrev}/>,
+    nextArrow: <ArrowButton direction='right' onClick={handleNext} />,
+    // beforeChange: (current: number, next: number) => {
+    //   setShowLeftArrow(next > 0);
+    //   setShowRightArrow(next < products.length - slidesToShow);
+    // },
   };
 
-  const handlePrev = () => {
-    if (sliderRef.current) {
-      sliderRef.current.slickPrev();
-    }
-  };
-
-  const handleNext = () => {
-    if (sliderRef.current) {
-      sliderRef.current.slickNext();
-    }
-  };
-
-  const ArrowButton = ({ direction, onClick, show }: { direction: 'left' | 'right', onClick: () => void, show: boolean }) => (
-    <button
-      onClick={onClick}
-      className={`absolute top-1/2 transform -translate-y-1/2 ${direction === 'left' ? 'left-0' : 'right-0'} 
-                  bg-white bg-opacity-50 hover:bg-opacity-75 rounded-full p-1 z-10 transition-opacity duration-300
-                  ${show ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-      aria-label={direction === 'left' ? 'Previous' : 'Next'}
-    >
-      <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {direction === 'left' ? (
-          <path d="M31.8839 8.36612C32.372 8.85427 32.372 9.64573 31.8839 10.1339L18.0178 24L31.8839 37.8661C32.372 38.3543 32.372 39.1457 31.8839 39.6339C31.3957 40.122 30.6043 40.122 30.1161 39.6339L15.3661 24.8839C14.878 24.3957 14.878 23.6043 15.3661 23.1161L30.1161 8.36612C30.6043 7.87796 31.3957 7.87796 31.8839 8.36612Z" fill="#2D5FF1"/>
-        ) : (
-          <path d="M16.1161 39.6339C15.628 39.1457 15.628 38.3543 16.1161 37.8661L29.9822 24L16.1161 10.1339C15.628 9.64573 15.628 8.85427 16.1161 8.36612C16.6043 7.87796 17.3957 7.87796 17.8839 8.36612L32.6339 23.1161C33.122 23.6043 33.122 24.3957 32.6339 24.8839L17.8839 39.6339C17.3957 40.122 16.6043 40.122 16.1161 39.6339Z" fill="#2D5FF1"/>
-        )}
-      </svg>
-    </button>
-  );
   return (
-    <div className="w-full rounded-lg overflow-hidden p-2 relative">
+    <div className="w-full rounded-lg p-6 relative">
       <h3 className="text-lg font-semibold mb-2">Choose Your Coverage</h3>
-      <ArrowButton direction="left" onClick={handlePrev} show={showLeftArrow} />
-      <ArrowButton direction="right" onClick={handleNext} show={showRightArrow} />
+      {/* <ArrowButton direction="left" onClick={handlePrev} show={showLeftArrow} />
+      <ArrowButton direction="right" onClick={handleNext} show={showRightArrow} /> */}
       <Slider ref={sliderRef} {...settings}>
         {products.map((product) => (
           <div key={product} className="px-0 sm:px-1">
@@ -167,7 +148,7 @@ const ProductSelector: React.FC<ProductSelectorProps> = ({ selectedProduct, setS
               >
                 {getProductIcon(product, dynamicColor)}
               </div>
-              <span className="text-xs sm:text-base text-center whitespace-normal h-10 sm:h-10 overflow-hidden lg:h-12 xl:h-12 2xl:h-12">{product}</span>
+              <span className="text-xs sm:text-base text-center whitespace-normal h-10 sm:h-10 lg:h-12 xl:h-12 2xl:h-12">{product}</span>
             </button>
           </div>
         ))}
