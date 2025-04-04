@@ -27,7 +27,7 @@ export const insuranceResources = [
   { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
   { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
   { name: 'Hospital Indemnity', pdfUrl: 'https://drive.google.com/file/d/1H48CuXQ32gHVkXeJ6oxbCvaSsabScrbw/view?usp=sharing' },
-  { name: 'Benefit Booklet', pdfUrl: 'https://drive.google.com/file/d/13aMjaInyR7KNKR0icao42NL2-O5Tl_Ft/view?usp=sharing' },
+  { name: 'Benefit Booklet', pdfUrl: 'https://drive.google.com/file/d/13UsCBflBEzgur-EA3OwMeitQXCA_uuux/view?usp=sharing' },
 ];
 
 
