@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { fetchWithToken, getToken, fetchToken } from '../services/authService';
+import { fetchWithToken, fetchToken, isTokenValid } from '../services/authService';
 import { debounce } from '../utils/debounce';
 import { IndividualInfo } from '../utils/insuranceTypes';
 import { BABRM, URI_SETTINGS } from '../utils/config';
@@ -73,7 +73,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
   const prevEmployeeCoverageRef = useRef(individualInfo.employeeCoverage);
   const prevSpouseCoverageRef = useRef(individualInfo.spouseCoverage);
 
-  function init() {
+  const init = useCallback(() => {
     const productsToFetch = [] as string[];
   
     // For each product, check if any triggers changed
@@ -100,14 +100,14 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       return;
     }
 
-    debouncedFetchProducts(productsToFetch, {
+    return fetchProducts(productsToFetch, {
       age: individualInfo.age,
       annualSalary: individualInfo.annualSalary,
       zipCode: individualInfo.zipCode,
       employeeCoverage: individualInfo.employeeCoverage,
       spouseCoverage: individualInfo.spouseCoverage,
     });
-  }
+  }, []);
 
   // On mount, ensure we have a token
   useEffect(() => {
@@ -115,13 +115,26 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       return;
     }
     // else
-    if (!getToken()) {
-      fetchToken().then(init).catch(err => {
+
+    async function initializeWithToken() {
+      try {
+        setLoading(true);
+        
+        if (!isTokenValid()) {
+          await fetchToken();
+        }
+        // else
+  
+        await init();
+      } catch(err) {
         console.error('Error fetching initial token:', err);
-      });
-    } else {
-      return init();
+        setError('Failed to initialize quotes');
+      } finally {
+        setLoading(false);
+      }
     }
+
+    initializeWithToken();
   }, []);
 
   // The main function to fetch quotes for a set of products
@@ -146,7 +159,6 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
         let response;
         try {
           response = await fetchWithToken(url);
-          console.log('response', response, 'product', product);
           return { product, data: response.data };
         } catch {
           console.warn(`Unexpected status for ${product}:`, response?.status);
@@ -190,6 +202,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     if (!isServerCalculations()) {
       return;
     }
+
     const changedAge = individualInfo.age !== prevAgeRef.current;
     const changedSalary = individualInfo.annualSalary !== prevSalaryRef.current;
     const changedZip = individualInfo.zipCode.slice(0,3) !== prevZipRef.current.slice(0,3);
@@ -212,10 +225,6 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       if (triggers && triggers.zipCode && changedZip) needsFetch = true;
       if (triggers && triggers.employeeCoverage && changedEmployeeCoverage) needsFetch = true;
       if (triggers && triggers.spouseCoverage && changedSpouseCoverage) needsFetch = true;
-
-      if (triggers === null) {
-        needsFetch = true;
-      }
 
       if (needsFetch) {
         // Skip 'accident' if we've already fetched it
@@ -254,7 +263,9 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       // debouncedFetchProducts.cancel();
     };
   }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, 
-    individualInfo.employeeCoverage, individualInfo.spouseCoverage, debouncedFetchProducts]);
+    individualInfo.employeeCoverage, individualInfo.spouseCoverage, 
+    debouncedFetchProducts, quotes.accident, quotes.hospital
+  ]);
 
   return {
     quotes,

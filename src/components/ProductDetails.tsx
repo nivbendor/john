@@ -112,11 +112,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
   }, [selectedProduct]);
 
-  const getLTDPlanDisplayName = (plan: LTDPlan) => {
+  const getLTDPlanDisplayName = (plan: LTDPlan, product: Product) => {
     switch (plan) {
       case 'Basic': return 'Associate';
-      case 'Premium': return 'LTD 1';
-      case 'Ultra': return 'LTD 2';
+      case 'Premium': return product === 'LTD' ? 'LTD 1' : 'STD 1';
+      case 'Ultra': return product === 'LTD' ? 'LTD 2' : 'STD 2';
       default: return plan;
     }
   };
@@ -419,7 +419,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               {showPlanDropdown && individualInfo.annualSalary > 0 && (
                 <Dropdown onSelect={handlePlanChange}>
                   <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                    {currentPlan ? getLTDPlanDisplayName(currentPlan as LTDPlan) : 'Select a Plan'}
+                    {currentPlan ? getLTDPlanDisplayName(currentPlan as LTDPlan, selectedProduct) : 'Select a Plan'}
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {(Array.isArray(availableLTDPlan) ? availableLTDPlan : [availableLTDPlan]).map((plan) => (
@@ -429,7 +429,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         active={currentPlan === plan}
                       >
                         <div className="flex justify-between items-center w-full">
-                          <span>{getLTDPlanDisplayName(plan)}</span>
+                          <span>{getLTDPlanDisplayName(plan, selectedProduct)}</span>
                           <span className="ml-4">
                             {formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}
                             <span className="ml-1 text-sm text-white-600">Lost Income / month</span>

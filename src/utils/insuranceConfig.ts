@@ -542,7 +542,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       bulletPoints: [
         "This benefit pays the same percentages out-of-network as it does in-network",
         "In-network dentists make your benefit dollars go further",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} & Select PDP Plus as your network",
         "$1500 annual maximum per person",
         "$1,000 orthodontia lifetime maximum per person, up to age 19",
         "Root canals covered in basic at 80% (typically root canals are major coverage)",
@@ -555,7 +555,7 @@ export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
       bulletPoints: [
         "This benefit pays the same percentages out-of-network as it does in-network",
         "In-network dentists make your benefit dollars go further",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}}",
+        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} & Select PDP Plus as your network",
         "$1500 annual maximum per person",
         "$1,000 orthodontia lifetime maximum per person, up to age 19",
         "Root canals covered in basic at 80% (typically root canals are major coverage)",

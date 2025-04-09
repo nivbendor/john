@@ -1,11 +1,33 @@
-// services/authService.js
+import { jwtDecode } from 'jwt-decode';
 import { URI_SETTINGS } from '../utils/config';
 import axios, { AxiosError } from 'axios';
+
+export function isTokenValid() {
+  try {
+    const token = getToken();
+    
+    if (!token) {
+      return false;
+    }
+
+    const decoded = jwtDecode(token);
+    
+    if (!decoded || !decoded.exp) {
+      return false;
+    }
+    // JWT exp is in seconds, so convert to milliseconds
+    const expiryTime = decoded.exp * 1000;
+    return Date.now() < expiryTime;
+  } catch (error) {
+    // If token is malformed or can't be decoded, treat it as invalid
+    return false;
+  }
+}
 
 const TOKEN_KEY = 'auth_token';
 
 // Retrieve token from local storage
-export function getToken() {
+export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
