@@ -24,7 +24,7 @@ const productConfig = {
       `/life/?age=${age}&employeeCoverage=${employeeCoverage}&spouseCoverage=${spouseCoverage}`
   },
   accident: { // accident should be invoked only once, since the rest of the data is static
-    triggers: null,
+    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/accident`
   },
   dental: {
@@ -40,7 +40,7 @@ const productConfig = {
     buildUrl: ({ age }) => `/critical/?age=${age}`
   },
   hospital: { // hospital indemnity should be invoked only once, since the rest of the data is static
-    triggers: null,
+    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/hospital`
   }
 };
@@ -85,9 +85,9 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       if (triggers && triggers.annualSalary && urlParams.annualSalary && urlParams.annualSalary > 0) needsFetch = true;
       if (triggers && triggers.zipCode && urlParams.zipCode) needsFetch = true;
 
-      if (triggers === null && (urlParams.age || urlParams.annualSalary || urlParams.zipCode)) {
-        needsFetch = true;
-      }
+      // if (triggers === null && (urlParams.age || urlParams.annualSalary || urlParams.zipCode)) {
+      //   needsFetch = true;
+      // }
   
       if (!needsFetch) {
         continue;
