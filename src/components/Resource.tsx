@@ -1,24 +1,42 @@
 import React from 'react';
 import { parseUrlParams } from '../utils/parseUrlParams';
-import { isServerCalculations } from '../utils/isServerCalculations';
+import { isDistributor } from '../utils/isDistributor';
+import { TAA } from '../utils/config';
 
 
-export const getProductLabel = (product) => {
-  switch (product) {
-    case 'LTD': return 'Long-Term Disability (LTD)';
-    case 'STD': return 'Short-Term Disability (STD)';
-    case 'Life / AD&D': return 'Life / AD&D';
-    case 'Accident': return 'Accident';
-    case 'Vision': return 'Vision';
-    case 'Dental': return 'Dental';
-    case 'Critical Illness/Cancer': return 'Critical Illness/Cancer';
-    case 'Hospital Indemnity': return 'Hospital Indemnity';
-    case 'Benefit Booklet': return 'Benefit Booklet';
-    default: return product;
-  }
+
+const defaultLabels: Record<string, string> = {
+  'LTD': 'Long-Term Disability (LTD)',
+  'STD': 'Short-Term Disability (STD)',
+  'Life / AD&D': 'Life / AD&D',
+  'Accident': 'Accident',
+  'Vision': 'Vision',
+  'Dental': 'Dental',
+  'Critical Illness/Cancer': 'Critical Illness/Cancer',
+  'Hospital Indemnity': 'Hospital Indemnity',
+  'Benefit Booklet': 'Benefit Booklet',
 };
 
-export const insuranceResources = [
+const taaLabels: Record<string, string> = {
+  'LTD': 'Long-Term Disability (LTD)',
+  'STD': 'Short-Term Disability (STD)',
+  'Life / AD&D': 'Life / AD&D',
+  'Accident': 'Accident',
+  'Vision': 'Vision',
+  'Dental': 'Dental',
+  'Critical Illness/Cancer': 'Critical Illness/Cancer',
+  'Telehealth': 'Telehealth',
+  'Identity Theft Protection': 'Identity Theft Protection',
+  'Virtual Primary Care': 'Virtual Primary Care',
+  'Benefit Booklet': 'Benefit Booklet',
+};
+
+export const getProductLabel = (product: string) => {
+  const labels = isDistributor(TAA) ? taaLabels : defaultLabels;
+  return labels[product];
+};
+
+const baseInsuranceResources = [
   { name: 'Long-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1Is98ZpVnOvHLbXcCRFbQA_LdnQOcAXhs/view?usp=sharing' },
   { name: 'Short-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1pp0b8hSu-v3vIwwIem-HO33oW419H7GJ/view?usp=sharing' },
   { name: 'Life / AD&D', pdfUrl: 'https://drive.google.com/file/d/1OdPgrmhZXNJxPktuicfAhperYZfBtjFj/view?usp=sharing' },
@@ -30,9 +48,27 @@ export const insuranceResources = [
   { name: 'Benefit Booklet', pdfUrl: 'https://drive.google.com/file/d/13UsCBflBEzgur-EA3OwMeitQXCA_uuux/view?usp=sharing' },
 ];
 
+const taaInsuranceResources = [
+  { name: 'Long-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1Is98ZpVnOvHLbXcCRFbQA_LdnQOcAXhs/view?usp=sharing' },
+  { name: 'Short-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1pp0b8hSu-v3vIwwIem-HO33oW419H7GJ/view?usp=sharing' },
+  { name: 'Life / AD&D', pdfUrl: 'https://drive.google.com/file/d/1OdPgrmhZXNJxPktuicfAhperYZfBtjFj/view?usp=sharing' },
+  { name: 'Accident', pdfUrl: 'https://drive.google.com/file/d/1WHltGto8P65qyX75mmSzbW5dT_A5oSHM/view?usp=sharing' },
+  { name: 'Vision', pdfUrl: 'https://drive.google.com/file/d/1UZaGtagPlO5yoSfhh6SiRAq18gJCS0Yo/view?usp=sharing' },
+  { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
+  { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
+  { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' },
+  { name: 'Identity Theft Protection', pdfUrl: '' },
+  { name: 'Virtual Primary Care', pdfUrl: '' },
+  { name: 'Benefit Booklet', pdfUrl: '' },
+];
+
+export const insuranceResources = isDistributor(TAA)
+  ? taaInsuranceResources
+  : baseInsuranceResources;
+
 
 const InsuranceResources: React.FC = () => {
-  const urlParams = parseUrlParams(window.location.search);
+  const urlParams = parseUrlParams();
   const cpValue = urlParams.cpValue;
 
   // Update URLs dynamically based on `cp` value

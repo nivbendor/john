@@ -18,7 +18,7 @@ import { useQuotes } from '../hooks/useQuotes';
 import SplashScreen from '../components/SplashScreen';
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 import { prohibitScrolling } from '../utils/prohibitScrolling';
-import { isServerCalculations } from '../utils/isServerCalculations';
+import { getInitialProducts } from '../utils/getInitialProdcuts';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -38,12 +38,12 @@ const initialIndividualInfo: IndividualInfo = {
   isExpanded: undefined
 };
 
-const initialProducts: Record<Product, boolean> = {
-  LTD: true, STD: true, 'Life / AD&D': true, Accident: true, Vision: true, Dental: true, 'Critical Illness/Cancer': true, 'Hospital Indemnity': true,
-};
+const initialProducts = getInitialProducts();
 
 const initialPremiums: PremiumResult = {
-  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 'Critical Illness/Cancer': 0, 'Hospital Indemnity': 0,
+  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 
+  'Critical Illness/Cancer': 0, 'Hospital Indemnity': 0,
+  'Telehealth': 0, 'Identity Theft Protection': 0, 'Virtual Primary Care': 0,
 };
 
 type BusinessProps = {
@@ -127,7 +127,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   });
 
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
-  const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
+  const [localProducts, setLocalProducts] = useState<Partial<Record<Product, boolean>>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
     PRODUCTS.reduce((acc, product) => ({
@@ -293,7 +293,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   handleSalaryChange={handleSalaryChange}
                   errors={{}}
                   recalculatePremium={recalculatePremium}
-                  activeProducts={localProducts}
                 />
               </div>
               {showCostPerHour && <div>Cost per hour component would go here</div>}

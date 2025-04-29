@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan, Quotes, PremiumResult } from '../utils/insuranceTypes';
-import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
+import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, REGULAR_PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper, getLTDPlanByAnnualSalaryCpValue } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
@@ -11,7 +11,8 @@ import { insuranceResources, getProductLabel } from './Resource';
 import colors from '../styles/colors';
 import { parseUrlParams } from '../utils/parseUrlParams';
 import { isDistributor } from '../utils/isDistributor';
-import { BABRM } from '../utils/config';
+import { BABRM, TAA } from '../utils/config';
+import { getProductContent } from '../utils/getProductContent';
 
 // Add the useColorFromUrl hook
 const useColorFromUrl = () => {
@@ -58,7 +59,6 @@ interface ProductDetailsProps {
   handleSalaryChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   errors: Record<string, string>
   recalculatePremium: (product: Product, plan: Plan) => void;
-  activeProducts: Record<Product, boolean>;
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
@@ -75,7 +75,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   handleIndividualInfoChange,
   errors,
   recalculatePremium,
-  activeProducts
 }) => {
 
   const dynamicColor = useColorFromUrl();
@@ -109,6 +108,10 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       setShowPlanDropdown(false);
     } else {
       setShowPlanDropdown(true);
+    }
+
+    if (['Telehealth', 'Identity Theft Protection', 'Virtual Primary Care'].includes(selectedProduct) && isDistributor(TAA)) {
+      setShowPlanDropdown(false);
     }
   }, [selectedProduct]);
 
@@ -177,6 +180,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     }
 
     recalculatePremium(selectedProduct, currentPlan);
+    console.log('recalculate premium in product details', quotes);
   }, [individualInfo, currentPlan, quotes, plans, selectedProduct, recalculatePremium, costView]);
 
   const handlePlanChange = (value: string | null) => {
@@ -317,8 +321,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     });
   };
 
-  const content = PRODUCT_CONTENT[selectedProduct][currentPlan];
-  const formattedContent = getFormattedContent(content);
+  const content = getProductContent(selectedProduct);
+  const formattedContent = getFormattedContent(content as { paragraph: string; bulletPoints: string[]; });
 
 
 

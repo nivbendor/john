@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { fetchWithToken, fetchToken, isTokenValid } from '../services/authService';
 import { debounce } from '../utils/debounce';
-import { IndividualInfo } from '../utils/insuranceTypes';
-import { BABRM, URI_SETTINGS } from '../utils/config';
+import { IndividualInfo, Quotes } from '../utils/insuranceTypes';
+import { BABRM, TAA, URI_SETTINGS } from '../utils/config';
 import { isServerCalculations } from '../utils/isServerCalculations';
 import { isDistributor } from '../utils/isDistributor';
 import { ParsedUrlParams } from '../utils/parseUrlParams';
@@ -42,8 +42,45 @@ const productConfig = {
   hospital: { // hospital indemnity should be invoked only once, since the rest of the data is static
     triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/hospital`
+  },
+  tele: { // telehealth should be invoked only once, since the rest of the data is static
+    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
+    buildUrl: () => `/telehealth`
+  },
+  id: { // identity theft protection should be invoked only once, since the rest of the data is static
+    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
+    buildUrl: () => `/identity`
+  },
+  virtual: { // virtual theft protection should be invoked only once, since the rest of the data is static
+    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
+    buildUrl: () => `/virtual`
   }
 };
+
+function isStaticData(quotes: Quotes, product: keyof typeof productConfig) {
+  return (
+    (product === 'accident' && quotes.accident !== null) || 
+    (product === 'hospital' && quotes.hospital !== null) ||
+    (product === 'virtual' && quotes.virtual !== null) ||
+    (product === 'id' && quotes.id !== null) ||
+    (product === 'tele' && quotes.tele !== null)
+  );
+}
+
+function enhanceUrl(url: string) {
+  const distributorParam = isDistributor(BABRM)
+    ? 'a=babrm'
+    : isDistributor(TAA)
+    ? 'a=taa'
+    : '';
+
+  if (!distributorParam) {
+    return '';
+  }
+
+  const separator = url.includes('?') ? '&' : '?';
+  return `${separator}${distributorParam}`;
+}
 
 /**
  * 
@@ -51,7 +88,7 @@ const productConfig = {
 export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlParams, inputError: string) {
 
   // We'll store results for each product in an object:
-  const [quotes, setQuotes] = useState({
+  const [quotes, setQuotes] = useState<Quotes>({
     ltd: null,
     std: null,
     life: null,
@@ -60,6 +97,9 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     vision: null,
     critical: null,
     hospital: null,
+    tele: null,
+    id: null,
+    virtual: null,
   });
 
   // Track loading state—optional if you want partial loading per product
@@ -152,9 +192,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
         const pathname = buildUrl(individualInfo);
         let url = URI_SETTINGS.quote() + pathname;
         
-        if (isDistributor(BABRM)) {
-          url += ((url.includes('?') ? '&' : '?') + 'a=babrm');
-        }
+        url += enhanceUrl(url);
 
         let response;
         try {
@@ -228,7 +266,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
 
       if (needsFetch) {
         // Skip 'accident' if we've already fetched it
-        if ((product === 'accident' && quotes.accident !== null) || (product === 'hospital' && quotes.hospital !== null)) {
+        if (isStaticData(quotes, product as keyof typeof productConfig)) {
           // Do nothing
           // accident should be fetched only once, because it doesn't have any dependencies
         }
@@ -264,7 +302,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     };
   }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, 
     individualInfo.employeeCoverage, individualInfo.spouseCoverage, 
-    debouncedFetchProducts, quotes.accident, quotes.hospital
+    debouncedFetchProducts, quotes
   ]);
 
   return {

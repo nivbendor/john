@@ -1,7 +1,11 @@
 // utils/insuranceTypes.ts
 
-export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'Vision' | 'Critical Illness/Cancer' | 'Hospital Indemnity';
-export type ProductShortName = 'ltd' | 'std' | 'life' | 'accident' | 'dental' | 'vision' | 'critical' | 'hospital';
+export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'Vision' 
+  | 'Critical Illness/Cancer' | 'Hospital Indemnity' | 'Telehealth' 
+  | 'Identity Theft Protection' | 'Virtual Primary Care';
+
+export type ProductShortName = 'ltd' | 'std' | 'life' | 'accident' | 'dental' | 'vision' 
+| 'critical' | 'hospital' | 'tele' | 'id' | 'virtual';
 
 export type EligibilityOption = 'Individual' | 'Individual + Spouse' | 'Individual + Children' | 'Family';
 

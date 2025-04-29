@@ -24,7 +24,6 @@ import {
 import {
   DENTAL_PREMIUMS,
   VISION_PREMIUMS,
-  AGE_BANDED_RATES,
   ZIP_CODE_REGIONS,
   STD_CONFIG,
   LTD_CONFIG,
@@ -335,7 +334,31 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     }
 
     return HOSPITAL_INDEMNITY[plan][individualInfo.eligibility];
-  }
+  },
+
+  'Telehealth': (individualInfo, quotes, plan) => {
+    if (individualInfo.age === 0) {
+      return 0;
+    }
+
+    return quotes.tele?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
+  },
+
+  'Virtual Primary Care': (individualInfo, quotes, plan) => {
+    if (individualInfo.age === 0) {
+      return 0;
+    }
+
+    return quotes.virtual?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
+  },
+
+  'Identity Theft Protection': (individualInfo, quotes, plan) => {
+    if (individualInfo.age === 0) {
+      return 0;
+    }
+
+    return quotes.id?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
+  },
 };
 
 export const calculatePremiums = (
@@ -392,7 +415,6 @@ export {
   US_STATES,
   DENTAL_PREMIUMS,
   VISION_PREMIUMS,
-  AGE_BANDED_RATES,
   ZIP_CODE_REGIONS,
   STD_CONFIG,
   LTD_CONFIG,

@@ -7,7 +7,7 @@ import colors from '../styles/colors';
 
 interface ActiveProductsToggleProps {
   plans: Record<Product, Plan>;
-  products: Record<Product, boolean>;
+  products: Partial<Record<Product, boolean>>;
   premiums: PremiumResult;
   costView: CostView;
   individualInfo: IndividualInfo;
@@ -49,7 +49,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   selectedEligibilityPerProduct,
   handleToggleChange,
 }) => {
-  const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
+  const [activeProducts, setActiveProducts] = useState<Partial<Record<Product, boolean>>>(() => {
     const initialState = { ...products };
     initialState['LTD'] = true;
     initialState['STD'] = false;
@@ -104,7 +104,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   const handleLocalToggle = (product: Product) => {
     setActiveProducts(prev => {
       const newState = { ...prev, [product]: !prev[product] };
-      handleToggleChange(product, newState[product]);
+      handleToggleChange(product, newState[product] as boolean);
       return newState;
     });
   };

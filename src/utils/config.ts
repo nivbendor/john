@@ -1,6 +1,8 @@
 import { isDev } from './isDev';
 
 export const BABRM = 'babrm';
+export const TAA = 'taa';
+
 
 export const config = {
     splash: {
