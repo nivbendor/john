@@ -16,7 +16,7 @@ export function getInitialProducts(): Partial<Record<Product, boolean>> {
       'Critical Illness/Cancer': true,
       Telehealth: true,
       'Identity Theft Protection': true,
-      'Virtual Primary Care': true,
+      // 'Virtual Primary Care': true,
     };
   }
 

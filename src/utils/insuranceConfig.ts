@@ -16,7 +16,7 @@ export const PRODUCTS: Product[] = (() => {
   if (!isDistributor(TAA)) {
     defaultProducts.push('Hospital Indemnity');
   } else {
-    defaultProducts.push('Telehealth', 'Identity Theft Protection', 'Virtual Primary Care');
+    defaultProducts.push('Telehealth', 'Identity Theft Protection');
   }
   return defaultProducts as Product[];
 })();
@@ -32,7 +32,7 @@ export const defaultPlans: Record<Product, Plan> = {
   'Hospital Indemnity': 'Premium',
   Telehealth: 'Premium', 
   'Identity Theft Protection': 'Premium', 
-  'Virtual Primary Care': 'Premium',
+  // 'Virtual Primary Care': 'Premium',
 };
 
 export const availableLTDPlanBySalaryCpValue = {
@@ -80,7 +80,7 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
   'Hospital Indemnity': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   Telehealth: ['Individual'],
   'Identity Theft Protection': ['Individual'],
-  'Virtual Primary Care': ['Individual'],
+  // 'Virtual Primary Care': ['Individual'],
 };
 
 
@@ -586,17 +586,17 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
       "Peace of Mind knowing your identity is defended around the clock"
     ]
   },
-  'Virtual Primary Care': {
-    paragraph: "Personalized, Comprehensive Care at Your Fingertips",
-    bulletPoints: [
-      "Choose Your Doctor: Patients select a dedicated primary care physician based on their preferences and needs",
-      "Full-Spectrum Primary Care: Includes wellness exams, health risk assessments, chronic condition management, lab review, care plans, and specialist referrals",
-      "At-Home Lab Testing: Convenient lab kits shipped to the patient’s door with prepaid return—no clinic visits needed",
-      "Genetic Testing (Optional): Personalized medication guidance (PGx) and early detection of hereditary risk factors",
-      "Integrated Behavioral Health: Seamless access to therapy, psychiatry, and mental health coaching within the same care platform",
-      "24/7 Urgent Care Access: Around-the-clock virtual urgent care included for immediate needs",
-      "Instant Prescription Delivery: E-prescriptions sent directly to the patient’s preferred pharmacy",
-      "Comprehensive Risk Assessment: Evaluates physical health, mental health, lifestyle, and more to personalize care"
-    ]
-  }
+  // 'Virtual Primary Care': {
+  //   paragraph: "Personalized, Comprehensive Care at Your Fingertips",
+  //   bulletPoints: [
+  //     "Choose Your Doctor: Patients select a dedicated primary care physician based on their preferences and needs",
+  //     "Full-Spectrum Primary Care: Includes wellness exams, health risk assessments, chronic condition management, lab review, care plans, and specialist referrals",
+  //     "At-Home Lab Testing: Convenient lab kits shipped to the patient’s door with prepaid return—no clinic visits needed",
+  //     "Genetic Testing (Optional): Personalized medication guidance (PGx) and early detection of hereditary risk factors",
+  //     "Integrated Behavioral Health: Seamless access to therapy, psychiatry, and mental health coaching within the same care platform",
+  //     "24/7 Urgent Care Access: Around-the-clock virtual urgent care included for immediate needs",
+  //     "Instant Prescription Delivery: E-prescriptions sent directly to the patient’s preferred pharmacy",
+  //     "Comprehensive Risk Assessment: Evaluates physical health, mental health, lifestyle, and more to personalize care"
+  //   ]
+  // }
 };

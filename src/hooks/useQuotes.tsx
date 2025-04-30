@@ -51,17 +51,17 @@ const productConfig = {
     triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/identity`
   },
-  virtual: { // virtual theft protection should be invoked only once, since the rest of the data is static
-    triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
-    buildUrl: () => `/virtual`
-  }
+  // virtual: { // virtual theft protection should be invoked only once, since the rest of the data is static
+  //   triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
+  //   buildUrl: () => `/virtual`
+  // }
 };
 
 function isStaticData(quotes: Quotes, product: keyof typeof productConfig) {
   return (
     (product === 'accident' && quotes.accident !== null) || 
     (product === 'hospital' && quotes.hospital !== null) ||
-    (product === 'virtual' && quotes.virtual !== null) ||
+    // (product === 'virtual' && quotes.virtual !== null) ||
     (product === 'id' && quotes.id !== null) ||
     (product === 'tele' && quotes.tele !== null)
   );
@@ -99,7 +99,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     hospital: null,
     tele: null,
     id: null,
-    virtual: null,
+    // virtual: null,
   });
 
   // Track loading state—optional if you want partial loading per product

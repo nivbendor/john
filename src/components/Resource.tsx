@@ -27,7 +27,7 @@ const taaLabels: Record<string, string> = {
   'Critical Illness/Cancer': 'Critical Illness/Cancer',
   'Telehealth': 'Telehealth',
   'Identity Theft Protection': 'Identity Theft Protection',
-  'Virtual Primary Care': 'Virtual Primary Care',
+  // 'Virtual Primary Care': 'Virtual Primary Care',
   'Benefit Booklet': 'Benefit Booklet',
 };
 
@@ -58,7 +58,7 @@ const taaInsuranceResources = [
   { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
   { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' },
   { name: 'Identity Theft Protection', pdfUrl: '' },
-  { name: 'Virtual Primary Care', pdfUrl: '' },
+  // { name: 'Virtual Primary Care', pdfUrl: '' },
   { name: 'Benefit Booklet', pdfUrl: '' },
 ];
 

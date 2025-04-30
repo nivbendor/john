@@ -344,14 +344,6 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
     return quotes.tele?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
   },
 
-  'Virtual Primary Care': (individualInfo, quotes, plan) => {
-    if (individualInfo.age === 0) {
-      return 0;
-    }
-
-    return quotes.virtual?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
-  },
-
   'Identity Theft Protection': (individualInfo, quotes, plan) => {
     if (individualInfo.age === 0) {
       return 0;

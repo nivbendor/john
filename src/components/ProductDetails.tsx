@@ -110,7 +110,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
       setShowPlanDropdown(true);
     }
 
-    if (['Telehealth', 'Identity Theft Protection', 'Virtual Primary Care'].includes(selectedProduct) && isDistributor(TAA)) {
+    if (['Telehealth', 'Identity Theft Protection'].includes(selectedProduct) && isDistributor(TAA)) {
       setShowPlanDropdown(false);
     }
   }, [selectedProduct]);

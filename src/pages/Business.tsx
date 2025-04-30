@@ -43,7 +43,7 @@ const initialProducts = getInitialProducts();
 const initialPremiums: PremiumResult = {
   LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 
   'Critical Illness/Cancer': 0, 'Hospital Indemnity': 0,
-  'Telehealth': 0, 'Identity Theft Protection': 0, 'Virtual Primary Care': 0,
+  'Telehealth': 0, 'Identity Theft Protection': 0,
 };
 
 type BusinessProps = {
