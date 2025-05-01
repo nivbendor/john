@@ -54,7 +54,8 @@ const productConfig = {
 };
 
 function isProductEnabled(product: keyof typeof productConfig) {
-  if (product === 'hospital' && isDistributor(TAA)) {
+  // TODO: critical is hidden temporarily
+  if (['hospital', 'critical'].includes(product) && isDistributor(TAA)) {
     return false;
   }
 

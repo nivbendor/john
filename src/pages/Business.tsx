@@ -19,6 +19,8 @@ import SplashScreen from '../components/SplashScreen';
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 import { prohibitScrolling } from '../utils/prohibitScrolling';
 import { getInitialProducts } from '../utils/getInitialProdcuts';
+import { isDistributor } from '../utils/isDistributor';
+import { TAA } from '../utils/config';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -71,7 +73,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
       ...funnelData,
       age: funnelData?.age ? parseInt(funnelData.age, 10) : (urlParams?.age ? urlParams.age : initialIndividualInfo.age),
     };
-    return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
+
+    return { 
+      ...initialIndividualInfo, 
+      ...urlParams, 
+      ...normalizedFunnelData,
+      ...(isDistributor(TAA) ? { employeeCoverageCriticalIllness: 10000, spouseCoverageCriticalIllness: 10000 } : {})
+    };
   });
 
   const [inputError, setInputError] = useState('');

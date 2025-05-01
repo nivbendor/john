@@ -55,7 +55,7 @@ const taaInsuranceResources = [
   { name: 'Accident', pdfUrl: 'https://drive.google.com/file/d/1WHltGto8P65qyX75mmSzbW5dT_A5oSHM/view?usp=sharing' },
   { name: 'Vision', pdfUrl: 'https://drive.google.com/file/d/1UZaGtagPlO5yoSfhh6SiRAq18gJCS0Yo/view?usp=sharing' },
   { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
-  { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
+  // { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
   { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' },
   { name: 'Identity Theft Protection', pdfUrl: '' },
   // { name: 'Virtual Primary Care', pdfUrl: '' },

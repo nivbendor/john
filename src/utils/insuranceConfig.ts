@@ -11,10 +11,11 @@ import { isServerCalculations } from './isServerCalculations';
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
 export const PRODUCTS: Product[] = (() => {
-  const defaultProducts = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
+  const defaultProducts = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision'];
 
+  // TODO: 'Critical Illness/Cancer' is a temporarily hidden
   if (!isDistributor(TAA)) {
-    defaultProducts.push('Hospital Indemnity');
+    defaultProducts.push('Hospital Indemnity', 'Critical Illness/Cancer');
   } else {
     defaultProducts.push('Telehealth', 'Identity Theft Protection');
   }
@@ -135,128 +136,146 @@ export const DENTAL_PREMIUMS: PlanRecord<Record<number, Record<EligibilityOption
 
 export type CriticalIllnessRates = { minAge: number; maxAge: number; rates: Record<EligibilityOption, number> };
 
-export const CRITICAL_ILLNESS_RATES: CriticalIllnessRates[] = [
-  {
-    "minAge": 0,
-    "maxAge": 24,
-    "rates": {
-      "Individual": 5.55,
-      "Individual + Spouse": 9.15,
-      "Individual + Children": 8.10,
-      "Family": 11.70
-    }
-  },
-  {
-    "minAge": 25,
-    "maxAge": 29,
-    "rates": {
-      "Individual": 6.45,
-      "Individual + Spouse": 10.35,
-      "Individual + Children": 8.85,
-      "Family": 12.90
-    }
-  },
-  {
-    "minAge": 30,
-    "maxAge": 34,
-    "rates": {
-      "Individual": 7.65,
-      "Individual + Spouse": 12.30,
-      "Individual + Children": 10.20,
-      "Family": 14.85
-    }
-  },
-  {
-    "minAge": 35,
-    "maxAge": 39,
-    "rates": {
-      "Individual": 10.05,
-      "Individual + Spouse": 15.75,
-      "Individual + Children": 12.45,
-      "Family": 18.30
-    }
-  },
-  {
-    "minAge": 40,
-    "maxAge": 44,
-    "rates": {
-      "Individual": 13.50,
-      "Individual + Spouse": 21.00,
-      "Individual + Children": 16.05,
-      "Family": 23.25
-    }
-  },
-  {
-    "minAge": 45,
-    "maxAge": 49,
-    "rates": {
-      "Individual": 18.45,
-      "Individual + Spouse": 28.35,
-      "Individual + Children": 21.00,
-      "Family": 30.90
-    }
-  },
-  {
-    "minAge": 50,
-    "maxAge": 54,
-    "rates": {
-      "Individual": 24.30,
-      "Individual + Spouse": 37.20,
-      "Individual + Children": 26.85,
-      "Family": 39.60
-    }
-  },
-  {
-    "minAge": 55,
-    "maxAge": 59,
-    "rates": {
-      "Individual": 33.60,
-      "Individual + Spouse": 51.15,
-      "Individual + Children": 36.15,
-      "Family": 53.70
-    }
-  },
-  {
-    "minAge": 60,
-    "maxAge": 64,
-    "rates": {
-      "Individual": 44.55,
-      "Individual + Spouse": 67.50,
-      "Individual + Children": 47.10,
-      "Family": 70.05
-    }
-  },
-  {
-    "minAge": 65,
-    "maxAge": 69,
-    "rates": {
-      "Individual": 58.95,
-      "Individual + Spouse": 89.25,
-      "Individual + Children": 61.50,
-      "Family": 91.80
-    }
-  },
-  {
-    "minAge": 70,
-    "maxAge": 74,
-    "rates": {
-      "Individual": 77.85,
-      "Individual + Spouse": 117.60,
-      "Individual + Children": 80.40,
-      "Family": 120.15
-    }
-  },
-  {
-    "minAge": 75,
-    "maxAge": 120,
-    "rates": {
-      "Individual": 109.05,
-      "Individual + Spouse": 164.25,
-      "Individual + Children": 111.60,
-      "Family": 166.80
-    }
+export interface CriticalIllnessConfig {
+  minCoverage: number;
+  step: number;
+  maxCoverage: number;
+}
+
+export const CRITICAL_ILLNESS_RATES: CriticalIllnessRates[] | CriticalIllnessConfig = (() => {
+
+  if (isDistributor(TAA)) {
+    return {
+      minCoverage: 0,
+      step: 5000,
+      maxCoverage: 25000
+    };
   }
-];
+
+  return [
+    {
+      "minAge": 0,
+      "maxAge": 24,
+      "rates": {
+        "Individual": 5.55,
+        "Individual + Spouse": 9.15,
+        "Individual + Children": 8.10,
+        "Family": 11.70
+      }
+    },
+    {
+      "minAge": 25,
+      "maxAge": 29,
+      "rates": {
+        "Individual": 6.45,
+        "Individual + Spouse": 10.35,
+        "Individual + Children": 8.85,
+        "Family": 12.90
+      }
+    },
+    {
+      "minAge": 30,
+      "maxAge": 34,
+      "rates": {
+        "Individual": 7.65,
+        "Individual + Spouse": 12.30,
+        "Individual + Children": 10.20,
+        "Family": 14.85
+      }
+    },
+    {
+      "minAge": 35,
+      "maxAge": 39,
+      "rates": {
+        "Individual": 10.05,
+        "Individual + Spouse": 15.75,
+        "Individual + Children": 12.45,
+        "Family": 18.30
+      }
+    },
+    {
+      "minAge": 40,
+      "maxAge": 44,
+      "rates": {
+        "Individual": 13.50,
+        "Individual + Spouse": 21.00,
+        "Individual + Children": 16.05,
+        "Family": 23.25
+      }
+    },
+    {
+      "minAge": 45,
+      "maxAge": 49,
+      "rates": {
+        "Individual": 18.45,
+        "Individual + Spouse": 28.35,
+        "Individual + Children": 21.00,
+        "Family": 30.90
+      }
+    },
+    {
+      "minAge": 50,
+      "maxAge": 54,
+      "rates": {
+        "Individual": 24.30,
+        "Individual + Spouse": 37.20,
+        "Individual + Children": 26.85,
+        "Family": 39.60
+      }
+    },
+    {
+      "minAge": 55,
+      "maxAge": 59,
+      "rates": {
+        "Individual": 33.60,
+        "Individual + Spouse": 51.15,
+        "Individual + Children": 36.15,
+        "Family": 53.70
+      }
+    },
+    {
+      "minAge": 60,
+      "maxAge": 64,
+      "rates": {
+        "Individual": 44.55,
+        "Individual + Spouse": 67.50,
+        "Individual + Children": 47.10,
+        "Family": 70.05
+      }
+    },
+    {
+      "minAge": 65,
+      "maxAge": 69,
+      "rates": {
+        "Individual": 58.95,
+        "Individual + Spouse": 89.25,
+        "Individual + Children": 61.50,
+        "Family": 91.80
+      }
+    },
+    {
+      "minAge": 70,
+      "maxAge": 74,
+      "rates": {
+        "Individual": 77.85,
+        "Individual + Spouse": 117.60,
+        "Individual + Children": 80.40,
+        "Family": 120.15
+      }
+    },
+    {
+      "minAge": 75,
+      "maxAge": 120,
+      "rates": {
+        "Individual": 109.05,
+        "Individual + Spouse": 164.25,
+        "Individual + Children": 111.60,
+        "Family": 166.80
+      }
+    }
+  ];
+
+})();
 
 type ZIPCodeRegions = {
   [key: number]: string[];

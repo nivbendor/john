@@ -189,7 +189,7 @@ const getAgeBandRate = (age: number, ageBandRates: CriticalIllnessRates[]): Reco
 };
 
 export function getCriticalIllnessRate(age: number, eligibility: EligibilityOption): number {
-  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES);
+  const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES as CriticalIllnessRates[]);
   return ageBandRate[eligibility];
   // const ageBandRate = getAgeBandRate(age, CRITICAL_ILLNESS_RATES as DefaultCriticalIllnessRates[]);
   // return ageBandRate * (eligibility === 'Individual' ? 1 : 2);

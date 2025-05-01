@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Product, IndividualInfo, Plan, CostView, EligibilityOption, getCostViewDisplayText, EligibilityPerProduct, PlanRecord, LTDPlan, Quotes, PremiumResult } from '../utils/insuranceTypes';
-import { LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, REGULAR_PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
+import { CRITICAL_ILLNESS_RATES, CriticalIllnessConfig, LIFE_ADD_CONFIG, PRODUCT_ELIGIBILITY_OPTIONS, REGULAR_PRODUCT_CONTENT, availableLTDPlanBySalaryCpValue } from '../utils/insuranceConfig';
 import { hasMultiplePlans, PREMIUM_CALCULATIONS, calculatePremiumByCostView, calculateLTDBenefit, calculateSTDBenefit, getLifeADDRate, hasUltraPlan, isLTDPlanAvailable, getLTDPlan, calculateLTDPremium, calculateLTDPremiumWrapper, getLTDPlanByAnnualSalaryCpValue } from '../utils/insuranceUtils';
 import { Dropdown } from 'react-bootstrap';
 import { Alert, AlertDescription } from './ui/alert';
@@ -224,6 +224,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     handleIndividualInfoChange({ name: 'employeeCoverage', value: employee });
     handleIndividualInfoChange({ name: 'spouseCoverage', value: constrainedSpouseCoverage });
   };
+
+  const handleTAACoverageChange = (employee: number, spouse: number) => {
+    const constrainedEmployee = Math.min(employee, (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage);
+    const constrainedSpouse = Math.min(spouse, (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage);
+    handleIndividualInfoChange({ name: 'employeeCoverageCriticalIllness', value: constrainedEmployee });
+    handleIndividualInfoChange({ name: 'spouseCoverageCriticalIllness', value: constrainedSpouse });
+  }
 
   const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat('en-US', {
@@ -458,6 +465,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               />
             </div>
           )}
+
+          {selectedProduct === 'Critical Illness/Cancer' && isDistributor(TAA) && (
+            <div className="w-full lg:w-auto">
+              <CoverageSlider
+                individualInfo={individualInfo}
+                onCoverageChange={handleTAACoverageChange}
+              />
+            </div>
+          )}
+
           {showPlanDropdown && hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">

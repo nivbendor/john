@@ -13,7 +13,7 @@ export function getInitialProducts(): Partial<Record<Product, boolean>> {
       Accident: true,
       Vision: true,
       Dental: true,
-      'Critical Illness/Cancer': true,
+      // 'Critical Illness/Cancer': true, TODO: Critical-Illnness hidden temporarily
       Telehealth: true,
       'Identity Theft Protection': true,
       // 'Virtual Primary Care': true,

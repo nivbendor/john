@@ -37,9 +37,11 @@ export interface IndividualInfo {
   annualSalary: number;
   eligibility: EligibilityOption;
   ltdPlan: LTDPlan; // Add this line
-  employeeCoverage: number;
-  spouseCoverage: number;
+  employeeCoverage: number; // Life AD&D
+  spouseCoverage: number; // Life AD&D
   numberOfChildren: number;
+  employeeCoverageCriticalIllness?: number; // TAA and Critical Illness
+  spouseCoverageCriticalIllness?: number; // TAA and Critical Illness
 }
 
 export type Quotes = Record<ProductShortName, PlanRecord<Record<EligibilityOption, number>> | null>;

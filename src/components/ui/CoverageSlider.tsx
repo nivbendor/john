@@ -1,9 +1,11 @@
 import React from 'react';
-import { Slider, Box, Typography, Input, Grid } from '@mui/material';
+import { Slider, Typography, Input, Grid } from '@mui/material';
 import { Card, CardContent } from "./card";
 import { IndividualInfo } from '../../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG } from '../../utils/insuranceConfig';
-import { getLifeADDRate } from '../../utils/insuranceUtils';
+import { useEmployeeAndSpouseCoverage } from '../../hooks/useEmployeeAndSpouseCoverage';
+import { isDistributor } from '../../utils/isDistributor';
+import { TAA } from '../../utils/config';
 
 interface CoverageSliderProps {
   individualInfo: IndividualInfo;
@@ -14,21 +16,21 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
   individualInfo,
   onCoverageChange,
 }) => {
-  const { employeeCoverage, spouseCoverage, eligibility, age } = individualInfo;
-  const maxEmployeeCoverage = LIFE_ADD_CONFIG.max_coverage_amount_individual;
-  const maxSpouseCoverage = Math.min(
-    employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
-    LIFE_ADD_CONFIG.max_coverage_amount_spouse
-  );
+
+  const { eligibility } = individualInfo;
+  const { employeeCoverage, spouseCoverage, maxEmployeeCoverage, maxSpouseCoverage, step } = useEmployeeAndSpouseCoverage(individualInfo);
 
   const handleEmployeeCoverageChange = (event: Event, newValue: number | number[]) => {
     const newEmployeeCoverage = Array.isArray(newValue) ? newValue[0] : newValue;
 
     let newSpouseCoverage = spouseCoverage;
-    if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
-      newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
-    } else {
-      newSpouseCoverage = 0;
+    
+    if (!isDistributor(TAA)) {
+      if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
+        newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
+      } else {
+        newSpouseCoverage = 0;
+      }
     }
 
     onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
@@ -76,7 +78,7 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
                 size="small"
                 onChange={(e) => handleInputChange(e, 'employee')}
                 inputProps={{
-                  step: 10000,
+                  step,
                   min: 0,
                   max: maxEmployeeCoverage,
                   type: 'text',
@@ -91,7 +93,7 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
               onChange={handleEmployeeCoverageChange}
               min={0}
               max={maxEmployeeCoverage}
-              step={10000}
+              step={step}
             />
           </Grid>
           {showSpouseCoverage && (
@@ -117,7 +119,7 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
                 onChange={handleSpouseCoverageChange}
                 min={0}
                 max={maxSpouseCoverage}
-                step={10000}
+                step={step}
               />
             </Grid>
           )}
