@@ -349,7 +349,7 @@ export const PREMIUM_CALCULATIONS: Record<Product, (individualInfo: IndividualIn
       return 0;
     }
 
-    return quotes.id?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
+    return quotes.identity?.[plan.toLowerCase()]?.[individualInfo.eligibility.toLowerCase()] || 0;
   },
 };
 

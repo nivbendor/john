@@ -47,22 +47,29 @@ const productConfig = {
     triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/telehealth`
   },
-  id: { // identity theft protection should be invoked only once, since the rest of the data is static
+  identity: { // identity theft protection should be invoked only once, since the rest of the data is static
     triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
     buildUrl: () => `/identity`
   },
-  // virtual: { // virtual theft protection should be invoked only once, since the rest of the data is static
-  //   triggers: { age: true, employeeCoverage: true, spouseCoverage: true },
-  //   buildUrl: () => `/virtual`
-  // }
 };
+
+function isProductEnabled(product: keyof typeof productConfig) {
+  if (product === 'hospital' && isDistributor(TAA)) {
+    return false;
+  }
+
+  if (['tele', 'identity'].includes(product) && isDistributor(BABRM)) {
+    return false;
+  }
+
+  return true;
+}
 
 function isStaticData(quotes: Quotes, product: keyof typeof productConfig) {
   return (
     (product === 'accident' && quotes.accident !== null) || 
     (product === 'hospital' && quotes.hospital !== null) ||
-    // (product === 'virtual' && quotes.virtual !== null) ||
-    (product === 'id' && quotes.id !== null) ||
+    (product === 'identity' && quotes.identity !== null) ||
     (product === 'tele' && quotes.tele !== null)
   );
 }
@@ -98,13 +105,13 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     critical: null,
     hospital: null,
     tele: null,
-    id: null,
-    // virtual: null,
+    identity: null,
   });
 
   // Track loading state—optional if you want partial loading per product
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [tokenReady, setTokenReady] = useState(false);
 
   // We'll store old values of age, salary, zipCode
   const prevAgeRef = useRef(individualInfo.age);
@@ -114,6 +121,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
   const prevSpouseCoverageRef = useRef(individualInfo.spouseCoverage);
 
   const init = useCallback(() => {
+
     const productsToFetch = [] as string[];
   
     // For each product, check if any triggers changed
@@ -128,6 +136,10 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       // if (triggers === null && (urlParams.age || urlParams.annualSalary || urlParams.zipCode)) {
       //   needsFetch = true;
       // }
+
+      if (!isProductEnabled(product as keyof typeof productConfig)) {
+        continue;
+      }
   
       if (!needsFetch) {
         continue;
@@ -149,33 +161,26 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
     });
   }, []);
 
-  // On mount, ensure we have a token
+  // Effect 1: Ensure token is valid
   useEffect(() => {
-    if (!isServerCalculations()) {
-      return;
-    }
-    // else
+    if (!isServerCalculations()) return;
 
-    async function initializeWithToken() {
-      try {
-        setLoading(true);
-        
-        if (!isTokenValid()) {
-          await fetchToken();
-        }
-        // else
-  
-        await init();
-      } catch(err) {
-        console.error('Error fetching initial token:', err);
-        setError('Failed to initialize quotes');
-      } finally {
-        setLoading(false);
+    async function ensureToken() {
+      if (!isTokenValid()) {
+        await fetchToken();
       }
+      setTokenReady(true);
     }
 
-    initializeWithToken();
+    ensureToken();
   }, []);
+
+  // Effect 2: Run quote fetching only when token is ready
+  useEffect(() => {
+    if (!isServerCalculations() || !tokenReady) return;
+
+    init();
+  }, [tokenReady]);
 
   // The main function to fetch quotes for a set of products
   const fetchProducts = useCallback(async (productsToFetch, individualInfo: Partial<IndividualInfo>) => {
@@ -237,7 +242,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
 
   // The effect that checks what changed
   useEffect(() => {
-    if (!isServerCalculations()) {
+    if (!isServerCalculations() || !tokenReady) {
       return;
     }
 
@@ -301,8 +306,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
       // debouncedFetchProducts.cancel();
     };
   }, [individualInfo.age, individualInfo.annualSalary, individualInfo.zipCode, 
-    individualInfo.employeeCoverage, individualInfo.spouseCoverage, 
-    debouncedFetchProducts, quotes
+    individualInfo.employeeCoverage, individualInfo.spouseCoverage, tokenReady,
   ]);
 
   return {

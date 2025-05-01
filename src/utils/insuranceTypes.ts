@@ -5,7 +5,7 @@ export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'V
   | 'Identity Theft Protection';
 
 export type ProductShortName = 'ltd' | 'std' | 'life' | 'accident' | 'dental' | 'vision' 
-| 'critical' | 'hospital' | 'tele' | 'id';
+| 'critical' | 'hospital' | 'tele' | 'identity';
 
 export type EligibilityOption = 'Individual' | 'Individual + Spouse' | 'Individual + Children' | 'Family';
 
