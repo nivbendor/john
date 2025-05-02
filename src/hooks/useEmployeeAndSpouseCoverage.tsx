@@ -1,12 +1,12 @@
 import { isDistributor } from "../utils/isDistributor";
 import { LIFE_ADD_CONFIG, CRITICAL_ILLNESS_RATES, CriticalIllnessConfig } from "../utils/insuranceConfig";
-import { IndividualInfo } from "../utils/insuranceTypes";
+import { IndividualInfo, Product } from "../utils/insuranceTypes";
 import { TAA } from "../utils/config";
 
-export function useEmployeeAndSpouseCoverage(individualInfo: IndividualInfo) {
+export function useEmployeeAndSpouseCoverage(individualInfo: IndividualInfo, product: Product) {
   const { employeeCoverage, spouseCoverage, employeeCoverageCriticalIllness, spouseCoverageCriticalIllness } = individualInfo;
 
-  if (isDistributor(TAA)) {
+  if (isDistributor(TAA) && product === 'Critical Illness/Cancer') {
     return {
       employeeCoverage: employeeCoverageCriticalIllness as number,
       spouseCoverage: spouseCoverageCriticalIllness as number,

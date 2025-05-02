@@ -79,8 +79,8 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
   Vision: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   'Critical Illness/Cancer': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   'Hospital Indemnity': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
-  Telehealth: ['Individual'],
-  'Identity Theft Protection': ['Individual'],
+  Telehealth: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  'Identity Theft Protection': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   // 'Virtual Primary Care': ['Individual'],
 };
 
@@ -537,7 +537,7 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
     bulletPoints: [
       "The answer is LTD Insurance. This coverage would keep income flowing each month",
       "Benefit can be paid up to your normal retirement age",
-      "Your benefit will be $0 of lost income per month",
+      "Your benefit will be {calculateLTDBenefit} of lost income per month",
       "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
       "Elimination period: Agents - 90-days, Agency Staff - 180-days",
       "Dependents are not eligible for disability coverage"
@@ -547,7 +547,7 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
     paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
     bulletPoints: [
       "STD will pay up to $1,000 of weekly benefit depending on your earnings",
-      "Your benefit will be $0 of lost income per week",
+      "Your benefit will be {weeklySTDBenefit} of lost income per week",
       "Includes missing work due to pregnancy (women only)",
       "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
       "Elimination period: Agents - 30-days, Agency Staff - 7-days",

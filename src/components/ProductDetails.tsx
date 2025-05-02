@@ -13,6 +13,7 @@ import { parseUrlParams } from '../utils/parseUrlParams';
 import { isDistributor } from '../utils/isDistributor';
 import { BABRM, TAA } from '../utils/config';
 import { getProductContent } from '../utils/getProductContent';
+import { getPlanLabel } from '../utils/getPlanLabel';
 
 // Add the useColorFromUrl hook
 const useColorFromUrl = () => {
@@ -427,7 +428,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
               </div>
 
               {/* Ensure the dropdown is shown for LTD if annual salary is greater than 0 */}
-              {showPlanDropdown && individualInfo.annualSalary > 0 && (
+              {showPlanDropdown && (individualInfo.annualSalary > 0) && !isDistributor(TAA) && (
                 <Dropdown onSelect={handlePlanChange}>
                   <Dropdown.Toggle variant="primary" id="dropdown-plan">
                     {currentPlan ? getLTDPlanDisplayName(currentPlan as LTDPlan, selectedProduct) : 'Select a Plan'}
@@ -451,7 +452,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                   </Dropdown.Menu>
                 </Dropdown>
               )}
-
             </>
           )}
 
@@ -460,6 +460,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {selectedProduct === 'Life / AD&D' && (
             <div className="w-full lg:w-auto">
               <CoverageSlider
+                product={selectedProduct}
                 individualInfo={individualInfo}
                 onCoverageChange={handleCoverageChange}
               />
@@ -469,6 +470,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {selectedProduct === 'Critical Illness/Cancer' && isDistributor(TAA) && (
             <div className="w-full lg:w-auto">
               <CoverageSlider
+                product={selectedProduct}
                 individualInfo={individualInfo}
                 onCoverageChange={handleTAACoverageChange}
               />
@@ -478,7 +480,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           {showPlanDropdown && hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">
-                {plans[selectedProduct] || 'Select a Plan'} {/* Fallback for initial state */}
+                {getPlanLabel(selectedProduct, plans[selectedProduct]) || 'Select a Plan'} {/* Fallback for initial state */}
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 {(selectedProduct === 'LTD' ? ['Basic', 'Premium', 'Ultra'] : ['Basic', 'Premium']).map((plan) => (
@@ -489,7 +491,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     disabled={selectedProduct === 'LTD' && isLTDPlan(plan) && !isLTDPlanAvailable(plan, individualInfo.annualSalary, isKen || false)}
                   >
                     <div className="flex justify-between items-center w-full">
-                      <span>{plan}</span>
+                      <span>{getPlanLabel(selectedProduct, plan as Plan)}</span>
                       <span className="ml-4">
                         {selectedProduct === 'LTD' && isLTDPlan(plan)
                           ? `Max: ${formatCurrency(calculateLTDBenefit(individualInfo.annualSalary, plan))}`

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Slider, Typography, Input, Grid } from '@mui/material';
 import { Card, CardContent } from "./card";
-import { IndividualInfo } from '../../utils/insuranceTypes';
+import { IndividualInfo, Product } from '../../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG } from '../../utils/insuranceConfig';
 import { useEmployeeAndSpouseCoverage } from '../../hooks/useEmployeeAndSpouseCoverage';
 import { isDistributor } from '../../utils/isDistributor';
@@ -9,23 +9,25 @@ import { TAA } from '../../utils/config';
 
 interface CoverageSliderProps {
   individualInfo: IndividualInfo;
+  product: Product;
   onCoverageChange: (employee: number, spouse: number) => void;
 }
 
 const CoverageSlider: React.FC<CoverageSliderProps> = ({
   individualInfo,
+  product,
   onCoverageChange,
 }) => {
 
   const { eligibility } = individualInfo;
-  const { employeeCoverage, spouseCoverage, maxEmployeeCoverage, maxSpouseCoverage, step } = useEmployeeAndSpouseCoverage(individualInfo);
+  const { employeeCoverage, spouseCoverage, maxEmployeeCoverage, maxSpouseCoverage, step } = useEmployeeAndSpouseCoverage(individualInfo, product);
 
   const handleEmployeeCoverageChange = (event: Event, newValue: number | number[]) => {
     const newEmployeeCoverage = Array.isArray(newValue) ? newValue[0] : newValue;
 
     let newSpouseCoverage = spouseCoverage;
     
-    if (!isDistributor(TAA)) {
+    if (!isDistributor(TAA) && product === 'Critical Illness/Cancer') {
       if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
         newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
       } else {

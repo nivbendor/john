@@ -49,18 +49,18 @@ const baseInsuranceResources = [
 ];
 
 const taaInsuranceResources = [
-  { name: 'Long-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1Is98ZpVnOvHLbXcCRFbQA_LdnQOcAXhs/view?usp=sharing' },
-  { name: 'Short-Term Disability', pdfUrl: 'https://drive.google.com/file/d/1pp0b8hSu-v3vIwwIem-HO33oW419H7GJ/view?usp=sharing' },
-  { name: 'Life / AD&D', pdfUrl: 'https://drive.google.com/file/d/1OdPgrmhZXNJxPktuicfAhperYZfBtjFj/view?usp=sharing' },
-  { name: 'Accident', pdfUrl: 'https://drive.google.com/file/d/1WHltGto8P65qyX75mmSzbW5dT_A5oSHM/view?usp=sharing' },
-  { name: 'Vision', pdfUrl: 'https://drive.google.com/file/d/1UZaGtagPlO5yoSfhh6SiRAq18gJCS0Yo/view?usp=sharing' },
-  { name: 'Dental', pdfUrl: 'https://drive.google.com/file/d/104CY3yNGQO7CndksnwDaCKQ7NATsm5pq/view?usp=sharing' },
-  // { name: 'Critical Illness/Cancer', pdfUrl: 'https://drive.google.com/file/d/16ErPUOdmifHNue6XNfZ_tbR0LRRTcaDc/view?usp=sharing' },
-  { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' },
-  { name: 'Identity Theft Protection', pdfUrl: '' },
-  // { name: 'Virtual Primary Care', pdfUrl: '' },
-  { name: 'Benefit Booklet', pdfUrl: '' },
+  { name: 'Long-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/LTD%20Staff%20-%20TAA%204-29-2025.pdf' }, // assuming this is for staff
+  { name: 'Short-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Short%20Term%20Disability%20-%20TAA%204-29-2025-4.pdf' },
+  { name: 'Life / AD&D', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Vol%20Life%20-AD&D%20-%20TAA%204-29-2025-3.pdf' },
+  { name: 'Accident', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Accident%20-%20TAA%204-29-2025-7.pdf' },
+  { name: 'Vision', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Dental%20-%20TAA%204-29-2025-6.pdf' }, // Note: this URL says "Dental" — verify if this is correct for Vision
+  { name: 'Dental', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Dental%20-%20TAA%204-29-2025-5.pdf' },
+  { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' }, // No new link provided
+  { name: 'Identity Theft Protection', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Identity%20Security%20-%20TAA%204-29-2025-9.pdf' },
+  { name: 'Critical Illness/Cancer', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Critical%20Illness%2BCancer%20-%20TAA%204-29-2025-8.pdf' },
+  { name: 'Benefit Booklet', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Benefit-Guide-TAA-7-1-2025.pdf' },
 ];
+
 
 export const insuranceResources = isDistributor(TAA)
   ? taaInsuranceResources
