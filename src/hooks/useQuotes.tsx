@@ -110,7 +110,7 @@ export function useQuotes(individualInfo: IndividualInfo, urlParams: ParsedUrlPa
   });
 
   // Track loading state—optional if you want partial loading per product
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tokenReady, setTokenReady] = useState(false);
 

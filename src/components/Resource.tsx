@@ -49,7 +49,7 @@ const baseInsuranceResources = [
 ];
 
 const taaInsuranceResources = [
-  { name: 'Long-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/LTD%20Staff%20-%20TAA%204-29-2025.pdf' }, // assuming this is for staff
+  { name: 'Long-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/LTD%20Agents%20-%20TAA%204-29-2025.pdf' }, // assuming this is for staff
   { name: 'Short-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Short%20Term%20Disability%20-%20TAA%204-29-2025-4.pdf' },
   { name: 'Life / AD&D', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Vol%20Life%20-AD&D%20-%20TAA%204-29-2025-3.pdf' },
   { name: 'Accident', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Accident%20-%20TAA%204-29-2025-7.pdf' },
