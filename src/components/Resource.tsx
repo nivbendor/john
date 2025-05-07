@@ -24,7 +24,7 @@ const taaLabels: Record<string, string> = {
   'Accident': 'Accident',
   'Vision': 'Vision',
   'Dental': 'Dental',
-  'Critical Illness/Cancer': 'Critical Illness/Cancer',
+  // 'Critical Illness/Cancer': 'Critical Illness/Cancer', // TODO: critical is hidden temporarily
   'Telehealth': 'Telehealth',
   'Identity Theft Protection': 'Identity Theft Protection',
   // 'Virtual Primary Care': 'Virtual Primary Care',
@@ -57,7 +57,7 @@ const taaInsuranceResources = [
   { name: 'Dental', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Dental%20-%20TAA%204-29-2025-5.pdf' },
   { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' }, // No new link provided
   { name: 'Identity Theft Protection', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Identity%20Security%20-%20TAA%204-29-2025-9.pdf' },
-  // { name: 'Critical Illness/Cancer', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Critical%20Illness%2BCancer%20-%20TAA%204-29-2025-8.pdf' },
+  // { name: 'Critical Illness/Cancer', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Critical%20Illness%2BCancer%20-%20TAA%204-29-2025-8.pdf' }, // TODO: critical is hidden temporarily
   { name: 'Benefit Booklet', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Benefit-Guide-TAA-7-1-2025.pdf' },
 ];
 

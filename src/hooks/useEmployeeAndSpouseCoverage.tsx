@@ -12,6 +12,7 @@ export function useEmployeeAndSpouseCoverage(individualInfo: IndividualInfo, pro
       spouseCoverage: spouseCoverageCriticalIllness as number,
       maxSpouseCoverage: (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage,
       maxEmployeeCoverage: (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage,
+      minCoverage: (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).minCoverage,
       step: (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).step,
     }
   }
@@ -28,5 +29,6 @@ export function useEmployeeAndSpouseCoverage(individualInfo: IndividualInfo, pro
     maxSpouseCoverage,
     maxEmployeeCoverage,
     step: 10000,
+    minCoverage: 0,
   }
 }

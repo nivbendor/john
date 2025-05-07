@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
 
+import * as SelectPrimitive from "@radix-ui/react-select"
+
 interface SelectProps<T> extends React.SelectHTMLAttributes<HTMLSelectElement> {
   children: ReactNode;
   onValueChange?: (value: T) => void;
@@ -70,3 +72,5 @@ export const SelectItem = React.forwardRef<HTMLOptionElement, SelectItemProps>(
 );
 
 SelectItem.displayName = 'SelectItem';
+
+export const SelectGroup = SelectPrimitive.Group

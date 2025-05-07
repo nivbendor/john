@@ -4,7 +4,6 @@ import { BABRM, TAA } from './config';
 import { Product, EligibilityOption, USState, PlanRecord, Plan, LTDPlan } from './insuranceTypes';
 import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
 import { isDistributor } from './isDistributor';
-import { isServerCalculations } from './isServerCalculations';
 
 
 
@@ -13,9 +12,9 @@ import { isServerCalculations } from './isServerCalculations';
 export const PRODUCTS: Product[] = (() => {
   const defaultProducts = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision'];
 
-  // TODO: 'Critical Illness/Cancer' is a temporarily hidden
   if (!isDistributor(TAA)) {
-    defaultProducts.push('Hospital Indemnity', 'Critical Illness/Cancer');
+    // TODO: critical is hidden temporarily
+    defaultProducts.push('Critical Illness/Cancer', 'Hospital Indemnity');
   } else {
     defaultProducts.push('Telehealth', 'Identity Theft Protection');
   }
@@ -146,7 +145,7 @@ export const CRITICAL_ILLNESS_RATES: CriticalIllnessRates[] | CriticalIllnessCon
 
   if (isDistributor(TAA)) {
     return {
-      minCoverage: 0,
+      minCoverage: 5000,
       step: 5000,
       maxCoverage: 25000
     };

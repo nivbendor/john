@@ -14,9 +14,11 @@ import { isDistributor } from '../utils/isDistributor';
 import { BABRM, TAA } from '../utils/config';
 import { getProductContent } from '../utils/getProductContent';
 import { getPlanLabel } from '../utils/getPlanLabel';
+import SmokerStatusToggle from './ui/SmokerStatusToggle';
+import SpouseInformation from './ui/SpouseInformation';
 
 // Add the useColorFromUrl hook
-const useColorFromUrl = () => {
+export const useColorFromUrl = () => {
   const [color, setColor] = useState(colors.default);
 
   useEffect(() => {
@@ -228,7 +230,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
   const handleTAACoverageChange = (employee: number, spouse: number) => {
     const constrainedEmployee = Math.min(employee, (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage);
-    const constrainedSpouse = Math.min(spouse, (CRITICAL_ILLNESS_RATES as CriticalIllnessConfig).maxCoverage);
+    const constrainedSpouse = Math.min(spouse, constrainedEmployee);
     handleIndividualInfoChange({ name: 'employeeCoverageCriticalIllness', value: constrainedEmployee });
     handleIndividualInfoChange({ name: 'spouseCoverageCriticalIllness', value: constrainedSpouse });
   }
@@ -387,6 +389,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
   };
 
 
+  const [isSmoker, setIsSmoker] = useState(false);
+
+  const [spouseAge, setSpouseAge] = useState(30);
+  
+  const [isSpouseSmoker, setIsSpouseSmoker] = useState(false);
+
   return (
     <div className="space-y-4 px-4">
       <div className="flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
@@ -467,16 +475,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
             </div>
           )}
 
-          {selectedProduct === 'Critical Illness/Cancer' && isDistributor(TAA) && (
-            <div className="w-full lg:w-auto">
-              <CoverageSlider
-                product={selectedProduct}
-                individualInfo={individualInfo}
-                onCoverageChange={handleTAACoverageChange}
-              />
-            </div>
-          )}
-
           {showPlanDropdown && hasMultiplePlans(selectedProduct) && (
             <Dropdown onSelect={handlePlanChange}>
               <Dropdown.Toggle variant="primary" id="dropdown-plan">
@@ -523,6 +521,30 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
           )}
         </div>
       </div>
+
+      {/* {selectedProduct === 'Critical Illness/Cancer' && isDistributor(TAA) && (
+        <>
+          <div className="w-full lg:w-auto">
+            <CoverageSlider
+              product={selectedProduct}
+              individualInfo={individualInfo}
+              onCoverageChange={handleTAACoverageChange}
+            />
+          </div>
+
+          <SmokerStatusToggle
+            isSmoker={isSmoker} 
+            setIsSmoker={setIsSmoker} 
+          />
+
+          {selectedEligibilityPerProduct[selectedProduct] === "Individual + Spouse" && <SpouseInformation
+            spouseAge={spouseAge}
+            setSpouseAge={setSpouseAge}
+            isSpouseSmoker={isSpouseSmoker}
+            setIsSpouseSmoker={setIsSpouseSmoker}
+          />}
+        </>
+      )}     */}
 
       <div>
         <p className="text-gray-600 mb-2 text-lg ">{formattedContent.paragraph}</p>
