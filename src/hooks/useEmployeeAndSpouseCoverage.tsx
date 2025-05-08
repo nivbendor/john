@@ -17,6 +17,18 @@ export function useEmployeeAndSpouseCoverage(individualInfo: IndividualInfo, pro
     }
   }
 
+  // if (isDistributor(TAA) && product === 'Life / AD&D') {
+  //   return {
+  //     employeeCoverage,
+  //     spouseCoverage,
+  //     maxSpouseCoverage: 20000,
+  //     maxEmployeeCoverage: 150000,
+  //     step: 1000,
+  //     minCoverage: 25000,
+  //   }
+  // }
+
+  // regular Life / AD&D
   const maxEmployeeCoverage = LIFE_ADD_CONFIG.max_coverage_amount_individual;
   const maxSpouseCoverage = Math.min(
     employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
