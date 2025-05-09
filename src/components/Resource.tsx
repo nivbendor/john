@@ -53,7 +53,7 @@ const taaInsuranceResources = [
   { name: 'Short-Term Disability', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Short%20Term%20Disability%20-%20TAA%204-29-2025-4.pdf' },
   { name: 'Life / AD&D', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Vol%20Life%20-AD&D%20-%20TAA%204-29-2025-3.pdf' },
   { name: 'Accident', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Accident%20-%20TAA%204-29-2025-7.pdf' },
-  { name: 'Vision', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Dental%20-%20TAA%204-29-2025-6.pdf' }, // Note: this URL says "Dental" — verify if this is correct for Vision
+  { name: 'Vision', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/TAA%20Vision%20Slip%20Sheet-2.pdf' }, // Note: this URL says "Dental" — verify if this is correct for Vision
   { name: 'Dental', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Dental%20-%20TAA%204-29-2025-5.pdf' },
   { name: 'Telehealth', pdfUrl: 'https://drive.google.com/file/d/your-telehealth-pdf-id/view?usp=sharing' }, // No new link provided
   { name: 'Identity Theft Protection', pdfUrl: 'https://knowledge.cakewalkbenefits.com/hubfs/TAA/Identity%20Security%20-%20TAA%204-29-2025-9.pdf' },
