@@ -107,16 +107,10 @@ export function calculateLTDBenefit(annualSalary: number, plan: LTDPlan): number
   }
 
   const monthlyBenefit = (annualSalary / 12) * 0.6;
-  const maxBenefit = LTD_CONFIG.maxBenefitAmount[plan];
-  const tempCappedBenefit = Math.min(monthlyBenefit, maxBenefit as number);
+  const maxBenefit = isDistributor(TAA) ? 20000 : LTD_CONFIG.maxBenefitAmount[plan];
+  const cappedBenefit = Math.min(monthlyBenefit, maxBenefit as number);
 
-  const cappedBenefit = Math.round(tempCappedBenefit * 100) / 100; // Rounded to two decimal places
-
-  if (isDistributor(TAA)) {
-    return cappedBenefit * 2;
-  }
-
-  return cappedBenefit;
+  return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }
 
 //incontent Dynamic - STD Weekly
