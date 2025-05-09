@@ -39,6 +39,8 @@ import {
 } from './insuranceConfig';
 import { parseUrlParams } from "./parseUrlParams";
 import { isServerCalculations } from "./isServerCalculations";
+import { isDistributor } from "./isDistributor";
+import { TAA } from "./config";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -106,9 +108,15 @@ export function calculateLTDBenefit(annualSalary: number, plan: LTDPlan): number
 
   const monthlyBenefit = (annualSalary / 12) * 0.6;
   const maxBenefit = LTD_CONFIG.maxBenefitAmount[plan];
-  const cappedBenefit = Math.min(monthlyBenefit, maxBenefit as number);
+  const tempCappedBenefit = Math.min(monthlyBenefit, maxBenefit as number);
 
-  return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
+  const cappedBenefit = Math.round(tempCappedBenefit * 100) / 100; // Rounded to two decimal places
+
+  if (isDistributor(TAA)) {
+    return cappedBenefit * 2;
+  }
+
+  return cappedBenefit;
 }
 
 //incontent Dynamic - STD Weekly
@@ -118,7 +126,7 @@ export function calculateSTDBenefit(annualSalary: number): number {
   }
 
   const weeklyBenefit = (annualSalary / STD_CONFIG.weeks) * STD_CONFIG.benefitAmountKey;
-  const cappedBenefit = Math.min(weeklyBenefit, STD_CONFIG.maxCoverageAmount);
+  const cappedBenefit = Math.min(weeklyBenefit, isDistributor(TAA) ? 1000 : STD_CONFIG.maxCoverageAmount);
 
   return Math.round(cappedBenefit * 100) / 100; // Rounded to two decimal places
 }

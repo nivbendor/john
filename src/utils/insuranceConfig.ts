@@ -534,6 +534,7 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
   'LTD': {
     paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
     bulletPoints: [
+      "The maximum monthly benefit is $20,000",
       "The answer is LTD Insurance. This coverage would keep income flowing each month",
       "Benefit can be paid up to your normal retirement age",
       "Your benefit will be {calculateLTDBenefit} of lost income per month",
@@ -575,8 +576,30 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
       "Available for dependents"
     ]
   },
-  'Dental': REGULAR_PRODUCT_CONTENT['Dental'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
-  'Vision': REGULAR_PRODUCT_CONTENT['Vision'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
+  'Dental': {
+    paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+    bulletPoints: [
+      "This benefit pays the same percentages out-of-network as it does in-network",
+      "In-network dentists make your benefit dollars go further",
+      "Check for an in-network dentist {{HERE|https://member.sunlifeconnect.com/findadentist}} & Select PPO plans",
+      "$1500 annual maximum per person",
+      "$1,000 orthodontia lifetime maximum per person, up to age 19",
+      "Root canals covered in basic at 80% (typically root canals are major coverage)",
+      "No waiting period to use your benefits",
+      "Available for employees and dependents"
+    ]
+  },
+  'Vision': {
+    paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages",
+    bulletPoints: [
+      "$10 copay for an annual eye exam",
+      "You can get frames and lenses every year",
+      "You can choose to enroll in either the VSP or Davis network",
+      "Check for an in-network doctor {{HERE|https://www.guardiananytime.com/fpapp/vision}}",
+      "No waiting period to use your benefits",
+      "Available for dependents"
+    ]
+  },
   'Critical Illness/Cancer': REGULAR_PRODUCT_CONTENT['Critical Illness/Cancer'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
   'Hospital Indemnity': REGULAR_PRODUCT_CONTENT['Hospital Indemnity'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
   'Telehealth': {
