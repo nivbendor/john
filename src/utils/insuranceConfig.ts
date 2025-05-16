@@ -582,9 +582,8 @@ export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoi
       "This benefit pays the same percentages out-of-network as it does in-network",
       "In-network dentists make your benefit dollars go further",
       "Check for an in-network dentist {{HERE|https://member.sunlifeconnect.com/findadentist/#/}} & Select PPO plans",
-      "$1500 annual maximum per person",
+      "Annual benefit maximums per enrolled member:  Base:  $750,  Enhanced $1,000",
       "$1,000 orthodontia lifetime maximum per person, up to age 19",
-      "Root canals covered in basic at 80% (typically root canals are major coverage)",
       "No waiting period to use your benefits",
       "Available for employees and dependents"
     ]
