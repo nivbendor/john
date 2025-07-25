@@ -82,12 +82,16 @@ function enhanceUrl(url: string) {
     ? 'a=taa'
     : '';
 
-  if (!distributorParam) {
-    return '';
+  const legacyParam = 'legacy=true';
+  
+  const params: string[] = [];
+  if (distributorParam) {
+    params.push(distributorParam);
   }
+  params.push(legacyParam);
 
   const separator = url.includes('?') ? '&' : '?';
-  return `${separator}${distributorParam}`;
+  return `${separator}${params.join('&')}`;
 }
 
 /**
