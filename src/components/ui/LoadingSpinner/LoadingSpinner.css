@@ -1,0 +1,57 @@
+/* 1) Full-screen container with flex centering */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* full viewport height & width */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  /* optional: a semi-transparent background if you want a loading overlay */
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 9999; /* ensure it overlays other content */
+}
+
+/* 2) The spinner itself */
+.spinner {
+  position: relative;
+  width: 22.4px;
+  height: 22.4px;
+}
+
+.spinner::before,
+.spinner::after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: absolute;
+
+  border: 5.6px solid #4353ff; /* primary blue */
+  border-radius: 50%;
+  box-shadow: 0 -33.6px 0 -5.6px #4353ff;
+
+  animation: spinner-initial 0.5s backwards, spinner-rotate 1.25s 0.5s infinite ease;
+}
+
+.spinner::after {
+  animation-delay: 0s, 1.25s; /* start times for the second circle */
+}
+
+/* Keyframe for initial “pop” effect */
+@keyframes spinner-initial {
+  from {
+    box-shadow: 0 0 0 -5.6px #4353ff;
+  }
+}
+
+/* Keyframe for continuous rotation */
+@keyframes spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}

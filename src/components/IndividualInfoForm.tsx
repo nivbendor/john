@@ -30,7 +30,8 @@ const useColorFromUrl = () => {
 interface IndividualInfoFormProps {
   individualInfo: IndividualInfo;
   handleIndividualInfoChange: (e: React.ChangeEvent<HTMLInputElement> | { name: string; value: number | string }) => void;
-  errors: Record<string, string>;
+  handleInputErrorChange: (error: string) => void;
+  error: string;
   costView: CostView;
   setCostView: (value: CostView) => void;
 }
@@ -38,13 +39,50 @@ interface IndividualInfoFormProps {
 const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
   individualInfo,
   handleIndividualInfoChange,
-  errors,
+  handleInputErrorChange,
+  error,
   costView,
   setCostView
 }) => {
   const ageOptions = Array.from({ length: 100 }, (_, i) => i); // Create age options from 1 to 100
   const costViewOptions: CostView[] = ['Monthly', 'Semi-Monthly', 'Bi-Weekly', 'Weekly'];
   const borderColor = useColorFromUrl();
+
+  const [zipCode, setZipCode] = useState(individualInfo.zipCode);
+  const [zipCodeTouched, setZipCodeTouched] = useState(false);
+  
+  const handleZipCodeChange = (e) => {
+    console.log(`Zip Code input change: ${e.target.value}`);
+    setZipCode(e.target.value);
+  }
+
+  // On blur, mark as touched and do validation
+  const handleZipCodeBlur = () => {
+    setZipCodeTouched(true);
+    const error = validateZip(zipCode);
+    handleInputErrorChange(error);
+    if (!error) {
+      handleIndividualInfoChange({ name: 'zipCode', value: zipCode });
+    }
+  };
+
+  // Function to check ZIP code validity (blank or valid pattern)
+  function validateZip(value) {
+    // If empty, no error
+    if (!value) {
+      return '';
+    }
+    // 5 digits or 5 digits + dash + 4 digits
+    const pattern = /^\d{5}(-\d{4})?$/;
+    if (!pattern.test(value)) {
+      return 'Please enter a valid US ZIP code (e.g., 12345 or 12345-1234) or leave blank.';
+    }
+    return '';
+  }
+
+  function handleZipCodeErrorToastClose() {
+    setZipCodeTouched(false);
+  }
 
   // Function to display the age field, showing a dash if age is 0 (unset)
   const displayAge = () => {
@@ -61,6 +99,7 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
       
       <div className="py-2 pl-0.5">
         <h3 className="text-lg font-semibold mb-1 text-left">Individual Information</h3>
+        <h5 className="text-sm mb-1 text-left">Enter your age, zip, pay period and income to see prices instantly</h5>
         
         {/* Form Fields */}
         <div className="flex flex-col space-y-4">
@@ -105,13 +144,25 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
                 <Input
                   id="zipCode"
                   name="zipCode"
-                  value={individualInfo.zipCode}
-                  onChange={(e) => {
-                    console.log(`Zip Code input change: ${e.target.value}`);
-                    handleIndividualInfoChange(e);
-                  }}
+                  value={zipCode}
+                  onBlur={handleZipCodeBlur}
+                  onChange={handleZipCodeChange}
                   className="w-full h-10 bg-white-100 rounded-lg border border-gray-300 text-center px-2"
                 />
+                {error && zipCodeTouched &&
+                  <div className="fixed top-40 right-4 max-w-xs w-full bg-red-500 text-white shadow-lg rounded-lg p-4 flex items-center space-x-3 transition-transform transform hover:scale-105">
+                    {/* https://tailwindflex.com/@coder32/succes-warning-error-toast-designs */}
+                    <div className="flex-1">
+                      <p className="font-bold">Error</p>
+                      <p className="text-sm">{error}</p>
+                    </div>
+                    <button className="text-white hover:text-gray-300 focus:outline-none" onClick={handleZipCodeErrorToastClose}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                }
               </div>
             </div>
 
@@ -183,10 +234,25 @@ const IndividualInfoForm: React.FC<IndividualInfoFormProps> = ({
               <Input
                 id="zipCode"
                 name="zipCode"
-                value={individualInfo.zipCode}
-                onChange={handleIndividualInfoChange}
+                value={zipCode}
+                onBlur={handleZipCodeBlur}
+                onChange={handleZipCodeChange}
                 className="w-24 h-10 bg-white-100 rounded-lg border-0 text-center"
               />
+              {error && zipCodeTouched &&
+                <div className="fixed top-40 right-4 max-w-xs w-full bg-red-500 text-white shadow-lg rounded-lg p-4 flex items-center space-x-3 transition-transform transform hover:scale-105">
+                  {/* https://tailwindflex.com/@coder32/succes-warning-error-toast-designs */}
+                  <div className="flex-1">
+                    <p className="font-bold">Error</p>
+                    <p className="text-sm">{error}</p>
+                  </div>
+                  <button className="text-white hover:text-gray-300 focus:outline-none" onClick={handleZipCodeErrorToastClose}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              }
             </div>
     
             <div className="w-px h-10" style={{ backgroundColor: borderColor }}></div>

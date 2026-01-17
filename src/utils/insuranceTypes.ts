@@ -1,6 +1,11 @@
 // utils/insuranceTypes.ts
 
-export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'Vision' | 'Critical Illness/Cancer';
+export type Product = 'LTD' | 'STD' | 'Life / AD&D' | 'Accident' | 'Dental' | 'Vision' 
+  | 'Critical Illness/Cancer' | 'Hospital Indemnity' | 'Telehealth' 
+  | 'Identity Theft Protection';
+
+export type ProductShortName = 'ltd' | 'std' | 'life' | 'accident' | 'dental' | 'vision' 
+| 'critical' | 'hospital' | 'tele' | 'identity';
 
 export type EligibilityOption = 'Individual' | 'Individual + Spouse' | 'Individual + Children' | 'Family';
 
@@ -32,10 +37,14 @@ export interface IndividualInfo {
   annualSalary: number;
   eligibility: EligibilityOption;
   ltdPlan: LTDPlan; // Add this line
-  employeeCoverage: number;
-  spouseCoverage: number;
+  employeeCoverage: number; // Life AD&D
+  spouseCoverage: number; // Life AD&D
   numberOfChildren: number;
+  employeeCoverageCriticalIllness?: number; // TAA and Critical Illness
+  spouseCoverageCriticalIllness?: number; // TAA and Critical Illness
 }
+
+export type Quotes = Record<ProductShortName, PlanRecord<Record<EligibilityOption, number>> | null>;
 
 export const ELIGIBILITY_OPTIONS: EligibilityOption[] = ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'];
 export const US_STATES: USState[] = [

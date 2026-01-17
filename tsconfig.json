@@ -22,6 +22,6 @@
       "components/*": ["components/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/components/Resource.jtsx"],
   "exclude": ["**/node_modules", "**/.*/"]
 }

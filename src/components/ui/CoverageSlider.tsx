@@ -1,35 +1,40 @@
 import React from 'react';
-import { Slider, Box, Typography, Input, Grid } from '@mui/material';
+import { Slider, Typography, Input, Grid } from '@mui/material';
 import { Card, CardContent } from "./card";
-import { IndividualInfo } from '../../utils/insuranceTypes';
+import { IndividualInfo, Product } from '../../utils/insuranceTypes';
 import { LIFE_ADD_CONFIG } from '../../utils/insuranceConfig';
-import { getLifeADDRate } from '../../utils/insuranceUtils';
+import { useEmployeeAndSpouseCoverage } from '../../hooks/useEmployeeAndSpouseCoverage';
+import { isDistributor } from '../../utils/isDistributor';
+import { TAA } from '../../utils/config';
 
 interface CoverageSliderProps {
   individualInfo: IndividualInfo;
+  product: Product;
   onCoverageChange: (employee: number, spouse: number) => void;
 }
 
 const CoverageSlider: React.FC<CoverageSliderProps> = ({
   individualInfo,
+  product,
   onCoverageChange,
 }) => {
-  const { employeeCoverage, spouseCoverage, eligibility, age } = individualInfo;
-  const maxEmployeeCoverage = LIFE_ADD_CONFIG.max_coverage_amount_individual;
-  const maxSpouseCoverage = Math.min(
-    employeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional,
-    LIFE_ADD_CONFIG.max_coverage_amount_spouse
-  );
+
+  const { eligibility } = individualInfo;
+  const { employeeCoverage, spouseCoverage, maxEmployeeCoverage, maxSpouseCoverage, step, minCoverage } = useEmployeeAndSpouseCoverage(individualInfo, product);
 
   const handleEmployeeCoverageChange = (event: Event, newValue: number | number[]) => {
     const newEmployeeCoverage = Array.isArray(newValue) ? newValue[0] : newValue;
 
     let newSpouseCoverage = spouseCoverage;
-    if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
-      newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
-    } else {
-      newSpouseCoverage = 0;
-    }
+    
+    // TODO: critical but it looks not right how it was done initially
+    // if (!isDistributor(TAA) && product === 'Critical Illness/Cancer') {
+      if (eligibility === 'Individual + Spouse' || eligibility === 'Family') {
+        newSpouseCoverage = Math.min(spouseCoverage, newEmployeeCoverage * LIFE_ADD_CONFIG.max_coverage_amount_spouse_conditional);
+      } else {
+        newSpouseCoverage = 0;
+      }
+    // }
 
     onCoverageChange(newEmployeeCoverage, newSpouseCoverage);
   };
@@ -76,48 +81,48 @@ const CoverageSlider: React.FC<CoverageSliderProps> = ({
                 size="small"
                 onChange={(e) => handleInputChange(e, 'employee')}
                 inputProps={{
-                  step: 10000,
-                  min: 0,
+                  step,
+                  min: minCoverage,
                   max: maxEmployeeCoverage,
                   type: 'text',
                   'aria-labelledby': 'input-slider',
                 }}
-                sx={{ width: '50%', maxWidth: '80px', mb: 2 }}
+                sx={{ maxWidth: '80px', mb: 2 }}
               />
             </Typography>
             <Slider
               getAriaLabel={() => 'Individual Coverage'}
               value={employeeCoverage}
               onChange={handleEmployeeCoverageChange}
-              min={0}
+              min={minCoverage}
               max={maxEmployeeCoverage}
-              step={10000}
+              step={step}
             />
           </Grid>
           {showSpouseCoverage && (
             <Grid item xs={12} sm={6}>
-              <Typography gutterBottom>Spouse Coverage:
+              <Typography className='m-0' gutterBottom>Spouse Coverage:
                 <Input className='px-1.5 font-semibold'
                   value={formatCurrency(spouseCoverage)}
                   size="small"
                   onChange={(e) => handleInputChange(e, 'spouse')}
                   inputProps={{
-                    step: 5000,
-                    min: 0,
+                    step,
+                    min: minCoverage,
                     max: maxSpouseCoverage,
                     type: 'text',
                     'aria-labelledby': 'input-slider',
                   }}
-                  sx={{ width: '50%', maxWidth: '80px', mb: 2 }}
+                  sx={{ maxWidth: '80px', mb: 2 }}
                 />
               </Typography>
               <Slider
                 getAriaLabel={() => 'Spouse coverage amount'}
                 value={spouseCoverage}
                 onChange={handleSpouseCoverageChange}
-                min={0}
+                min={minCoverage}
                 max={maxSpouseCoverage}
-                step={10000}
+                step={step}
               />
             </Grid>
           )}

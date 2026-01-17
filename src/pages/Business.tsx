@@ -14,10 +14,13 @@ import InsuranceResources from '../components/Resource';
 import Funnel from '../components/Funnel';
 import ZipDebugPanel from '../components/ZipDebugPopup';
 import { getRegistrationUrl } from '../utils/registrationUrls';
-// import { debounce } from '../utils/debounce';
-// import { URI_SETTINGS } from '../utils/config';
-// import { useLocalStorage } from '../hooks/useLocalStorage';
-// import { useProductUpdate } from '../hooks/useProductUpdate';
+import { useQuotes } from '../hooks/useQuotes';
+import SplashScreen from '../components/SplashScreen';
+import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
+import { prohibitScrolling } from '../utils/prohibitScrolling';
+import { getInitialProducts } from '../utils/getInitialProdcuts';
+import { isDistributor } from '../utils/isDistributor';
+import { TAA } from '../utils/config';
 
 // Define all necessary types and constants
 type PremiumResult = Record<Product, number>;
@@ -32,17 +35,17 @@ const initialIndividualInfo: IndividualInfo = {
   eligibility: 'Individual',
   ltdPlan: 'Basic' as LTDPlan, // Add this line
   employeeCoverage: 20000,
-  spouseCoverage: 10000,
+  spouseCoverage: 5000,
   numberOfChildren: 2,
   isExpanded: undefined
 };
 
-const initialProducts: Record<Product, boolean> = {
-  LTD: true, STD: true, 'Life / AD&D': true, Accident: true, Vision: true, Dental: true, 'Critical Illness/Cancer': true
-};
+const initialProducts = getInitialProducts();
 
 const initialPremiums: PremiumResult = {
-  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 'Critical Illness/Cancer': 0
+  LTD: 0, STD: 0, 'Life / AD&D': 0, Accident: 0, Vision: 0, Dental: 0, 
+  'Critical Illness/Cancer': 0, 'Hospital Indemnity': 0,
+  'Telehealth': 0, 'Identity Theft Protection': 0,
 };
 
 type BusinessProps = {
@@ -62,16 +65,40 @@ type BusinessProps = {
 };
 
 const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelData, onZipDebug }) => {
+  const urlParams = parseUrlParams();
   const { costView, setCostView } = useCostView();
 
   const [individualInfo, setIndividualInfo] = useState<IndividualInfo>(() => {
-    const urlParams = parseUrlParams();
     const normalizedFunnelData = {
       ...funnelData,
-      age: funnelData?.age ? parseInt(funnelData.age, 10) : initialIndividualInfo.age,
+      age: funnelData?.age ? parseInt(funnelData.age, 10) : (urlParams?.age ? urlParams.age : initialIndividualInfo.age),
     };
-    return { ...initialIndividualInfo, ...urlParams, ...normalizedFunnelData };
+
+    return { 
+      ...initialIndividualInfo, 
+      ...urlParams, 
+      ...normalizedFunnelData,
+      ...(isDistributor(TAA) ? { employeeCoverageCriticalIllness: 10000, spouseCoverageCriticalIllness: 10000 } : {})
+    };
   });
+
+  const [inputError, setInputError] = useState('');
+
+  const { quotes, loading, error } = useQuotes(individualInfo, urlParams, inputError);
+
+  useEffect(() => {
+    console.log('***QUOTES***', JSON.stringify(quotes, null, 2));
+  }, [quotes]);
+
+  useEffect(() => {
+    if (prohibitScrolling()) {
+      document.body.style.overflow = 'hidden';
+    }
+  }, []);
+
+  useEffect(() => {
+    console.log('An error occurred during an API call', error);
+  }, [error]);
 
   const { cpValue, isKen } = useMemo(() => parseUrlParams(), []);
   const registrationUrl = useMemo(() => getRegistrationUrl(cpValue), [cpValue]);
@@ -108,7 +135,7 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
   });
 
   const [selectedProduct, setSelectedProduct] = useState<Product>('LTD');
-  const [localProducts, setLocalProducts] = useState<Record<Product, boolean>>(initialProducts);
+  const [localProducts, setLocalProducts] = useState<Partial<Record<Product, boolean>>>(initialProducts);
   const [premiums, setPremiums] = useState<PremiumResult>(initialPremiums);
   const [productPlans, setProductPlans] = useState<Record<Product, Plan>>(() =>
     PRODUCTS.reduce((acc, product) => ({
@@ -117,23 +144,25 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     }), {} as Record<Product, Plan>)
   );
 
+  // TODO: remove the dependencies if not needed anymore
   const recalculatePremium = useCallback((product: Product, plan: Plan) => {
-    const newPremium = calculatePremiums(individualInfo, product, costView, plan);
+    const newPremium = calculatePremiums(individualInfo, quotes, product, costView, plan);
     setPremiums(prev => ({
       ...prev,
       [product]: newPremium,
     }));
-  }, [individualInfo, costView]);
+  }, [individualInfo, quotes, costView]);
 
+  // TODO: remove the dependencies if not needed anymore
   const calculateAllPremiums = useMemo(() => {
     return () => {
       const allPremiums: PremiumResult = { ...initialPremiums };
       PRODUCTS.forEach(product => {
-        allPremiums[product] = calculatePremiums(individualInfo, product, costView, productPlans[product]);
+        allPremiums[product] = calculatePremiums(individualInfo, quotes, product, costView, productPlans[product]);
       });
       return allPremiums;
     };
-  }, [individualInfo, costView, productPlans]);
+  }, [individualInfo, quotes, costView, productPlans]);
 
   const setProductPlan = useCallback((product: Product, plan: Plan) => {
     if (product === 'LTD') {
@@ -176,7 +205,9 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     });
   }, [updateZipDebugInfo, productPlans.LTD, isKen]);
 
-
+  const handleInputErrorChange = useCallback((error: string) => {
+    setInputError(error);
+  }, []);
   // const [calculations] = useProductUpdate(individualInfo);
 
   // console.log('CALCULATIONS', calculations);
@@ -224,8 +255,13 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
     setShowFunnel(false);
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+  // else
+
   return (
-    <div className="min-h-screen bg-gray-100 lg:px-6">
+    <div className="min-h-screen lg:px-6">
       {showFunnel ? (
         <Funnel onComplete={handleFunnelComplete} />
       ) : (
@@ -236,7 +272,8 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                 <IndividualInfoForm
                   individualInfo={individualInfo}
                   handleIndividualInfoChange={handleInputChange}
-                  errors={{}}
+                  handleInputErrorChange={handleInputErrorChange}
+                  error={inputError}
                   costView={costView}
                   setCostView={setCostView}
                 />
@@ -253,8 +290,10 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   plans={productPlans}
                   selectedProduct={selectedProduct}
                   premium={premiums[selectedProduct]}
+                  premiums={premiums}
                   costView={costView}
                   individualInfo={individualInfo}
+                  quotes={quotes}
                   setProductPlan={setProductPlan}
                   selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   setSelectedEligibilityPerProduct={setSelectedEligibilityPerProduct}
@@ -262,7 +301,6 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
                   handleSalaryChange={handleSalaryChange}
                   errors={{}}
                   recalculatePremium={recalculatePremium}
-                  activeProducts={localProducts}
                 />
               </div>
               {showCostPerHour && <div>Cost per hour component would go here</div>}
@@ -271,11 +309,12 @@ const Business: React.FC<BusinessProps> = ({ setProducts, setTotalCost, funnelDa
             <div className="w-full lg:w-1/3 space-y-4">
               <div className="bg-white rounded-xl shadow-md p-6">
                 <ActiveProductsToggle
-                  plan={productPlans}
+                  plans={productPlans}
                   products={localProducts}
                   premiums={premiums}
                   costView={costView}
                   individualInfo={individualInfo}
+                  quotes={quotes}
                   selectedEligibilityPerProduct={selectedEligibilityPerProduct}
                   handleToggleChange={(product, isActive) => {
                     setLocalProducts(prev => ({

@@ -1,11 +1,33 @@
-// services/authService.js
-import { URI_SETTINGS } from '@/utils/config';
+import { jwtDecode } from 'jwt-decode';
+import { URI_SETTINGS } from '../utils/config';
 import axios, { AxiosError } from 'axios';
+
+export function isTokenValid() {
+  try {
+    const token = getToken();
+    
+    if (!token) {
+      return false;
+    }
+
+    const decoded = jwtDecode(token);
+    
+    if (!decoded || !decoded.exp) {
+      return false;
+    }
+    // JWT exp is in seconds, so convert to milliseconds
+    const expiryTime = decoded.exp * 1000;
+    return Date.now() < expiryTime;
+  } catch (error) {
+    // If token is malformed or can't be decoded, treat it as invalid
+    return false;
+  }
+}
 
 const TOKEN_KEY = 'auth_token';
 
 // Retrieve token from local storage
-export function getToken() {
+export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
@@ -25,7 +47,7 @@ export async function fetchToken() {
 
 // Generic function to make an authenticated request
 // If we get a 401 with "The incoming token has expired", refresh & retry
-export async function fetchWithToken(url, config = { headers: {}}) {
+export async function fetchWithToken(url: string, config = { headers: {}}) {
   let token = getToken();
 
   // Insert token into request headers
@@ -41,22 +63,18 @@ export async function fetchWithToken(url, config = { headers: {}}) {
   try {
     const resp = await axios(url, finalConfig);
     return resp;
-  } catch (error) {
-    // Check if we got 401 and a specific error message
-    if (
-      error instanceof AxiosError &&
-      error.response &&
-      error.response.status === 401 &&
-      error.response.data.message === 'The incoming token has expired'
-    ) {
-      console.log('Token expired, refreshing...');
+  } catch (error: unknown) {
+    if ((error as AxiosError).status === 401 || (error as AxiosError).code === 'ERR_NETWORK') { // unauthorized
+      console.log('error', (error as any).toJSON());
+      console.error('Token has expired, refreshing...');
       // Refresh the token
       token = await fetchToken();
       // Retry the request with the new token
       finalConfig.headers.Authorization = `Bearer ${token}`;
       return axios(url, finalConfig);
     }
-    // Otherwise, rethrow the error
+      
+    console.log('error', (error as AxiosError).toJSON());
     throw error;
   }
 }

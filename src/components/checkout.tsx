@@ -1,17 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult, EligibilityPerProduct } from '../utils/insuranceTypes';
+import { Product, CostView, IndividualInfo, Plan, calculatePremiumByCostView, PremiumResult, EligibilityPerProduct, Quotes } from '../utils/insuranceTypes';
 import { PREMIUM_CALCULATIONS } from '../utils/insuranceUtils';
 import { parseUrlParams } from 'utils/parseUrlParams';
-import { handleQuoteRequest } from '../utils/quoteUtils';
 import colors from '../styles/colors';
 
 
 interface ActiveProductsToggleProps {
-  plan: Record<Product, Plan>;
-  products: Record<Product, boolean>;
+  plans: Record<Product, Plan>;
+  products: Partial<Record<Product, boolean>>;
   premiums: PremiumResult;
   costView: CostView;
   individualInfo: IndividualInfo;
+  quotes: Quotes;
   selectedEligibilityPerProduct: EligibilityPerProduct;
   handleToggleChange: (product: Product, isActive: boolean) => void;
 }
@@ -40,15 +40,16 @@ const useColorFromUrl = () => {
 };
 
 const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
-  plan,
+  plans,
   products,
   premiums,
   costView,
   individualInfo,
+  quotes,
   selectedEligibilityPerProduct,
   handleToggleChange,
 }) => {
-  const [activeProducts, setActiveProducts] = useState<Record<Product, boolean>>(() => {
+  const [activeProducts, setActiveProducts] = useState<Partial<Record<Product, boolean>>>(() => {
     const initialState = { ...products };
     initialState['LTD'] = true;
     initialState['STD'] = false;
@@ -57,6 +58,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
     initialState['Vision'] = false;
     initialState['Dental'] = true;
     initialState['Accident'] = false;
+    initialState['Hospital'] = false;
     
     //default: return product;//
 
@@ -73,9 +75,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, costView);
-  }, [individualInfo, selectedEligibilityPerProduct, plan, costView]);
+  }, [individualInfo, quotes, selectedEligibilityPerProduct, plans, costView]);
 
   const getMonthlyPremium = useCallback((product: Product): number => {
     const calculatePremium = PREMIUM_CALCULATIONS[product];
@@ -83,9 +85,9 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
       ...individualInfo,
       eligibility: selectedEligibilityPerProduct[product],
     };
-    const premium = calculatePremium(tempIndividualInfo, plan[product]);
+    const premium = calculatePremium(tempIndividualInfo, quotes, plans[product]);
     return calculatePremiumByCostView(premium, 'Monthly');
-  }, [individualInfo, plan]);
+  }, [individualInfo, quotes, selectedEligibilityPerProduct, plans]);
 
   const totalPremium = Object.entries(activeProducts)
     .filter(([product, isActive]) => isActive)
@@ -102,7 +104,7 @@ const ActiveProductsToggle: React.FC<ActiveProductsToggleProps> = ({
   const handleLocalToggle = (product: Product) => {
     setActiveProducts(prev => {
       const newState = { ...prev, [product]: !prev[product] };
-      handleToggleChange(product, newState[product]);
+      handleToggleChange(product, newState[product] as boolean);
       return newState;
     });
   };

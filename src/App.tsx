@@ -1,11 +1,8 @@
-// src\App.tsx
-
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './styles/global.css';
 import './styles/ProductTabs.css';
 import './styles/App.css';
-import Home from './pages/Home';
 import Business from './pages/Business';
 import StickyProductCostSummary from './components/StickyProductCostSummary';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -70,7 +67,12 @@ const App: React.FC = () => {
           <main className="flex-grow">
             <Router>
               <Routes>
-                <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : <Home />} />
+                <Route path="/" element={showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
+                  <Business setProducts={setProducts} 
+                    setTotalCost={setTotalCost} 
+                    funnelData={funnelData} 
+                    onZipDebug={handleZipDebug} />} 
+                  />
                 <Route path="/john" element={
                   showFunnel ? <Funnel onComplete={handleFunnelComplete} /> : 
                   <Business 

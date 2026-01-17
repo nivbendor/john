@@ -34,8 +34,8 @@ export function parseUrlParams(): ParsedUrlParams {
   
   // Splashscreen param check
   const splashParam = params.get('splash');
-  if (splashParam === '1') {
-    result.showSplash = true;
+  if (splashParam === '0') {
+    result.showSplash = false;
   }
 
 

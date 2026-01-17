@@ -1,25 +1,38 @@
 // utils/insuranceConfig.ts
 
-import { BABRM } from './config';
+import { BABRM, TAA } from './config';
 import { Product, EligibilityOption, USState, PlanRecord, Plan, LTDPlan } from './insuranceTypes';
 import { calculateLTDBenefit } from './insuranceUtils'; // Import the function
 import { isDistributor } from './isDistributor';
 
 
 
-
 // const [individualData, setIndividualData] = useState(getDefaultIndividualData());
 
-export const PRODUCTS: Product[] = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision', 'Critical Illness/Cancer'];
+export const PRODUCTS: Product[] = (() => {
+  const defaultProducts = ['LTD', 'STD', 'Life / AD&D', 'Accident', 'Dental', 'Vision'];
+
+  if (!isDistributor(TAA)) {
+    // TODO: critical is hidden temporarily
+    defaultProducts.push('Critical Illness/Cancer', 'Hospital Indemnity');
+  } else {
+    defaultProducts.push('Telehealth', 'Identity Theft Protection');
+  }
+  return defaultProducts as Product[];
+})();
 
 export const defaultPlans: Record<Product, Plan> = {
   LTD: 'Premium',
   STD: 'Premium',
   'Life / AD&D': 'Basic',
   Accident: 'Premium',
-  Dental: 'Premium',
+  Dental: isDistributor(BABRM) ? 'Premium' : 'Basic',
   Vision: 'Premium',
   'Critical Illness/Cancer': 'Basic',
+  'Hospital Indemnity': 'Premium',
+  Telehealth: 'Premium', 
+  'Identity Theft Protection': 'Premium', 
+  // 'Virtual Primary Care': 'Premium',
 };
 
 export const availableLTDPlanBySalaryCpValue = {
@@ -64,70 +77,27 @@ export const PRODUCT_ELIGIBILITY_OPTIONS: Record<Product, EligibilityOption[]> =
   Dental: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   Vision: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
   'Critical Illness/Cancer': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  'Hospital Indemnity': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  Telehealth: ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  'Identity Theft Protection': ['Individual', 'Individual + Spouse', 'Individual + Children', 'Family'],
+  // 'Virtual Primary Care': ['Individual'],
 };
 
 
-export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = (() => {
-
-  if (isDistributor(BABRM)) {
-    return {
-      AK: {
-        Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-        Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 },
-      },
-      Other: {
-        Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-        Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 },
-      },
-    } as Record<string, PlanRecord<Record<EligibilityOption, number>>>;
+export const VISION_PREMIUMS: Record<string, PlanRecord<Record<EligibilityOption, number>>> = {
+  AK: {
+    Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
+    Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
+  },
+  'CA,CT,HI,NJ,NV,WA': {
+    Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
+    Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
+  },
+  Other: {
+    Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
+    Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
   }
-
-  return {
-    AK: {
-      Basic: { Individual: 9.86, 'Individual + Spouse': 19.78, 'Individual + Children': 16.74, Family: 27.61 },
-      Premium: { Individual: 12.23, 'Individual + Spouse': 24.52, 'Individual + Children': 20.75, Family: 34.23 }
-    },
-    'CA,CT,HI,NJ,NV,WA': {
-      Basic: { Individual: 8.43, 'Individual + Spouse': 16.91, 'Individual + Children': 14.32, Family: 23.60 },
-      Premium: { Individual: 10.51, 'Individual + Spouse': 21.07, 'Individual + Children': 17.84, Family: 29.41 }
-    },
-    Other: {
-      Basic: { Individual: 7.56, 'Individual + Spouse': 15.15, 'Individual + Children': 12.83, Family: 21.15 },
-      Premium: { Individual: 9.48, 'Individual + Spouse': 19.00, 'Individual + Children': 16.08, Family: 26.52 }
-    }
-  }
-})();  
-
-export const STATE_CATEGORIES: Record<string, USState[]> = {
-  AK: ['AK'],
-  'CA,CT,HI,NJ,NV,WA': ['CA', 'CT', 'HI', 'NJ', 'NV', 'WA', 'OR'],
-  Other: US_STATES.filter(state => !['AK', 'CA', 'CT', 'HI', 'NJ', 'NV', 'WA', 'OR'].includes(state))
-};
-
-export const AGE_BANDED_RATES = [
-  { minAge: 0, maxAge: 29, rate: 0.25 },
-  { minAge: 30, maxAge: 34, rate: 0.25 },
-  { minAge: 35, maxAge: 39, rate: 0.25 },
-  { minAge: 40, maxAge: 44, rate: 0.25 },
-  { minAge: 45, maxAge: 49, rate: 0.30 },
-  { minAge: 50, maxAge: 54, rate: 0.38 },
-  { minAge: 55, maxAge: 59, rate: 0.46 },
-  { minAge: 60, maxAge: 64, rate: 0.55 },
-  { minAge: 65, maxAge: 120, rate: 0.66 }
-];
-
-export const AGE_BANDED_RATES_LIFE = [
-  { minAge: 0, maxAge: 29, rate: 0.11 },
-  { minAge: 30, maxAge: 34, rate: 0.13 },
-  { minAge: 35, maxAge: 39, rate: 0.15 },
-  { minAge: 40, maxAge: 44, rate: 0.18 },
-  { minAge: 45, maxAge: 49, rate: 0.26 },
-  { minAge: 50, maxAge: 54, rate: 0.40 },
-  { minAge: 55, maxAge: 59, rate: 0.59 },
-  { minAge: 60, maxAge: 64, rate: 0.89 },
-  { minAge: 65, maxAge: 69, rate: 1.68 },
-  { minAge: 70, maxAge: Infinity, rate: 2.71 },
-];
+};  
 
 export const ACCIDENT_PREMIUMS: PlanRecord<Record<EligibilityOption, number>> = {
   Basic: { Individual: 7.94, 'Individual + Spouse': 15.07, 'Individual + Children': 18.89, Family: 22.27 },
@@ -163,20 +133,148 @@ export const DENTAL_PREMIUMS: PlanRecord<Record<number, Record<EligibilityOption
   }
 };
 
-export const CRITICAL_ILLNESS_RATES: { minAge: number; maxAge: number; rate: number }[] = [
-  { minAge: 0, maxAge: 24, rate: 5.55 },
-  { minAge: 25, maxAge: 29, rate: 6.45 },
-  { minAge: 30, maxAge: 34, rate: 7.65 },
-  { minAge: 35, maxAge: 39, rate: 10.05 },
-  { minAge: 40, maxAge: 44, rate: 13.50 },
-  { minAge: 45, maxAge: 49, rate: 18.45 },
-  { minAge: 50, maxAge: 54, rate: 24.30 },
-  { minAge: 55, maxAge: 59, rate: 33.60 },
-  { minAge: 60, maxAge: 64, rate: 44.55 },
-  { minAge: 65, maxAge: 69, rate: 58.95 },
-  { minAge: 70, maxAge: 74, rate: 77.85 },
-  { minAge: 75, maxAge: 120, rate: 109.05 }
-];
+export type CriticalIllnessRates = { minAge: number; maxAge: number; rates: Record<EligibilityOption, number> };
+
+export interface CriticalIllnessConfig {
+  minCoverage: number;
+  step: number;
+  maxCoverage: number;
+}
+
+export const CRITICAL_ILLNESS_RATES: CriticalIllnessRates[] | CriticalIllnessConfig = (() => {
+
+  if (isDistributor(TAA)) {
+    return {
+      minCoverage: 5000,
+      step: 5000,
+      maxCoverage: 25000
+    };
+  }
+
+  return [
+    {
+      "minAge": 0,
+      "maxAge": 24,
+      "rates": {
+        "Individual": 5.55,
+        "Individual + Spouse": 9.15,
+        "Individual + Children": 8.10,
+        "Family": 11.70
+      }
+    },
+    {
+      "minAge": 25,
+      "maxAge": 29,
+      "rates": {
+        "Individual": 6.45,
+        "Individual + Spouse": 10.35,
+        "Individual + Children": 8.85,
+        "Family": 12.90
+      }
+    },
+    {
+      "minAge": 30,
+      "maxAge": 34,
+      "rates": {
+        "Individual": 7.65,
+        "Individual + Spouse": 12.30,
+        "Individual + Children": 10.20,
+        "Family": 14.85
+      }
+    },
+    {
+      "minAge": 35,
+      "maxAge": 39,
+      "rates": {
+        "Individual": 10.05,
+        "Individual + Spouse": 15.75,
+        "Individual + Children": 12.45,
+        "Family": 18.30
+      }
+    },
+    {
+      "minAge": 40,
+      "maxAge": 44,
+      "rates": {
+        "Individual": 13.50,
+        "Individual + Spouse": 21.00,
+        "Individual + Children": 16.05,
+        "Family": 23.25
+      }
+    },
+    {
+      "minAge": 45,
+      "maxAge": 49,
+      "rates": {
+        "Individual": 18.45,
+        "Individual + Spouse": 28.35,
+        "Individual + Children": 21.00,
+        "Family": 30.90
+      }
+    },
+    {
+      "minAge": 50,
+      "maxAge": 54,
+      "rates": {
+        "Individual": 24.30,
+        "Individual + Spouse": 37.20,
+        "Individual + Children": 26.85,
+        "Family": 39.60
+      }
+    },
+    {
+      "minAge": 55,
+      "maxAge": 59,
+      "rates": {
+        "Individual": 33.60,
+        "Individual + Spouse": 51.15,
+        "Individual + Children": 36.15,
+        "Family": 53.70
+      }
+    },
+    {
+      "minAge": 60,
+      "maxAge": 64,
+      "rates": {
+        "Individual": 44.55,
+        "Individual + Spouse": 67.50,
+        "Individual + Children": 47.10,
+        "Family": 70.05
+      }
+    },
+    {
+      "minAge": 65,
+      "maxAge": 69,
+      "rates": {
+        "Individual": 58.95,
+        "Individual + Spouse": 89.25,
+        "Individual + Children": 61.50,
+        "Family": 91.80
+      }
+    },
+    {
+      "minAge": 70,
+      "maxAge": 74,
+      "rates": {
+        "Individual": 77.85,
+        "Individual + Spouse": 117.60,
+        "Individual + Children": 80.40,
+        "Family": 120.15
+      }
+    },
+    {
+      "minAge": 75,
+      "maxAge": 120,
+      "rates": {
+        "Individual": 109.05,
+        "Individual + Spouse": 164.25,
+        "Individual + Children": 111.60,
+        "Family": 166.80
+      }
+    }
+  ];
+
+})();
 
 type ZIPCodeRegions = {
   [key: number]: string[];
@@ -250,19 +348,23 @@ export const LTD_CONFIG = (() => {
       costPerHundred: {
         Basic: 0.24,
         Premium: 0.35,
+        Ultra: 0.35
       },
       maxBenefitAmount: {
         Basic: 8333.33,
         Premium: 10000,
+        Ultra: 10000,
       },
       maxUnits: {
         Basic: 83.33,
         Premium: 166.66,
+        Ultra: 166.66,
       },
       weeks: 52,
       incomeBrackets: {
         Basic: { min: 0, max: 100000 },
-        Premium: { min: 100001, max: 300000 },
+        Premium: { min: 100001, max: 200000 },
+        Ultra: { min: 200001, max: 300000 }
       }
     };
   }
@@ -318,186 +420,223 @@ export const LIFE_ADD_CONFIG = {
   ]
 };
 
+export const HOSPITAL_INDEMNITY: PlanRecord<Record<EligibilityOption, number>> = {
+  Basic: {
+      "Individual": 11.15,
+      "Individual + Spouse": 23.58,
+      "Individual + Children": 18.09,
+      "Family": 30.53
+  },
+  Premium: {
+    "Individual": 19.96,
+    "Individual + Spouse": 42.48,
+    "Individual + Children": 32.18,
+    "Family": 54.70
+  }
+};
 
-export const PRODUCT_CONTENT: Record<Product, PlanRecord<{
-  paragraph: string;
-  bulletPoints: string[];
-}>> = {
+export const REGULAR_PRODUCT_CONTENT: Partial<Record<Product, { paragraph: string; bulletPoints: string[] }>> = {
   'LTD': {
-    'Basic': {
-      paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
-      bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $8,333 of monthly benefit",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Benefit can be paid up to your normal retirement age",
-        "Available for employees only"
-      ]
-    },
-    'Premium': {
-      paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
-      bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $10,000 of monthly benefit",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Benefit can be paid up to your normal retirement age",
-        "Available for employees only"
-      ]
-    },
-    'Ultra': {
-      paragraph: "How would you pay your expenses if you cannot work because of injury or illness? Our Ultra plan provides enhanced coverage for high-income earners.",
-      bulletPoints: [
-        "LTD Insurance protects your ability to earn an income",
-        "Up to $15,000 of monthly benefit",
-        "Your benefit will be {calculateLTDBenefit} of lost income per month",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Benefit can be paid up to your normal retirement age",
-        "Available for employees only",
-        "Ideal for salaries above $200,000"
-      ]
-    }
+    paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
+    bulletPoints: [
+      "The answer is LTD Insurance. This coverage would keep income flowing each month",
+      "Benefit can be paid up to your normal retirement age",
+      "Your benefit will be {calculateLTDBenefit} of lost income per month",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Available for employees only"
+    ]
   },
   'STD': {
-    'Basic': {
-      paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
-      bulletPoints: [
-        "Up to $1,200 of weekly benefit",
-        "Your benefit will be {weeklySTDBenefit} of lost income per week",
-        "Includes missing work due to pregnancy (women only)",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Available for employees only"
-      ]
-    },
-    'Premium': {
-      paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
-      bulletPoints: [
-        "Up to $1,200 of weekly benefit",
-        "Your benefit will be {weeklySTDBenefit} of lost income per week",
-        "Includes missing work due to pregnancy (women only)",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled",
-        "Available for employees only"
-      ]
-    }
+    paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
+    bulletPoints: [
+      "STD will pay up to $1,200 of weekly benefit depending on your earnings",
+      "Your benefit will be {weeklySTDBenefit} of lost income per week",
+      "Includes missing work due to pregnancy (women only)",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Available for employees only",
+      "STD can be paid up to 11-weeks post-incident"
+    ]
   },
   'Life / AD&D': {
-    'Basic': {
-      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
-      bulletPoints: [
-        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of coverage.",
-        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
-        "Spouse is eligible for up to $20,000 of coverage.",
-        "$2.50 provides $10,000 of coverage for all your children.",
-        "Available for employees and dependents"
-      ]
-    },
-    'Premium': {
-      paragraph: "Life insurance helps loved ones financially in the event of a premature death.",
-      bulletPoints: [
-        "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund.",
-        "Up to $150,000 of coverage.",
-        "Accidental death and dismemberment (AD&D) is part of the policy at the same coverage amount.",
-        "Guaranteed Issue - meaning just sign-up and you're enrolled.",
-        "Spouse is eligible for up to $20,000 of coverage.",
-        "$2.50 provides $10,000 of coverage for all your children.",
-        "Available for employees and dependents"
-      ]
-    }
+    paragraph: "Life insurance helps loved ones financially in the event of a premature death",
+    bulletPoints: [
+      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund",
+      "Up to $150,000 of guaranteed issue coverage",
+      "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Spouse is eligible for up to $20,000 of coverage",
+      "All children under age 26 are eligible for $10,000 of coverage at one low premium for all children"
+    ]
   },
   'Accident': {
-    'Basic': {
-      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
-      bulletPoints: [
-        "Pays large benefit amounts for accidents needing medical attention",
-        "Benefit is paid directly to you",
-        "Pays for on and off the job accidents",
-        "An extra 25% is paid for accidents that occur playing organized sports",
-        "Available for employees and dependents"
-      ]
-    },
-    'Premium': {
-      paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances.",
-      bulletPoints: [
-        "Pays large benefit amounts for accidents needing medical attention",
-        "Benefit is paid directly to you",
-        "Pays for on and off the job accidents",
-        "An extra 25% is paid for accidents that occur playing organized sports",
-        "Available for employees and dependents"
-      ]
-    }
+    paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances",
+    bulletPoints: [
+      "Pays large benefit amounts for accidents needing medical attention",
+      "Benefit is paid directly to you",
+      "Pays for on and off the job accidents",
+      "An extra 25% is paid for accidents that occur playing organized sports",
+      "Guaranteed Issue – meaning just sign-up and you’re enrolled",
+      "Available for dependents"
+    ]
   },
   'Dental': {
-    'Basic': {
-      paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
-      bulletPoints: [
-        "Great benefit if your dentist is in network.",
-        "Check for an in-network dentist [HERE](https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife).",
-        "$1000 annual maximum per person.",
-        "Root canals covered in basic at 80% (typically root canals are major coverage).",
-        "Available for employees and dependents"
-      ]
-    },
-    'Premium': {
-      paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
-      bulletPoints: [
-        "Pays the same if your dentist is in-network or out-of-network.",
-        "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} for bigger savings.",
-        "$1,500 annual maximum per person.",
-        "Root canals are covered in the basic level at 80% (typically root canals are major coverage at 50% or less).",
-        "$1,000 child ortho (lifetime max).",
-        "Available for employees and dependents"
-      ]
-    }
+    paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+    bulletPoints: [
+      "This benefit pays the same percentages out-of-network as it does in-network",
+      "In-network dentists make your benefit dollars go further",
+      "Check for an in-network dentist {{HERE|https://providers.online.metlife.com/findDentist?searchType=findDentistMetLife}} & Select PDP Plus as your network",
+      "$1500 annual maximum per person",
+      "$1,000 orthodontia lifetime maximum per person, up to age 19",
+      "Root canals covered in basic at 80% (typically root canals are major coverage)",
+      "No waiting period to use your benefits",
+      "Available for employees and dependents"
+    ]
   },
   'Vision': {
-    'Basic': {
-      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
-      bulletPoints: [
-        "$10 copay for an annual eye exam.",
-        "You can get frames and lenses every year.",
-        "VSP Network.",
-        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "Available for employee and dependents"
-      ]
-    },
-    'Premium': {
-      paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages.",
-      bulletPoints: [
-        "$10 copay for an annual eye exam.",
-        "You can get frames and lenses every year.",
-        "VSP Network.",
-        "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}.",
-        "Available for employee and dependents"
-      ]
-    }
+    paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages",
+    bulletPoints: [
+      "$10 copay for an annual eye exam",
+      "You can get frames and lenses every year",
+      "VSP Network",
+      "Check for an in-network doctor {{HERE|https://www.vsp.com/eye-doctor}}",
+      "No waiting period to use your benefits",
+      "Available for dependents"
+    ]
   },
   'Critical Illness/Cancer': {
-    'Basic': {
-      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
-      bulletPoints: [
-        "Helps cover expenses that other insurance won't",
-        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
-        "Pays same lump sum for reoccurrence",
-        "Pays $15,000 on the initial diagnosis of invasive cancer",
-        "Benefit is paid directly to you",
-        "Dozens of illnesses are covered by this policy",
-        "Available for employees and dependents"
-      ]
-    },
-    'Premium': {
-      paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike.",
-      bulletPoints: [
-        "Helps cover expenses that other insurance won't",
-        "Pays $15,000 lump sum for initial diagnosis of covered illnesses",
-        "Pays same lump sum for reoccurrence",
-        "Pays $15,000 on the initial diagnosis of invasive cancer",
-        "Benefit is paid directly to you",
-        "Dozens of illnesses are covered by this policy",
-        "Available for employees and dependents"
-      ]
-    }
+    paragraph: "Money won't fix everything but our lump sum payment can help relieve some of the financial stress if cancer or other critical illnesses were to strike",
+    bulletPoints: [
+      "Helps cover expenses that other insurance won't",
+      "Pays $15,000 lump sum for initial diagnosis for over 20 covered illnesses such as heart attack, stroke, coma, kidney failure",
+      "Pays same lump sum for reoccurrence",
+      "Pays $15,000 on the initial diagnosis of invasive cancer",
+      "Benefit is paid directly to you",
+      "Dozens of illnesses are covered by this policy",
+      "Guaranteed Issue – Sign-up and you’re enrolled",
+      "Available for employees and dependents"
+    ]
+  },
+  'Hospital Indemnity': {
+    paragraph: "Can you predict when a hospital stay will happen? Probably not. But you can predict how it will impact your finances - unless you're covered",
+    bulletPoints: [
+      "Unlike traditional health insurance, which reimburses hospitals and doctors, this policy pays YOU",
+      "$1,000 Hospital Admission Benefit",
+      "$200 confinement benefit per day – up to 15 days",
+      "ICU admission and confinement double the payout",
+      "$50 benefit for annual health",
+      "Ideal benefit to offset costs for pregnancy",
+      "Available for employees and dependents"
+    ]
   }
+};
+
+export const TAA_PRODUCT_CONTENT: Record<Product, { paragraph: string; bulletPoints: string[] }> = {
+  'LTD': {
+    paragraph: "How would you pay your expenses if you cannot work because of injury or illness?",
+    bulletPoints: [
+      "The maximum monthly benefit is $20,000",
+      "The answer is LTD Insurance. This coverage would keep income flowing each month",
+      "Benefit can be paid up to your normal retirement age",
+      "Your benefit will be {calculateLTDBenefit} of lost income per month",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Elimination period: Agents - 90-days, Agency Staff - 180-days",
+      "Dependents are not eligible for disability coverage"
+    ]
+  },
+  'STD': {
+    paragraph: "How would you pay your monthly expenses if you cannot work because of injury or illness?",
+    bulletPoints: [
+      "STD will pay up to $1,000 of weekly benefit depending on your earnings",
+      "Your benefit will be {weeklySTDBenefit} of lost income per week",
+      "Includes missing work due to pregnancy (women only)",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Elimination period: Agents - 30-days, Agency Staff - 7-days",
+      "Benefit payout up to: Agents - 9-weeks, Agency Staff - 26-weeks",
+      "Dependents are not eligible for disability coverage"
+    ]
+  },
+  'Life / AD&D': {
+    paragraph: "Life insurance helps loved ones financially in the event of a premature death",
+    bulletPoints: [
+      "Cover funeral costs (avg. $15,000), payoff credit debt or establish a college fund",
+      "Up to $150,000 of guaranteed issue coverage",
+      "This policy provides two coverages in one, with Accidental Death and Dismemberment (AD&D) included at the same coverage amount for Agents only",
+      "One time guaranteed issue opportunity during the initial open enrollment - meaning just sign-up and you're enrolled",
+      "Spouse is eligible for up to $20,000 of coverage",
+      "All children under age 26 are eligible for $10,000 of coverage at one low premium for all children"
+    ]
+  },
+  'Accident': {
+    paragraph: "It's not if you have an accident rather, when? Accident insurance helps with expenses that may not be covered by other insurances",
+    bulletPoints: [
+      "Pays large benefit amounts for accidents needing medical attention",
+      "Benefit is paid directly to you",
+      "Pays for on and off the job accidents",
+      "Guaranteed Issue – meaning just sign-up and you’re enrolled",
+      "Available for dependents"
+    ]
+  },
+  'Dental': {
+    paragraph: "Dental insurance provides access to affordable care. Maintenance of healthy teeth and gums is directly related to overall health. Are you taking care of your teeth?",
+    bulletPoints: [
+      "This benefit pays the same percentages out-of-network as it does in-network",
+      "In-network dentists make your benefit dollars go further",
+      "Check for an in-network dentist {{HERE|https://member.sunlifeconnect.com/findadentist/#/}} & Select PPO plans",
+      "Annual benefit maximums per enrolled member:  Base:  $750,  Enhanced $1,000",
+      "$1,000 orthodontia lifetime maximum per person, up to age 19",
+      "No waiting period to use your benefits",
+      "Available for employees and dependents"
+    ]
+  },
+  'Vision': {
+    paragraph: "Vision exams are critical to detect eye disease, which are typical and may go unnoticed because they show no symptoms in the early stages",
+    bulletPoints: [
+      "$10 copay for an annual eye exam",
+      "You can get frames and lenses every year",
+      "You can choose to enroll in either the VSP or Davis network",
+      "Check for an in-network doctor {{HERE|https://www.guardiananytime.com/fpapp/vision}}",
+      "No waiting period to use your benefits",
+      "Available for dependents"
+    ]
+  },
+  'Critical Illness/Cancer': REGULAR_PRODUCT_CONTENT['Critical Illness/Cancer'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
+  'Hospital Indemnity': REGULAR_PRODUCT_CONTENT['Hospital Indemnity'] as { paragraph: string; bulletPoints: string[]; }, // Same as original
+  'Telehealth': {
+    paragraph: "Fast, Affordable Care Anytime, Anywhere",
+    bulletPoints: [
+      "Access quality healthcare without the wait or the high cost",
+      "24/7 Virtual Doctor Visits by phone, app, or video – no appointment needed",
+      "Zero or Low-Cost Consultations with licensed physicians",
+      "No Deductibles or Copays for general medical visits (varies by plan)",
+      "Prescriptions Sent to Your Pharmacy for common conditions",
+      "Covers Everyday Health Issues like cold & flu, sinus infections, allergies, and more",
+      "Nationwide Access – use it wherever you live, work, or travel"
+    ]
+  },
+  'Identity Theft Protection': {
+    paragraph: "Protect your identity, credit, and peace of mind with powerful, proactive coverage.",
+    bulletPoints: [
+      "24/7 Monitoring of your personal, financial, and online information",
+      "Real-Time Alerts to stop identity theft before it causes major damage",
+      "$1 Million Insurance to cover recovery-related expenses",
+      "Credit Score Tracking with tools to monitor and improve your credit",
+      "Online Privacy Protection for keystrokes, PINs, and credit card data",
+      "Expert Recovery Services—we do the work to restore your identity",
+      "Fraud Resolution Support from certified identity protection specialists",
+      "Peace of Mind knowing your identity is defended around the clock"
+    ]
+  },
+  // 'Virtual Primary Care': {
+  //   paragraph: "Personalized, Comprehensive Care at Your Fingertips",
+  //   bulletPoints: [
+  //     "Choose Your Doctor: Patients select a dedicated primary care physician based on their preferences and needs",
+  //     "Full-Spectrum Primary Care: Includes wellness exams, health risk assessments, chronic condition management, lab review, care plans, and specialist referrals",
+  //     "At-Home Lab Testing: Convenient lab kits shipped to the patient’s door with prepaid return—no clinic visits needed",
+  //     "Genetic Testing (Optional): Personalized medication guidance (PGx) and early detection of hereditary risk factors",
+  //     "Integrated Behavioral Health: Seamless access to therapy, psychiatry, and mental health coaching within the same care platform",
+  //     "24/7 Urgent Care Access: Around-the-clock virtual urgent care included for immediate needs",
+  //     "Instant Prescription Delivery: E-prescriptions sent directly to the patient’s preferred pharmacy",
+  //     "Comprehensive Risk Assessment: Evaluates physical health, mental health, lifestyle, and more to personalize care"
+  //   ]
+  // }
 };
